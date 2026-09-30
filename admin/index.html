@@ -5,11 +5,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Panel de Administración — ANPA Ensino Rabadeira</title>
+  <title>ENTORNO DE PROBAS — CMS TEST | Panel de Administración</title>
   <link rel="icon" type="image/jpeg" href="/img/logo-anpa.jpg">
+  <style>
+    .sandbox-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #f59e0b;
+      color: #78350f;
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-align: center;
+      padding: 0.4rem 1rem;
+      z-index: 999999;
+      border-bottom: 2px solid #d97706;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      padding-top: 2rem;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="sandbox-banner" role="alert">
+    ⚠️ ENTORNO DE PROBAS — CMS TEST (Sandbox de probas illada)
+  </div>
   <!-- Decap CMS Core (Open-Source) -->
   <script src="https://unpkg.com/decap-cms@^3.1.0/dist/decap-cms.js"></script>
   <!-- Custom Preview Templates & Warm Theme Integration -->
