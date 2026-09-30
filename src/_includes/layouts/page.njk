@@ -1,6 +1,61 @@
 ---
 layout: layouts/base.njk
 ---
+{% macro render_flexible_block(block) %}
+  {% if block.type == "text_block" or block.type == "text" %}
+    {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+    {% if block.body %}{{ block.body | md | safe }}{% elif block.content %}{{ block.content | md | safe }}{% elif block.text %}{{ block.text | md | safe }}{% endif %}
+
+  {% elif block.type == "callout_block" or block.type == "callout" %}
+    {% if block.title or block.text or block.body %}
+    <div class="callout-box{% if block.style %} callout-box--{{ block.style }}{% endif %}">
+      {% if block.title %}<h3>{{ block.title }}</h3>{% endif %}
+      {% if block.text %}{{ block.text | md | safe }}{% elif block.body %}{{ block.body | md | safe }}{% endif %}
+      {% if block.url and block.url_label %}
+      <p style="margin-top: 0.75rem;"><a href="{{ block.url }}" target="_blank" rel="noopener noreferrer" class="btn-action">{{ block.url_label }}</a></p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  {% elif block.type == "image_block" or block.type == "image" %}
+    {% if block.image %}
+    <figure class="page-figure" style="margin: 1.75rem 0;">
+      <img src="{{ block.image }}" alt="{{ block.image_alt | default('') }}" style="max-width: 100%; border-radius: var(--radius-sm, 8px);">
+      {% if block.caption %}<figcaption style="font-size: var(--fs-sm, 0.875rem); color: var(--clr-gray-600, #64748b); margin-top: 0.5rem; text-align: center;">{{ block.caption }}</figcaption>{% endif %}
+    </figure>
+    {% endif %}
+
+  {% elif block.type == "document_block" or block.type == "document" %}
+    {% if block.file and block.title %}
+    <div class="doc-card" style="margin: 1.25rem 0;">
+      <div class="doc-card__main">
+        <div class="doc-card__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+          </svg>
+        </div>
+        <div class="doc-card__info">
+          <h3 class="doc-card__title">{{ block.title }}</h3>
+          {% if block.description %}<p class="doc-card__meta"><span class="doc-card__badge">PDF</span> {{ block.description }}</p>{% endif %}
+        </div>
+      </div>
+      <div class="doc-card__actions">
+        <a href="{{ block.file }}" target="_blank" rel="noopener noreferrer" class="doc-btn doc-btn--primary">{{ block.button_label | default('Abrir PDF') }}</a>
+        <a href="{{ block.file }}" download class="doc-btn doc-btn--secondary">Descargar</a>
+      </div>
+    </div>
+    {% endif %}
+
+  {% elif block.type == "button_block" or block.type == "button" %}
+    {% if block.url and block.label %}
+    <div class="page-cta" style="margin: 1.75rem 0;">
+      <a href="{{ block.url }}" target="_blank" rel="noopener noreferrer" class="btn-action btn-action--primary">{{ block.label }}</a>
+      {% if block.note %}<p style="font-size: var(--fs-sm, 0.875rem); color: var(--clr-gray-600, #64748b); margin-top: 0.5rem;">{{ block.note }}</p>{% endif %}
+    </div>
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
 <div class="page-content container">
   {% if image %}
   <div class="post-single__image">
@@ -15,34 +70,46 @@ layout: layouts/base.njk
       <p>{{ intro }}</p>
     {% endif %}
 
-    {# ===== SERVIZO MADRUGADORES (CAMPOS ESTRUTURADOS) ===== #}
-    {% if schedule_hours %}
-      <p>O servizo de madrugadores está dispoñible de <strong>{{ schedule_hours }}</strong> con posibilidade de almorzo. O servizo é xestionado pola empresa {{ provider_name }}{% if provider_url %} (<a href="{{ provider_url }}" target="_blank" rel="noopener noreferrer">{{ provider_url | replace('https://', '') | replace('http://', '') | replace('/', '') }}</a>){% endif %}.</p>
+    {# ===== 1. SECCIÓNS SUPERIORES FLEXIBLES (Avisos, novidades, etc. arriba de tarifas) ===== #}
+    {% if top_sections and top_sections.length > 0 %}
+      {% for blk in top_sections %}
+        {{ render_flexible_block(blk) }}
+      {% endfor %}
     {% endif %}
 
-    {% if rates %}
+    {# ===== 2. SERVIZO MADRUGADORES (CAMPOS ESTRUTURADOS) ===== #}
+    {% if schedule_hours %}
+      <p>O servizo de madrugadores está dispoñible de <strong>{{ schedule_hours }}</strong> con posibilidade de almorzo. O servizo é xestionado pola empresa {{ provider_name | default('Jardanay') }}{% if provider_url %} (<a href="{{ provider_url }}" target="_blank" rel="noopener noreferrer">{{ provider_url | replace('https://', '') | replace('http://', '') | replace('/', '') }}</a>){% endif %}.</p>
+    {% endif %}
+
+    {% if rates and (rates.monthly_breakfast or rates.monthly_no_breakfast or rates.daily_breakfast or rates.daily_no_breakfast) %}
       <h2>Tarifas do servizo (Curso {{ academic_year | default('2026-2027') }})</h2>
       <p>Segundo a guía oficial do servizo para o curso {{ academic_year | default('2026-2027') }}:</p>
 
+      {% if rates.monthly_breakfast or rates.monthly_no_breakfast %}
       <p><strong>Contratación mensual fixa:</strong></p>
       <ul>
-        <li>Con almorzo: <strong>{{ rates.monthly_breakfast }}</strong></li>
-        <li>Sen almorzo: <strong>{{ rates.monthly_no_breakfast }}</strong></li>
+        {% if rates.monthly_breakfast %}<li>Con almorzo: <strong>{{ rates.monthly_breakfast }}</strong></li>{% endif %}
+        {% if rates.monthly_no_breakfast %}<li>Sen almorzo: <strong>{{ rates.monthly_no_breakfast }}</strong></li>{% endif %}
       </ul>
+      {% endif %}
 
+      {% if rates.daily_breakfast or rates.daily_no_breakfast %}
       <p><strong>Días soltos (esporádicos):</strong></p>
       <ul>
-        <li>Con almorzo: <strong>{{ rates.daily_breakfast }}</strong></li>
-        <li>Sen almorzo: <strong>{{ rates.daily_no_breakfast }}</strong></li>
+        {% if rates.daily_breakfast %}<li>Con almorzo: <strong>{{ rates.daily_breakfast }}</strong></li>{% endif %}
+        {% if rates.daily_no_breakfast %}<li>Sen almorzo: <strong>{{ rates.daily_no_breakfast }}</strong></li>{% endif %}
       </ul>
+      {% endif %}
     {% endif %}
 
-    {% if registration_url or fixed_users_note %}
+    {% if registration_url or fixed_users_note or sporadic_users_note %}
       <h2>Inscrición e funcionamento</h2>
       {% if registration_url %}
       <p>A tramitación do servizo realízase a través da plataforma web de {{ provider_name | default('Jardanay') }}: <a href="{{ registration_url }}" target="_blank" rel="noopener noreferrer">{{ registration_url | replace('https://', '') | replace('http://', '') }}</a>.</p>
       {% endif %}
 
+      {% if fixed_users_note or sporadic_users_note %}
       <ul>
         {% if fixed_users_note %}
         <li><strong>Usuarios fixos:</strong> {{ fixed_users_note }}</li>
@@ -51,9 +118,10 @@ layout: layouts/base.njk
         <li><strong>Usuarios esporádicos (días soltos):</strong> {{ sporadic_users_note }}{% if vouchers_url %} a través de <a href="{{ vouchers_url }}" target="_blank" rel="noopener noreferrer">{{ vouchers_url | replace('https://', '') | replace('http://', '') }}</a>{% endif %}.</li>
         {% endif %}
       </ul>
+      {% endif %}
     {% endif %}
 
-    {# ===== PASOS GUÍA COMEDOR ===== #}
+    {# ===== 3. PASOS GUÍA COMEDOR ===== #}
     {% if steps and steps.length > 0 %}
       <h2>PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)</h2>
       {% if atriga_portal_url %}
@@ -61,7 +129,7 @@ layout: layouts/base.njk
       {% endif %}
 
       {% for st in steps %}
-        <p>{{ st.description }}</p>
+        {% if st.description %}<p>{{ st.description }}</p>{% endif %}
         {% if st.image %}
         <p>
           <img src="{{ st.image }}" alt="{{ st.image_alt | default('Paso ' + loop.index) }}">
@@ -82,7 +150,7 @@ layout: layouts/base.njk
       {% endif %}
     {% endif %}
 
-    {# ===== ALTA DE SOCIOS E IBAN ===== #}
+    {# ===== 4. ALTA DE SOCIOS E IBAN ===== #}
     {% if bank_iban %}
       {% if membership_fee %}
       <p>Agradecemos se podedes adxuntar no propio formulario o xustificante de pago ({{ membership_fee }}), tras facelo na conta bancaria:</p>
@@ -108,11 +176,12 @@ layout: layouts/base.njk
       {% endif %}
     {% endif %}
 
-    {# ===== DOCUMENTACIÓN INFORMATIVA (DOC CARDS) ===== #}
+    {# ===== 5. DOCUMENTACIÓN INFORMATIVA (DOC CARDS) ===== #}
     {% if documents and documents.length > 0 %}
       <h2>Documentación informativa</h2>
       <div class="doc-cards">
         {% for doc in documents %}
+        {% if doc.file and doc.title %}
         <div class="doc-card">
           <div class="doc-card__main">
             <div class="doc-card__icon" aria-hidden="true">
@@ -122,7 +191,7 @@ layout: layouts/base.njk
             </div>
             <div class="doc-card__info">
               <h3 class="doc-card__title">{{ doc.title }}</h3>
-              <p class="doc-card__meta"><span class="doc-card__badge">PDF</span> {{ doc.description }}</p>
+              {% if doc.description %}<p class="doc-card__meta"><span class="doc-card__badge">PDF</span> {{ doc.description }}</p>{% endif %}
             </div>
           </div>
           <div class="doc-card__actions">
@@ -130,18 +199,26 @@ layout: layouts/base.njk
             <a href="{{ doc.file }}" download class="doc-btn doc-btn--secondary">Descargar</a>
           </div>
         </div>
+        {% endif %}
         {% endfor %}
       </div>
     {% endif %}
 
-    {# ===== CONSELLO ESCOLAR ===== #}
+    {# ===== 6. CONSELLO ESCOLAR ===== #}
     {% if blog_url %}
       <p>No link inferior tendes a información das representantes das familias en dito Consello:</p>
       <p><a href="{{ blog_url }}" target="_blank" rel="noopener noreferrer">{{ blog_label | default('Blog do Consello Escolar Rabadeira') }}</a></p>
     {% endif %}
 
-    {# ===== CONTACTO DE PÁXINA ===== #}
-    {% if contact_anpa_email or contact_provider_phone or contact_email %}
+    {# ===== 7. SECCIÓNS ADICIONAIS FLEXIBLES (Reordenables) ===== #}
+    {% if sections and sections.length > 0 %}
+      {% for blk in sections %}
+        {{ render_flexible_block(blk) }}
+      {% endfor %}
+    {% endif %}
+
+    {# ===== 8. CONTACTO DE PÁXINA ===== #}
+    {% if contact_anpa_email or contact_provider_phone or contact_email or contact_provider_email %}
       <h2>Contacto e axuda</h2>
       <p>Para calquera dúbida ou cuestión, podes contactar con:</p>
       <ul>
@@ -154,7 +231,7 @@ layout: layouts/base.njk
       </ul>
     {% endif %}
 
-    {# Contido Markdown estándar (se existe) #}
+    {# ===== 9. CONTIDO LIBRE MARKDOWN (Se existe) ===== #}
     {{ content | safe }}
   </div>
 </div>
