@@ -3,9 +3,9 @@
 
 backend:
   name: github
-  repo: NikyMuchi/anpa-rabadeira
+  repo: NikyMuchi/anpa-rabadeira-cms-test
   branch: main
-  base_url: https://anpa-rabadeira.netlify.app
+  base_url: https://anpa-rabadeira-cms-test.netlify.app
   auth_endpoint: auth
 
 # Enable editorial workflow: creates PRs for drafts and requires review/approval before publishing
