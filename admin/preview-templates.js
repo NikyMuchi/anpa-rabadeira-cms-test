@@ -264,42 +264,14 @@
         ) : null,
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, title),
         h('div', { className: 'post-content' },
-          // Primary Markdown body (for document pages like Madrugadores)
-          (!data.steps && !data.bank_iban && !data.blog_url) ? (
-            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
-          ) : null,
-
           data.intro && data.intro.trim() ? formatMarkdown(data.intro) : null,
 
           // 1. Top flexible sections
           renderBlocks(data.top_sections, getAsset),
 
-          data.rates && (data.rates.monthly_breakfast || data.rates.monthly_no_breakfast || data.rates.daily_breakfast || data.rates.daily_no_breakfast) ? h('div', null,
-            h('h2', null, `Tarifas do servizo (Curso ${data.academic_year || '2026-2027'})`),
-            h('p', null, 'Segundo a guía oficial do servizo:'),
-            (data.rates.monthly_breakfast || data.rates.monthly_no_breakfast) ? h('div', null,
-              h('p', null, h('strong', null, 'Contratación mensual fixa:')),
-              h('ul', null,
-                data.rates.monthly_breakfast ? h('li', null, 'Con almorzo: ', h('strong', null, data.rates.monthly_breakfast)) : null,
-                data.rates.monthly_no_breakfast ? h('li', null, 'Sen almorzo: ', h('strong', null, data.rates.monthly_no_breakfast)) : null
-              )
-            ) : null,
-            (data.rates.daily_breakfast || data.rates.daily_no_breakfast) ? h('div', null,
-              h('p', null, h('strong', null, 'Días soltos (esporádicos):')),
-              h('ul', null,
-                data.rates.daily_breakfast ? h('li', null, 'Con almorzo: ', h('strong', null, data.rates.daily_breakfast)) : null,
-                data.rates.daily_no_breakfast ? h('li', null, 'Sen almorzo: ', h('strong', null, data.rates.daily_no_breakfast)) : null
-              )
-            ) : null
-          ) : null,
-
-          data.registration_url || data.fixed_users_note || data.sporadic_users_note ? h('div', null,
-            h('h2', null, 'Inscrición e funcionamento'),
-            data.registration_url ? h('p', null, 'A tramitación do servizo realízase a través da plataforma web de ', data.provider_name || 'Jardanay', ': ', h('span', null, data.registration_url.replace(/^https?:\/\//, '').replace(/\/$/, ''))) : null,
-            (data.fixed_users_note || data.sporadic_users_note) ? h('ul', null,
-              data.fixed_users_note ? h('li', null, h('strong', null, 'Usuarios fixos: '), data.fixed_users_note) : null,
-              data.sporadic_users_note ? h('li', null, h('strong', null, 'Usuarios esporádicos (días soltos): '), data.sporadic_users_note, data.vouchers_url ? [' a través de ', h('span', { key: 'vurl' }, data.vouchers_url.replace(/^https?:\/\//, ''))] : null) : null
-            ) : null
+          // Primary Markdown body (for document pages like Madrugadores)
+          (!data.steps && !data.bank_iban && !data.blog_url) ? (
+            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
           ) : null,
 
           // 3. Comedor Steps

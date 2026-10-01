@@ -35,19 +35,16 @@ function runFlexibleContentTests() {
 
   // Test 1: Rendering without flexible sections (baseline parity)
   test('Page layout renders baseline fields without empty artifacts when sections are absent', () => {
+    const rawContent = `O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa [Jardanay](https://www.jardanay.es/).
+
+## Tarifas do servizo (Curso 2026-2027)
+
+- Con almorzo: **49,94 € / mes**
+- Sen almorzo: **37,45 € / mes**`;
+
     const context = {
       title: 'Servizo Madrugadores',
-      intro: 'O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa [Jardanay](https://www.jardanay.es/).',
-      academic_year: '2026-2027',
-      provider_name: 'Jardanay',
-      rates: {
-        monthly_breakfast: '49,94 € / mes',
-        monthly_no_breakfast: '37,45 € / mes',
-        daily_breakfast: '4,79 € / día',
-        daily_no_breakfast: '3,75 € / día'
-      },
-      registration_url: 'https://www.comedores.jardanay.es',
-      fixed_users_note: 'Usuarios fixos note',
+      content: md.render(rawContent),
       documents: [
         { title: 'Guía', file: '/docs/guia.pdf', description: 'Desc' }
       ],
@@ -66,11 +63,10 @@ function runFlexibleContentTests() {
     assert(!rendered.includes('<p></p>'));
   });
 
-  // Test 2: Top announcement / Callout block above rates
-  test('Top announcement callout block renders above rates', () => {
+  // Test 2: Top announcement / Callout block above content
+  test('Top announcement callout block renders above content', () => {
     const context = {
       title: 'Servizo Madrugadores',
-      intro: 'O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa [Jardanay](https://www.jardanay.es/).',
       top_sections: [
         {
           type: 'callout_block',
@@ -81,7 +77,7 @@ function runFlexibleContentTests() {
           url_label: 'Máis información'
         }
       ],
-      rates: { monthly_breakfast: '49,94 € / mes' },
+      content: md.render('## Tarifas do servizo\n\nTarifas aquí...'),
       site: { name: 'ANPA Rabadeira' },
       collections: { navPages: [] }
     };
@@ -93,8 +89,8 @@ function runFlexibleContentTests() {
     assert(rendered.includes('Máis información'));
 
     const calloutPos = rendered.indexOf('Aviso Urxente de Prazos');
-    const ratesPos = rendered.indexOf('Tarifas do servizo');
-    assert(calloutPos < ratesPos, 'Callout should appear ABOVE rates section');
+    const contentPos = rendered.indexOf('Tarifas do servizo');
+    assert(calloutPos < contentPos, 'Callout should appear ABOVE content section');
   });
 
   // Test 3: Multiple flexible section block types (Text, Image, PDF, Button)
@@ -187,7 +183,7 @@ function runFlexibleContentTests() {
       const context = {
         title: 'Servizo Madrugadores',
         intro: emptyVal,
-        rates: { monthly_breakfast: '49,94 € / mes' },
+        content: md.render('## Tarifas do servizo\n\nTarifas aquí...'),
         site: { name: 'ANPA Rabadeira' },
         collections: { navPages: [] }
       };

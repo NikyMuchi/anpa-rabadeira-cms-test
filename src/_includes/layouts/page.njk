@@ -66,59 +66,20 @@ layout: layouts/base.njk
   <h1>{{ title }}</h1>
 
   <div class="post-content">
-    {# ===== CONTIDO MARKDOWN PRINCIPAL (Para páxinas de documento simple como Madrugadores) ===== #}
-    {% if content and not (steps or bank_iban or blog_url) %}
-      {{ content | safe }}
-    {% endif %}
-
     {% if intro and intro | trim %}
       {{ intro | md | safe }}
     {% endif %}
 
-    {# ===== 1. SECCIÓNS SUPERIORES FLEXIBLES (Avisos, novidades, etc. arriba de tarifas) ===== #}
+    {# ===== 1. SECCIÓNS SUPERIORES FLEXIBLES ===== #}
     {% if top_sections and top_sections.length > 0 %}
       {% for blk in top_sections %}
         {{ render_flexible_block(blk) }}
       {% endfor %}
     {% endif %}
 
-    {% if rates and (rates.monthly_breakfast or rates.monthly_no_breakfast or rates.daily_breakfast or rates.daily_no_breakfast) %}
-      <h2>Tarifas do servizo (Curso {{ academic_year | default('2026-2027') }})</h2>
-      <p>Segundo a guía oficial do servizo para o curso {{ academic_year | default('2026-2027') }}:</p>
-
-      {% if rates.monthly_breakfast or rates.monthly_no_breakfast %}
-      <p><strong>Contratación mensual fixa:</strong></p>
-      <ul>
-        {% if rates.monthly_breakfast %}<li>Con almorzo: <strong>{{ rates.monthly_breakfast }}</strong></li>{% endif %}
-        {% if rates.monthly_no_breakfast %}<li>Sen almorzo: <strong>{{ rates.monthly_no_breakfast }}</strong></li>{% endif %}
-      </ul>
-      {% endif %}
-
-      {% if rates.daily_breakfast or rates.daily_no_breakfast %}
-      <p><strong>Días soltos (esporádicos):</strong></p>
-      <ul>
-        {% if rates.daily_breakfast %}<li>Con almorzo: <strong>{{ rates.daily_breakfast }}</strong></li>{% endif %}
-        {% if rates.daily_no_breakfast %}<li>Sen almorzo: <strong>{{ rates.daily_no_breakfast }}</strong></li>{% endif %}
-      </ul>
-      {% endif %}
-    {% endif %}
-
-    {% if registration_url or fixed_users_note or sporadic_users_note %}
-      <h2>Inscrición e funcionamento</h2>
-      {% if registration_url %}
-      <p>A tramitación do servizo realízase a través da plataforma web de {{ provider_name | default('Jardanay') }}: <a href="{{ registration_url }}" target="_blank" rel="noopener noreferrer">{{ registration_url | replace('https://', '') | replace('http://', '') }}</a>.</p>
-      {% endif %}
-
-      {% if fixed_users_note or sporadic_users_note %}
-      <ul>
-        {% if fixed_users_note %}
-        <li><strong>Usuarios fixos:</strong> {{ fixed_users_note }}</li>
-        {% endif %}
-        {% if sporadic_users_note %}
-        <li><strong>Usuarios esporádicos (días soltos):</strong> {{ sporadic_users_note }}{% if vouchers_url %} a través de <a href="{{ vouchers_url }}" target="_blank" rel="noopener noreferrer">{{ vouchers_url | replace('https://', '') | replace('http://', '') }}</a>{% endif %}.</li>
-        {% endif %}
-      </ul>
-      {% endif %}
+    {# ===== CONTIDO MARKDOWN PRINCIPAL (Para páxinas de documento simple como Madrugadores) ===== #}
+    {% if content and not (steps or bank_iban or blog_url) %}
+      {{ content | safe }}
     {% endif %}
 
     {# ===== 3. PASOS GUÍA COMEDOR ===== #}
