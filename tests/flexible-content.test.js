@@ -199,6 +199,71 @@ function runFlexibleContentTests() {
     }
   });
 
+  // Test 7: Simple Document Editor page (Madrugadores format)
+  test('Simple Document Editor renders full narrative markdown body and documents list without separate price/hours fields', () => {
+    const rawMarkdown = `O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa Jardanay ([www.jardanay.es](https://www.jardanay.es/)).
+
+## Tarifas do servizo (Curso 2026-2027)
+
+Segundo a guía oficial do servizo para o curso 2026-2027:
+
+**Contratación mensual fixa:**
+- Con almorzo: **49,94 € / mes**
+- Sen almorzo: **37,45 € / mes**
+
+## Inscrición e funcionamento
+
+A tramitación do servizo realízase a través da plataforma web de Jardanay: [www.comedores.jardanay.es](https://www.comedores.jardanay.es).
+
+## Contacto e axuda
+
+Para calquera dúbida ou cuestión, podes contactar con:
+- **ANPA Ensino Rabadeira:** [anpaensinorabadeira@gmail.com](mailto:anpaensinorabadeira@gmail.com)`;
+
+    const context = {
+      title: 'Servizo Madrugadores',
+      content: md.render(rawMarkdown),
+      documents: [
+        {
+          title: 'Tríptico Informativo Madrugadores 2026-2027',
+          file: '/docs/triptico_madrugadores_2026-2027.pdf',
+          description: 'Guía oficial de Jardanay: prazos, operativa e tarifas'
+        }
+      ],
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<h1>Servizo Madrugadores</h1>'));
+    assert(rendered.includes('<strong>7:30 a 8:45</strong>'));
+    assert(rendered.includes('<h2>Tarifas do servizo (Curso 2026-2027)</h2>'));
+    assert(rendered.includes('49,94 € / mes'));
+    assert(rendered.includes('<h2>Documentación informativa</h2>'));
+    assert(rendered.includes('Tríptico Informativo Madrugadores 2026-2027'));
+    assert(rendered.includes('/docs/triptico_madrugadores_2026-2027.pdf'));
+    assert(rendered.includes('anpaensinorabadeira@gmail.com'));
+    assert(!rendered.includes('undefined'));
+    assert(!rendered.includes('null'));
+  });
+
+  // Test 8: Empty document editor body produces zero default sentences or fallback
+  test('Empty document editor body produces zero default sentences or fallback', () => {
+    const context = {
+      title: 'Servizo Madrugadores',
+      content: '',
+      documents: [],
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<h1>Servizo Madrugadores</h1>'));
+    assert(!rendered.includes('O servizo de madrugadores'));
+    assert(!rendered.includes('<h2>Tarifas do servizo</h2>'));
+    assert(!rendered.includes('<h2>Documentación informativa</h2>'));
+  });
+
   console.log(`\nFlexible Content Test Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) process.exit(1);
 }

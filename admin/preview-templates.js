@@ -32,18 +32,38 @@
     if (!text || typeof text !== 'string') return null;
     const trimmed = text.trim();
     if (!trimmed) return null;
-    const paragraphs = trimmed.split(/\n\s*\n/).filter(Boolean);
-    if (paragraphs.length === 0) return null;
+    const blocks = trimmed.split(/\n\s*\n/).filter(Boolean);
+    if (blocks.length === 0) return null;
 
-    return paragraphs.map((para, pIdx) => {
-      const lines = para.split('\n');
-      return h('p', { key: pIdx, style: { marginBottom: '1rem', lineHeight: '1.7' } },
-        lines.map((line, lIdx) => {
-          return h('span', {
-            key: lIdx,
-            dangerouslySetInnerHTML: { __html: renderInlineMarkdown(line) }
-          });
-        })
+    return blocks.map((blk, bIdx) => {
+      const lines = blk.split('\n');
+      const firstLine = lines[0].trim();
+      // Heading 2
+      if (firstLine.startsWith('## ')) {
+        return h('h2', { key: bIdx, style: { marginTop: '1.5rem', marginBottom: '0.75rem', color: '#13406a' } }, firstLine.replace(/^##\s+/, ''));
+      }
+      // Heading 3
+      if (firstLine.startsWith('### ')) {
+        return h('h3', { key: bIdx, style: { marginTop: '1.25rem', marginBottom: '0.5rem', color: '#13406a' } }, firstLine.replace(/^###\s+/, ''));
+      }
+      // List
+      if (lines.every(l => l.trim().startsWith('- ') || l.trim().startsWith('* '))) {
+        return h('ul', { key: bIdx, style: { paddingLeft: '1.5rem', marginBottom: '1rem', lineHeight: '1.7' } },
+          lines.map((l, lIdx) => h('li', { key: lIdx, dangerouslySetInnerHTML: { __html: renderInlineMarkdown(l.trim().replace(/^[-*]\s+/, '')) } }))
+        );
+      }
+      // Blockquote
+      if (firstLine.startsWith('> ')) {
+        return h('blockquote', { key: bIdx, style: { borderLeft: '4px solid #0d9488', paddingLeft: '1rem', margin: '1rem 0', color: '#475569', fontStyle: 'italic' } },
+          lines.map((line, lIdx) => h('p', { key: lIdx, style: { margin: '0.25rem 0' }, dangerouslySetInnerHTML: { __html: renderInlineMarkdown(line.replace(/^>\s*/, '')) } }))
+        );
+      }
+      // Paragraph
+      return h('p', { key: bIdx, style: { marginBottom: '1rem', lineHeight: '1.7' } },
+        lines.map((line, lIdx) => h('span', {
+          key: lIdx,
+          dangerouslySetInnerHTML: { __html: renderInlineMarkdown(line) }
+        }))
       );
     });
   }
@@ -244,6 +264,11 @@
         ) : null,
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, title),
         h('div', { className: 'post-content' },
+          // Primary Markdown body (for document pages like Madrugadores)
+          (!data.steps && !data.bank_iban && !data.blog_url) ? (
+            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
+          ) : null,
+
           data.intro && data.intro.trim() ? formatMarkdown(data.intro) : null,
 
           // 1. Top flexible sections
@@ -349,8 +374,10 @@
             )
           ) : null,
 
-          // Markdown body (se existe)
-          this.props.widgetFor ? this.props.widgetFor('body') : null
+          // Trailing Markdown body (for structured pages with trailing markdown)
+          (data.steps || data.bank_iban || data.blog_url) ? (
+            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
+          ) : null
         )
       );
     }

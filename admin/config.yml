@@ -157,14 +157,38 @@ collections:
     editor:
       preview: true
     files:
-      # --- MADRUGADORES ---
+      # --- MADRUGADORES (EDITOR DE DOCUMENTO SIMPLE) ---
       - name: "madrugadores"
         label: "🌅 Servizo de Madrugadores"
         file: "src/pages/madrugadores.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto introdutorio", name: "intro", widget: "markdown", required: false, hint: "Texto introdutorio da páxina. Admite formato markdown, negriñas e ligazóns." }
-          - label: "📢 Avisos e seccións superiores (arriba de tarifas)"
+          - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
+          - label: "Contido da páxina"
+            name: "body"
+            widget: "markdown"
+            buttons: ["bold", "italic", "link", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"]
+            modes: ["rich_text", "raw"]
+            hint: "Escriba aquí todo o contido da páxina (horarios, tarifas, instrucións e contacto). Admite cabeceiras, listas, negriña e ligazóns."
+          - label: "Documentos / PDF (opcional)"
+            name: "documents"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} (PDF)"
+            fields:
+              - { label: "Título do documento", name: "title", widget: "string" }
+              - { label: "Ficheiro PDF", name: "file", widget: "file" }
+              - { label: "Descrición breve", name: "description", widget: "string", required: false }
+
+      # --- COMEDOR ESCOLAR ---
+      - name: "comedor"
+        label: "🍽️ Pago do Comedor"
+        file: "src/pages/comedor.md"
+        fields:
+          - { label: "Título da páxina", name: "title", widget: "string" }
+          - { label: "Texto introdutorio", name: "intro", widget: "text", required: false }
+          - label: "📢 Avisos e seccións superiores"
             name: "top_sections"
             widget: "list"
             required: false
@@ -214,53 +238,6 @@ collections:
                   - { label: "Texto do botón", name: "label", widget: "string" }
                   - { label: "Ligazón (URL)", name: "url", widget: "string" }
                   - { label: "Nota explicativa (opcional)", name: "note", widget: "string", required: false }
-          - { label: "Curso académico", name: "academic_year", widget: "string", required: false, hint: "Ex: 2026-2027" }
-          - { label: "Nome da empresa xestora", name: "provider_name", widget: "string", required: false }
-          - label: "Tarifas do servizo"
-            name: "rates"
-            widget: "object"
-            required: false
-            fields:
-              - { label: "Mensual con almorzo", name: "monthly_breakfast", widget: "string", required: false }
-              - { label: "Mensual sen almorzo", name: "monthly_no_breakfast", widget: "string", required: false }
-              - { label: "Día solto con almorzo", name: "daily_breakfast", widget: "string", required: false }
-              - { label: "Día solto sen almorzo", name: "daily_no_breakfast", widget: "string", required: false }
-          - { label: "Plataforma de inscrición (URL)", name: "registration_url", widget: "string", required: false }
-          - { label: "Instrucións para usuarios fixos", name: "fixed_users_note", widget: "text", required: false }
-          - { label: "Instrucións para usuarios esporádicos", name: "sporadic_users_note", widget: "text", required: false }
-          - { label: "Plataforma de vales dixitais (URL)", name: "vouchers_url", widget: "string", required: false }
-          - label: "Documentación informativa (Trípticos / PDFs)"
-            name: "documents"
-            widget: "list"
-            required: false
-            fields:
-              - { label: "Título do documento", name: "title", widget: "string" }
-              - { label: "Ficheiro PDF", name: "file", widget: "file" }
-              - { label: "Descrición breve", name: "description", widget: "string", required: false }
-          - label: "📄 Seccións adicionais reordenables"
-            name: "sections"
-            widget: "list"
-            required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - { label: "Email de contacto ANPA", name: "contact_anpa_email", widget: "string", required: false }
-          - { label: "Teléfono da empresa", name: "contact_provider_phone", widget: "string", required: false }
-          - { label: "Email da empresa", name: "contact_provider_email", widget: "string", required: false }
-          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
-
-      # --- COMEDOR ESCOLAR ---
-      - name: "comedor"
-        label: "🍽️ Pago do Comedor"
-        file: "src/pages/comedor.md"
-        fields:
-          - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto introdutorio", name: "intro", widget: "text", required: false }
-          - label: "📢 Avisos e seccións superiores"
-            name: "top_sections"
-            widget: "list"
-            required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
           - { label: "Portal tributario ATRIGA (URL)", name: "atriga_portal_url", widget: "string", required: false }
           - label: "Pasos da guía de pago ATRIGA"
             name: "steps"
