@@ -89,7 +89,13 @@ exports.handler = async function (event) {
       provider: "github",
     });
 
-    // Send postMessage strictly to the verified origin
+    // Explicit allowlist containing only the canonical sandbox and PR #1 Deploy Preview
+    const allowedOrigins = [
+      "https://anpa-rabadeira-cms-test.netlify.app",
+      "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app",
+    ];
+
+    // Send postMessage strictly to the verified origin and opener source
     const html = `<!DOCTYPE html>
 <html lang="gl">
 <head>
@@ -100,9 +106,9 @@ exports.handler = async function (event) {
   <p>Autenticación completada. Pechando ventá...</p>
   <script>
     (function () {
-      var targetOrigin = ${JSON.stringify(siteOrigin)};
+      var allowedOrigins = ${JSON.stringify(allowedOrigins)};
       function receiveMessage(e) {
-        if (e.origin !== targetOrigin && e.origin !== window.location.origin) {
+        if (!e || allowedOrigins.indexOf(e.origin) === -1 || e.source !== window.opener) {
           return;
         }
         window.opener.postMessage(
