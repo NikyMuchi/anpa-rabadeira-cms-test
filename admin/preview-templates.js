@@ -30,7 +30,9 @@
 
   function formatMarkdown(text) {
     if (!text || typeof text !== 'string') return null;
-    const paragraphs = text.split(/\n\s*\n/).filter(Boolean);
+    const trimmed = text.trim();
+    if (!trimmed) return null;
+    const paragraphs = trimmed.split(/\n\s*\n/).filter(Boolean);
     if (paragraphs.length === 0) return null;
 
     return paragraphs.map((para, pIdx) => {
@@ -242,20 +244,10 @@
         ) : null,
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, title),
         h('div', { className: 'post-content' },
-          data.intro ? formatMarkdown(data.intro) : null,
+          data.intro && data.intro.trim() ? formatMarkdown(data.intro) : null,
 
           // 1. Top flexible sections
           renderBlocks(data.top_sections, getAsset),
-
-          // 2. Madrugadores structured
-          data.schedule_hours ? h('p', null,
-            'O servizo de madrugadores está dispoñible de ',
-            h('strong', null, data.schedule_hours),
-            ' con posibilidade de almorzo. O servizo é xestionado pola empresa ',
-            data.provider_name || 'Jardanay',
-            data.provider_url ? [' (', h('span', { key: 'url' }, data.provider_url.replace(/^https?:\/\//, '').replace(/\/$/, '')), ')'] : null,
-            '.'
-          ) : null,
 
           data.rates && (data.rates.monthly_breakfast || data.rates.monthly_no_breakfast || data.rates.daily_breakfast || data.rates.daily_no_breakfast) ? h('div', null,
             h('h2', null, `Tarifas do servizo (Curso ${data.academic_year || '2026-2027'})`),

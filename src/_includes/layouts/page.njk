@@ -66,8 +66,8 @@ layout: layouts/base.njk
   <h1>{{ title }}</h1>
 
   <div class="post-content">
-    {% if intro %}
-      <p>{{ intro }}</p>
+    {% if intro and intro | trim %}
+      {{ intro | md | safe }}
     {% endif %}
 
     {# ===== 1. SECCIÓNS SUPERIORES FLEXIBLES (Avisos, novidades, etc. arriba de tarifas) ===== #}
@@ -75,11 +75,6 @@ layout: layouts/base.njk
       {% for blk in top_sections %}
         {{ render_flexible_block(blk) }}
       {% endfor %}
-    {% endif %}
-
-    {# ===== 2. SERVIZO MADRUGADORES (CAMPOS ESTRUTURADOS) ===== #}
-    {% if schedule_hours %}
-      <p>O servizo de madrugadores está dispoñible de <strong>{{ schedule_hours }}</strong> con posibilidade de almorzo. O servizo é xestionado pola empresa {{ provider_name | default('Jardanay') }}{% if provider_url %} (<a href="{{ provider_url }}" target="_blank" rel="noopener noreferrer">{{ provider_url | replace('https://', '') | replace('http://', '') | replace('/', '') }}</a>){% endif %}.</p>
     {% endif %}
 
     {% if rates and (rates.monthly_breakfast or rates.monthly_no_breakfast or rates.daily_breakfast or rates.daily_no_breakfast) %}

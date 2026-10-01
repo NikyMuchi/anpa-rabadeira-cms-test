@@ -7,10 +7,9 @@ navLabel: "Madrugadores"
 navOrder: 3
 showInNav: true
 iconColor: "green"
-schedule_hours: "7:30 a 8:45"
+intro: "O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa Jardanay ([www.jardanay.es](https://www.jardanay.es/))."
 academic_year: "2026-2027"
 provider_name: "Jardanay"
-provider_url: "https://www.jardanay.es/"
 rates:
   monthly_breakfast: "49,94 € / mes"
   monthly_no_breakfast: "37,45 € / mes"

@@ -142,7 +142,7 @@ function runTests() {
   // Test 7: Information Pages Frontmatter & Data Integrity
   test('All informational pages contain structured frontmatter without breaking layout', () => {
     const madrugadores = fs.readFileSync(path.join(pagesDir, 'madrugadores.md'), 'utf8');
-    assert(madrugadores.includes('schedule_hours: "7:30 a 8:45"'), 'Missing schedule in madrugadores.md');
+    assert(madrugadores.includes('intro: "O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa Jardanay ([www.jardanay.es](https://www.jardanay.es/))."'), 'Missing intro in madrugadores.md');
     assert(madrugadores.includes('monthly_breakfast: "49,94 € / mes"'), 'Missing price in madrugadores.md');
 
     const inscripcion = fs.readFileSync(path.join(pagesDir, 'inscripcion.md'), 'utf8');

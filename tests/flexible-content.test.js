@@ -37,10 +37,9 @@ function runFlexibleContentTests() {
   test('Page layout renders baseline fields without empty artifacts when sections are absent', () => {
     const context = {
       title: 'Servizo Madrugadores',
-      schedule_hours: '7:30 a 8:45',
+      intro: 'O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa [Jardanay](https://www.jardanay.es/).',
       academic_year: '2026-2027',
       provider_name: 'Jardanay',
-      provider_url: 'https://www.jardanay.es/',
       rates: {
         monthly_breakfast: '49,94 € / mes',
         monthly_no_breakfast: '37,45 € / mes',
@@ -58,7 +57,8 @@ function runFlexibleContentTests() {
 
     const rendered = env.render('layouts/page.njk', context);
     assert(rendered.includes('Servizo Madrugadores'));
-    assert(rendered.includes('7:30 a 8:45'));
+    assert(rendered.includes('<strong>7:30 a 8:45</strong>'));
+    assert(rendered.includes('<a href="https://www.jardanay.es/">Jardanay</a>'));
     assert(rendered.includes('49,94 € / mes'));
     assert(!rendered.includes('undefined'));
     assert(!rendered.includes('null'));
@@ -70,6 +70,7 @@ function runFlexibleContentTests() {
   test('Top announcement callout block renders above rates', () => {
     const context = {
       title: 'Servizo Madrugadores',
+      intro: 'O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa [Jardanay](https://www.jardanay.es/).',
       top_sections: [
         {
           type: 'callout_block',
@@ -80,7 +81,6 @@ function runFlexibleContentTests() {
           url_label: 'Máis información'
         }
       ],
-      schedule_hours: '7:30 a 8:45',
       rates: { monthly_breakfast: '49,94 € / mes' },
       site: { name: 'ANPA Rabadeira' },
       collections: { navPages: [] }
@@ -163,6 +163,40 @@ function runFlexibleContentTests() {
     assert(!rendered.includes('class="bank-box"'));
     assert(!rendered.includes('class="doc-cards"'));
     assert(!rendered.includes('class="callout-box"'));
+  });
+
+  // Test 5: Fully editable introduction replacement
+  test('Editors can rewrite or replace the entire introduction with markdown', () => {
+    const customIntro = 'Horario actualizado para este curso: de **7:00 a 9:00**. Máis información na [web municipal](https://culleredo.es).';
+    const context = {
+      title: 'Servizo Madrugadores',
+      intro: customIntro,
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<strong>7:00 a 9:00</strong>'));
+    assert(rendered.includes('<a href="https://culleredo.es">web municipal</a>'));
+    assert(!rendered.includes('O servizo de madrugadores está dispoñible'));
+  });
+
+  // Test 6: Empty or whitespace-only introduction renders nothing
+  test('Empty or whitespace-only introduction renders zero paragraph or fallback', () => {
+    for (const emptyVal of ['', '   ', ' \n\t ', null, undefined]) {
+      const context = {
+        title: 'Servizo Madrugadores',
+        intro: emptyVal,
+        rates: { monthly_breakfast: '49,94 € / mes' },
+        site: { name: 'ANPA Rabadeira' },
+        collections: { navPages: [] }
+      };
+
+      const rendered = env.render('layouts/page.njk', context);
+      assert(!rendered.includes('O servizo de madrugadores'));
+      assert(!rendered.includes('<p></p>'));
+      assert(rendered.includes('Tarifas do servizo'));
+    }
   });
 
   console.log(`\nFlexible Content Test Summary: ${passed} passed, ${failed} failed.\n`);

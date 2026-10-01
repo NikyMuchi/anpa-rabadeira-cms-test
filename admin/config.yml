@@ -163,7 +163,7 @@ collections:
         file: "src/pages/madrugadores.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto introdutorio", name: "intro", widget: "text", required: false }
+          - { label: "Texto introdutorio", name: "intro", widget: "markdown", required: false, hint: "Texto introdutorio da páxina. Admite formato markdown, negriñas e ligazóns." }
           - label: "📢 Avisos e seccións superiores (arriba de tarifas)"
             name: "top_sections"
             widget: "list"
@@ -214,10 +214,8 @@ collections:
                   - { label: "Texto do botón", name: "label", widget: "string" }
                   - { label: "Ligazón (URL)", name: "url", widget: "string" }
                   - { label: "Nota explicativa (opcional)", name: "note", widget: "string", required: false }
-          - { label: "Horario do servizo", name: "schedule_hours", widget: "string", required: false, hint: "Ex: 7:30 a 8:45" }
           - { label: "Curso académico", name: "academic_year", widget: "string", required: false, hint: "Ex: 2026-2027" }
           - { label: "Nome da empresa xestora", name: "provider_name", widget: "string", required: false }
-          - { label: "Páxina web da empresa", name: "provider_url", widget: "string", required: false }
           - label: "Tarifas do servizo"
             name: "rates"
             widget: "object"
