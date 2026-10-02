@@ -142,8 +142,9 @@ function runTests() {
   // Test 7: Information Pages Frontmatter & Data Integrity
   test('All informational pages contain structured frontmatter without breaking layout', () => {
     const madrugadores = fs.readFileSync(path.join(pagesDir, 'madrugadores.md'), 'utf8');
-    assert(madrugadores.includes('schedule_hours: "7:30 a 8:45"'), 'Missing schedule in madrugadores.md');
-    assert(madrugadores.includes('monthly_breakfast: "49,94 € / mes"'), 'Missing price in madrugadores.md');
+    assert(madrugadores.includes('O servizo de madrugadores está dispoñible de **7:30 a 8:45**'), 'Missing hours narrative in madrugadores.md');
+    assert(madrugadores.includes('49,94 € / mes'), 'Missing price narrative in madrugadores.md');
+    assert(madrugadores.includes('/docs/triptico_madrugadores_2026-2027.pdf'), 'Missing PDF doc in madrugadores.md');
 
     const inscripcion = fs.readFileSync(path.join(pagesDir, 'inscripcion.md'), 'utf8');
     assert(inscripcion.includes('ES76 0049 2731 64 2114103625'), 'Missing IBAN in inscripcion.md');

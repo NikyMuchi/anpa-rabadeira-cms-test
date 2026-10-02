@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "eleventy",
-    "test": "node tests/cms-schema-fidelity.test.js && node tests/oauth.test.js && node tests/rendered-parity-comparison.js"
+    "test": "node tests/cms-schema-fidelity.test.js && node tests/oauth.test.js && node tests/flexible-content.test.js && node tests/rendered-parity-comparison.js"
   },
   "keywords": [],
   "author": "",

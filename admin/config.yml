@@ -150,43 +150,36 @@ collections:
                   - { label: "Texto introdutorio", name: "intro", widget: "text" }
                   - { label: "Puntos / Letras", name: "points", widget: "list" }
 
-  # ===== 3. PÁXINAS DE INFORMACIÓN (CAMPOS ESTRUTURADOS E SINXELOS) =====
+  # ===== 3. PÁXINAS DE INFORMACIÓN (CAMPOS ESTRUTURADOS E BLOQUES FLEXIBLES) =====
   - name: "pages"
     label: "📄 Páxinas de Información"
     delete: false
+    editor:
+      preview: true
     files:
-      # --- MADRUGADORES ---
+      # --- MADRUGADORES (EDITOR DE DOCUMENTO SIMPLE) ---
       - name: "madrugadores"
         label: "🌅 Servizo de Madrugadores"
         file: "src/pages/madrugadores.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Horario do servizo", name: "schedule_hours", widget: "string", hint: "Ex: 7:30 a 8:45" }
-          - { label: "Curso académico", name: "academic_year", widget: "string", hint: "Ex: 2026-2027" }
-          - { label: "Nome da empresa xestora", name: "provider_name", widget: "string" }
-          - { label: "Páxina web da empresa", name: "provider_url", widget: "string" }
-          - label: "Tarifas do servizo"
-            name: "rates"
-            widget: "object"
-            fields:
-              - { label: "Mensual con almorzo", name: "monthly_breakfast", widget: "string" }
-              - { label: "Mensual sen almorzo", name: "monthly_no_breakfast", widget: "string" }
-              - { label: "Día solto con almorzo", name: "daily_breakfast", widget: "string" }
-              - { label: "Día solto sen almorzo", name: "daily_no_breakfast", widget: "string" }
-          - { label: "Plataforma de inscrición (URL)", name: "registration_url", widget: "string" }
-          - { label: "Instrucións para usuarios fixos", name: "fixed_users_note", widget: "text" }
-          - { label: "Instrucións para usuarios esporádicos", name: "sporadic_users_note", widget: "text" }
-          - { label: "Plataforma de vales dixitais (URL)", name: "vouchers_url", widget: "string" }
-          - label: "Documentación informativa (Trípticos / PDFs)"
+          - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
+          - label: "Contido da páxina"
+            name: "body"
+            widget: "markdown"
+            buttons: ["bold", "italic", "link", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"]
+            modes: ["rich_text", "raw"]
+            hint: "Escriba aquí todo o contido da páxina (horarios, tarifas, instrucións e contacto). Admite cabeceiras, listas, negriña e ligazóns."
+          - label: "Documentos / PDF (opcional)"
             name: "documents"
             widget: "list"
+            required: false
+            summary: "{{fields.title}} (PDF)"
             fields:
               - { label: "Título do documento", name: "title", widget: "string" }
               - { label: "Ficheiro PDF", name: "file", widget: "file" }
-              - { label: "Descrición breve", name: "description", widget: "string" }
-          - { label: "Email de contacto ANPA", name: "contact_anpa_email", widget: "string" }
-          - { label: "Teléfono da empresa", name: "contact_provider_phone", widget: "string" }
-          - { label: "Email da empresa", name: "contact_provider_email", widget: "string" }
+              - { label: "Descrición breve", name: "description", widget: "string", required: false }
 
       # --- COMEDOR ESCOLAR ---
       - name: "comedor"
@@ -194,18 +187,78 @@ collections:
         file: "src/pages/comedor.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto introdutorio", name: "intro", widget: "text" }
-          - { label: "Portal tributario ATRIGA (URL)", name: "atriga_portal_url", widget: "string" }
+          - { label: "Texto introdutorio", name: "intro", widget: "text", required: false }
+          - label: "📢 Avisos e seccións superiores"
+            name: "top_sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: &flexible_types
+              - label: "📝 Texto / Sección con título"
+                name: "text_block"
+                widget: "object"
+                fields:
+                  - { label: "Título da sección (H2)", name: "title", widget: "string", required: false }
+                  - { label: "Texto formatado (Markdown)", name: "body", widget: "markdown" }
+              - label: "📢 Caixa de aviso destacada"
+                name: "callout_block"
+                widget: "object"
+                fields:
+                  - { label: "Título do aviso", name: "title", widget: "string", required: false }
+                  - { label: "Mensaxe do aviso", name: "text", widget: "markdown" }
+                  - label: "Tipo / Estilo de aviso"
+                    name: "style"
+                    widget: "select"
+                    options:
+                      - { label: "ℹ️ Informativo (Azul)", value: "info" }
+                      - { label: "⚠️ Aviso / Importante (Amarelo)", value: "warning" }
+                      - { label: "✅ Novidade / Éxito (Verde)", value: "success" }
+                    default: "info"
+                  - { label: "Ligazón opcional (URL)", name: "url", widget: "string", required: false }
+                  - { label: "Texto da ligazón", name: "url_label", widget: "string", required: false }
+              - label: "🖼️ Imaxe con texto descritivo"
+                name: "image_block"
+                widget: "object"
+                fields:
+                  - { label: "Imaxe", name: "image", widget: "image" }
+                  - { label: "Texto alternativo (Alt)", name: "image_alt", widget: "string" }
+                  - { label: "Pé de foto (opcional)", name: "caption", widget: "string", required: false }
+              - label: "📄 Documento PDF ou Descarga"
+                name: "document_block"
+                widget: "object"
+                fields:
+                  - { label: "Título do documento", name: "title", widget: "string" }
+                  - { label: "Ficheiro PDF", name: "file", widget: "file" }
+                  - { label: "Descrición breve", name: "description", widget: "string", required: false }
+                  - { label: "Texto do botón", name: "button_label", widget: "string", default: "Abrir PDF", required: false }
+              - label: "🔗 Botón de acción / Ligazón"
+                name: "button_block"
+                widget: "object"
+                fields:
+                  - { label: "Texto do botón", name: "label", widget: "string" }
+                  - { label: "Ligazón (URL)", name: "url", widget: "string" }
+                  - { label: "Nota explicativa (opcional)", name: "note", widget: "string", required: false }
+          - { label: "Portal tributario ATRIGA (URL)", name: "atriga_portal_url", widget: "string", required: false }
           - label: "Pasos da guía de pago ATRIGA"
             name: "steps"
             widget: "list"
+            required: false
             summary: "Paso: {{fields.description}}"
             fields:
               - { label: "Descrición e instrución do paso", name: "description", widget: "text" }
-              - { label: "Captura de pantalla", name: "image", widget: "image" }
-              - { label: "Texto alternativo da captura (Alt)", name: "image_alt", widget: "string" }
-          - { label: "Outras formas de pago", name: "other_methods_note", widget: "text" }
-          - { label: "Nota final / peche", name: "closing_note", widget: "string" }
+              - { label: "Captura de pantalla", name: "image", widget: "image", required: false }
+              - { label: "Texto alternativo da captura (Alt)", name: "image_alt", widget: "string", required: false }
+          - { label: "Instrucións de envío de xustificante", name: "receipt_instructions", widget: "text", required: false }
+          - { label: "Outras formas de pago", name: "other_methods_note", widget: "text", required: false }
+          - { label: "Nota final / peche", name: "closing_note", widget: "string", required: false }
+          - label: "📄 Seccións adicionais reordenables"
+            name: "sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
+          - { label: "Email de contacto para dúbidas", name: "contact_email", widget: "string", required: false }
+          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
 
       # --- INSCRICIÓN / ALTA DE SOCIOS ---
       - name: "inscripcion"
@@ -214,13 +267,26 @@ collections:
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
           - { label: "Imaxe de cabeceira", name: "image", widget: "image", required: false }
-          - { label: "Texto explicativo", name: "intro", widget: "text" }
-          - { label: "Cota anual de socio", name: "membership_fee", widget: "string", hint: "Ex: 25€/familia" }
-          - { label: "Número de conta bancaria (IBAN)", name: "bank_iban", widget: "string" }
-          - { label: "Instrución de concepto da transferencia", name: "transfer_concept_note", widget: "string" }
-          - { label: "Formulario de inscrición (Google Forms URL)", name: "registration_form_url", widget: "string" }
-          - { label: "Texto do botón de inscrición", name: "registration_button_label", widget: "string" }
-          - { label: "Mensaxe final", name: "closing_text", widget: "string" }
+          - { label: "Texto explicativo", name: "intro", widget: "text", required: false }
+          - label: "📢 Avisos e seccións superiores"
+            name: "top_sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
+          - { label: "Cota anual de socio", name: "membership_fee", widget: "string", required: false, hint: "Ex: 25€/familia" }
+          - { label: "Número de conta bancaria (IBAN)", name: "bank_iban", widget: "string", required: false }
+          - { label: "Instrución de concepto da transferencia", name: "transfer_concept_note", widget: "string", required: false }
+          - { label: "Formulario de inscrición (Google Forms URL)", name: "registration_form_url", widget: "string", required: false }
+          - { label: "Texto do botón de inscrición", name: "registration_button_label", widget: "string", required: false }
+          - { label: "Mensaxe final", name: "closing_text", widget: "string", required: false }
+          - label: "📄 Seccións adicionais reordenables"
+            name: "sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
+          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
 
       # --- MEMORIA ANUAL ---
       - name: "memoria"
@@ -228,15 +294,29 @@ collections:
         file: "src/pages/memoria.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto de introdución", name: "intro", widget: "text" }
+          - { label: "Texto de introdución", name: "intro", widget: "text", required: false }
+          - label: "📢 Avisos e seccións superiores"
+            name: "top_sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
           - label: "Documentos de Memoria (PDFs)"
             name: "documents"
             widget: "list"
+            required: false
             fields:
               - { label: "Título da memoria", name: "title", widget: "string" }
               - { label: "Ficheiro PDF", name: "file", widget: "file" }
-              - { label: "Descrición breve", name: "description", widget: "string" }
-          - { label: "Email de contacto para dúbidas", name: "contact_email", widget: "string" }
+              - { label: "Descrición breve", name: "description", widget: "string", required: false }
+          - label: "📄 Seccións adicionais reordenables"
+            name: "sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
+          - { label: "Email de contacto para dúbidas", name: "contact_email", widget: "string", required: false }
+          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
 
       # --- CONSELLO ESCOLAR ---
       - name: "consello_escolar"
@@ -244,10 +324,23 @@ collections:
         file: "src/pages/consello-escolar.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto explicativo", name: "intro", widget: "text" }
-          - { label: "Texto da ligazón ao blog", name: "blog_label", widget: "string" }
-          - { label: "Ligazón ao blog das familias (URL)", name: "blog_url", widget: "string" }
-          - { label: "Email de contacto", name: "contact_email", widget: "string" }
+          - { label: "Texto explicativo", name: "intro", widget: "text", required: false }
+          - label: "📢 Avisos e seccións superiores"
+            name: "top_sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
+          - { label: "Texto da ligazón ao blog", name: "blog_label", widget: "string", required: false }
+          - { label: "Ligazón ao blog das familias (URL)", name: "blog_url", widget: "string", required: false }
+          - label: "📄 Seccións adicionais reordenables"
+            name: "sections"
+            widget: "list"
+            required: false
+            summary: "{{fields.title}} [{{fields.type}}]"
+            types: *flexible_types
+          - { label: "Email de contacto", name: "contact_email", widget: "string", required: false }
+          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
 
   # ===== 4. PORTADA / INICIO =====
   - name: "home"

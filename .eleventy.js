@@ -75,6 +75,11 @@ module.exports = function (eleventyConfig) {
     );
   });
 
+  eleventyConfig.addFilter("md", (content) => {
+    if (!content) return "";
+    return md.render(content);
+  });
+
   return {
     dir: {
       input: "src",
