@@ -1,15 +1,21 @@
 ---
 showInNav: true
+image_alt: Imaxe de cabeceira de proba sandbox para Madrugadores
 iconColor: green
 layout: layouts/page.njk
 permalink: /madrugadores/
 navOrder: 3
 navLabel: Madrugadores
 title: Servizo Madrugadores
+image: /img/uploads/test-image-sandbox.png
 documents:
   - title: Tríptico Informativo Madrugadores 2026-2027
     file: /docs/triptico_madrugadores_2026-2027.pdf
     description: "Guía oficial de Jardanay: prazos, operativa e tarifas"
+  - title: Documento de Proba Sandbox PDF
+    description: Descrición de proba sandbox para verificar o fluxo editorial e
+      descarga de documentos
+    file: /img/uploads/test-document-sandbox.pdf
 icon: 🌅
 ---
 O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa Jardanay ([www.jardanay.es](https://www.jardanay.es/)).
