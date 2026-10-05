@@ -14,19 +14,15 @@ icon: 🌅
 ---
 O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa Jardanay ([www.jardanay.es](https://www.jardanay.es/)).
 
-## Tarifas do servizo (Curso 2026-2027)PROBA DIAGNOSTICO LIMPO: Teste de gardado limpo.
-
-
+## Tarifas do servizo (Curso 2026-2027)
 
 Segundo a guía oficial do servizo para o curso 2026-2027:
 
 **Contratación mensual fixa:**
-
 * Con almorzo: **49,94 € / mes**
 * Sen almorzo: **37,45 € / mes**
 
 **Días soltos (esporádicos):**
-
 * Con almorzo: **4,79 € / día**
 * Sen almorzo: **3,75 € / día**
 
