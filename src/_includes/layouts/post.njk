@@ -12,7 +12,7 @@ layout: layouts/base.njk
       📅 {{ date | dataGalega }}
     </time>
     {% if image %}
-    <img src="{{ image }}" alt="{{ image_alt | default('') }}" class="post-single__image">
+    <img src="{{ image }}" alt="{{ title }}" class="post-single__image">
     {% endif %}
   </header>
   <div class="post-content">

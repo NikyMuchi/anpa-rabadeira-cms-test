@@ -77,7 +77,6 @@
       const date = entry.getIn(['data', 'date']);
       const category = entry.getIn(['data', 'category']) || 'Novas';
       const image = entry.getIn(['data', 'image']);
-      const imageAlt = typeof entry.getIn(['data', 'image_alt']) === 'string' ? entry.getIn(['data', 'image_alt']) : '';
       const imageSrc = image ? this.props.getAsset(image) : null;
       const formattedDate = date ? formatGalicianDate(date) : '';
 
@@ -88,7 +87,7 @@
             category ? h('span', { className: 'post-single__category' }, category) : null,
             h('h1', null, title),
             formattedDate ? h('time', { className: 'post-single__date' }, `📅 ${formattedDate}`) : null,
-            imageSrc ? h('img', { src: imageSrc.toString(), alt: imageAlt, className: 'post-single__image' }) : null
+            imageSrc ? h('img', { src: imageSrc.toString(), alt: title, className: 'post-single__image' }) : null
           ),
           h('div', { className: 'post-content' }, this.props.widgetFor ? this.props.widgetFor('body') : null)
         )
