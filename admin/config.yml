@@ -288,59 +288,53 @@ collections:
             types: *flexible_types
           - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
 
-      # --- MEMORIA ANUAL ---
+      # --- MEMORIA ANUAL (EDITOR DE DOCUMENTO SIMPLE) ---
       - name: "memoria"
         label: "📊 Memoria de Actividades"
         file: "src/pages/memoria.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto de introdución", name: "intro", widget: "text", required: false }
-          - label: "📢 Avisos e seccións superiores"
-            name: "top_sections"
-            widget: "list"
-            required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - label: "Documentos de Memoria (PDFs)"
+          - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
+          - label: "Contido da páxina"
+            name: "body"
+            widget: "markdown"
+            buttons: ["bold", "italic", "link", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"]
+            modes: ["rich_text", "raw"]
+            hint: "Escriba aquí todo o contido da páxina (resumo, actividades e contacto). Admite cabeceiras, listas, negriña e ligazóns."
+          - label: "Documentos / PDF (opcional)"
             name: "documents"
             widget: "list"
             required: false
+            summary: "{{fields.title}} (PDF)"
             fields:
-              - { label: "Título da memoria", name: "title", widget: "string" }
+              - { label: "Título do documento", name: "title", widget: "string" }
               - { label: "Ficheiro PDF", name: "file", widget: "file" }
               - { label: "Descrición breve", name: "description", widget: "string", required: false }
-          - label: "📄 Seccións adicionais reordenables"
-            name: "sections"
-            widget: "list"
-            required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - { label: "Email de contacto para dúbidas", name: "contact_email", widget: "string", required: false }
-          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
 
-      # --- CONSELLO ESCOLAR ---
+      # --- CONSELLO ESCOLAR (EDITOR DE DOCUMENTO SIMPLE) ---
       - name: "consello_escolar"
         label: "🏛️ Consello Escolar"
         file: "src/pages/consello-escolar.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto explicativo", name: "intro", widget: "text", required: false }
-          - label: "📢 Avisos e seccións superiores"
-            name: "top_sections"
+          - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
+          - label: "Contido da páxina"
+            name: "body"
+            widget: "markdown"
+            buttons: ["bold", "italic", "link", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"]
+            modes: ["rich_text", "raw"]
+            hint: "Escriba aquí todo o contido da páxina (explicación, ligazón ao blog e contacto). Admite cabeceiras, listas, negriña e ligazóns."
+          - label: "Documentos / PDF (opcional)"
+            name: "documents"
             widget: "list"
             required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - { label: "Texto da ligazón ao blog", name: "blog_label", widget: "string", required: false }
-          - { label: "Ligazón ao blog das familias (URL)", name: "blog_url", widget: "string", required: false }
-          - label: "📄 Seccións adicionais reordenables"
-            name: "sections"
-            widget: "list"
-            required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - { label: "Email de contacto", name: "contact_email", widget: "string", required: false }
-          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
+            summary: "{{fields.title}} (PDF)"
+            fields:
+              - { label: "Título do documento", name: "title", widget: "string" }
+              - { label: "Ficheiro PDF", name: "file", widget: "file" }
+              - { label: "Descrición breve", name: "description", widget: "string", required: false }
 
   # ===== 4. PORTADA / INICIO =====
   - name: "home"
