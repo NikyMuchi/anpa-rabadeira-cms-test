@@ -256,11 +256,12 @@
       const data = entry.getIn(['data']) ? entry.getIn(['data']).toJS() : {};
       const title = data.title || 'Título da páxina';
       const image = data.image ? this.props.getAsset(data.image) : null;
+      const imageAlt = typeof data.image_alt === 'string' ? data.image_alt : '';
       const getAsset = this.props.getAsset;
 
       return h('div', { className: 'preview-root container page-content' },
         image ? h('div', { className: 'post-single__image' },
-          h('img', { src: image.toString(), alt: title })
+          h('img', { src: image.toString(), alt: imageAlt })
         ) : null,
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, title),
         h('div', { className: 'post-content' },

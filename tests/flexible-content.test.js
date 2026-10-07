@@ -260,6 +260,73 @@ Para calquera dúbida ou cuestión, podes contactar con:
     assert(!rendered.includes('<h2>Documentación informativa</h2>'));
   });
 
+  // Test 9: Featured image renders saved image_alt value accurately
+  test('Featured image renders saved image_alt value on page layout', () => {
+    const context = {
+      title: 'Servizo Madrugadores',
+      image: '/img/uploads/test-image.png',
+      image_alt: 'Imaxe de cabeceira de proba sandbox para Madrugadores',
+      content: '<p>Contido</p>',
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<img src="/img/uploads/test-image.png" alt="Imaxe de cabeceira de proba sandbox para Madrugadores">'));
+    assert(!rendered.includes('alt="Servizo Madrugadores"'));
+  });
+
+  // Test 10: Intentionally empty image_alt renders alt="" without falling back to title
+  test('Intentionally empty image_alt renders alt="" without falling back to title', () => {
+    for (const emptyAlt of ['', null, undefined]) {
+      const context = {
+        title: 'Servizo Madrugadores',
+        image: '/img/uploads/test-image.png',
+        image_alt: emptyAlt,
+        content: '<p>Contido</p>',
+        site: { name: 'ANPA Rabadeira' },
+        collections: { navPages: [] }
+      };
+
+      const rendered = env.render('layouts/page.njk', context);
+      assert(rendered.includes('<img src="/img/uploads/test-image.png" alt="">'));
+      assert(!rendered.includes('alt="Servizo Madrugadores"'));
+    }
+  });
+
+  // Test 11: image_alt with quotes and ampersands escapes safely without breaking HTML attribute
+  test('image_alt containing quotes and ampersands escapes safely as HTML entities', () => {
+    const context = {
+      title: 'Servizo Madrugadores',
+      image: '/img/uploads/test-image.png',
+      image_alt: 'Foto de "Madrugadores" & Familias',
+      content: '<p>Contido</p>',
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<img src="/img/uploads/test-image.png" alt="Foto de &quot;Madrugadores&quot; &amp; Familias">'));
+    // Ensure attribute is closed cleanly and not malformed
+    assert(!rendered.includes('alt="Foto de "Madrugadores"'));
+  });
+
+  // Test 12: News post layout preserves existing title-based alt text
+  test('News post layout preserves existing title-based alt text when image is present', () => {
+    const context = {
+      title: 'Xuntanza Xeral de Familias',
+      date: '2026-02-15',
+      category: 'Novas',
+      image: '/img/uploads/xuntanza.jpg',
+      content: '<p>Texto da nova</p>',
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/post.njk', context);
+    assert(rendered.includes('<img src="/img/uploads/xuntanza.jpg" alt="Xuntanza Xeral de Familias" class="post-single__image">'));
+  });
+
   console.log(`\nFlexible Content Test Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) process.exit(1);
 }
