@@ -260,6 +260,40 @@ Para calquera dúbida ou cuestión, podes contactar con:
     assert(!rendered.includes('<h2>Documentación informativa</h2>'));
   });
 
+  // Test 9: Featured image renders saved image_alt value accurately
+  test('Featured image renders saved image_alt value on page layout', () => {
+    const context = {
+      title: 'Servizo Madrugadores',
+      image: '/img/uploads/test-image.png',
+      image_alt: 'Imaxe de cabeceira de proba sandbox para Madrugadores',
+      content: '<p>Contido</p>',
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<img src="/img/uploads/test-image.png" alt="Imaxe de cabeceira de proba sandbox para Madrugadores">'));
+    assert(!rendered.includes('alt="Servizo Madrugadores"'));
+  });
+
+  // Test 10: Intentionally empty image_alt renders alt="" without falling back to title
+  test('Intentionally empty image_alt renders alt="" without falling back to title', () => {
+    for (const emptyAlt of ['', null, undefined]) {
+      const context = {
+        title: 'Servizo Madrugadores',
+        image: '/img/uploads/test-image.png',
+        image_alt: emptyAlt,
+        content: '<p>Contido</p>',
+        site: { name: 'ANPA Rabadeira' },
+        collections: { navPages: [] }
+      };
+
+      const rendered = env.render('layouts/page.njk', context);
+      assert(rendered.includes('<img src="/img/uploads/test-image.png" alt="">'));
+      assert(!rendered.includes('alt="Servizo Madrugadores"'));
+    }
+  });
+
   console.log(`\nFlexible Content Test Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) process.exit(1);
 }

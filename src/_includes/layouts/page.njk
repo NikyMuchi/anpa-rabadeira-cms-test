@@ -59,7 +59,7 @@ layout: layouts/base.njk
 <div class="page-content container">
   {% if image %}
   <div class="post-single__image">
-    <img src="{{ image }}" alt="{{ title }}">
+    <img src="{{ image }}" alt="{{ image_alt | default('') }}">
   </div>
   {% endif %}
 

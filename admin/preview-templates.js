@@ -77,6 +77,7 @@
       const date = entry.getIn(['data', 'date']);
       const category = entry.getIn(['data', 'category']) || 'Novas';
       const image = entry.getIn(['data', 'image']);
+      const imageAlt = typeof entry.getIn(['data', 'image_alt']) === 'string' ? entry.getIn(['data', 'image_alt']) : '';
       const imageSrc = image ? this.props.getAsset(image) : null;
       const formattedDate = date ? formatGalicianDate(date) : '';
 
@@ -87,7 +88,7 @@
             category ? h('span', { className: 'post-single__category' }, category) : null,
             h('h1', null, title),
             formattedDate ? h('time', { className: 'post-single__date' }, `📅 ${formattedDate}`) : null,
-            imageSrc ? h('img', { src: imageSrc.toString(), alt: title, className: 'post-single__image' }) : null
+            imageSrc ? h('img', { src: imageSrc.toString(), alt: imageAlt, className: 'post-single__image' }) : null
           ),
           h('div', { className: 'post-content' }, this.props.widgetFor ? this.props.widgetFor('body') : null)
         )
@@ -256,11 +257,12 @@
       const data = entry.getIn(['data']) ? entry.getIn(['data']).toJS() : {};
       const title = data.title || 'Título da páxina';
       const image = data.image ? this.props.getAsset(data.image) : null;
+      const imageAlt = typeof data.image_alt === 'string' ? data.image_alt : '';
       const getAsset = this.props.getAsset;
 
       return h('div', { className: 'preview-root container page-content' },
         image ? h('div', { className: 'post-single__image' },
-          h('img', { src: image.toString(), alt: title })
+          h('img', { src: image.toString(), alt: imageAlt })
         ) : null,
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, title),
         h('div', { className: 'post-content' },
