@@ -4,7 +4,7 @@
 backend:
   name: github
   repo: NikyMuchi/anpa-rabadeira-cms-test
-  branch: main
+  branch: feat/memoria-consello-simple-editor
   base_url: https://anpa-rabadeira-cms-test.netlify.app
   auth_endpoint: auth
 
