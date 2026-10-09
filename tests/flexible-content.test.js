@@ -260,6 +260,68 @@ Para calquera dúbida ou cuestión, podes contactar con:
     assert(!rendered.includes('<h2>Documentación informativa</h2>'));
   });
 
+  // Test 8b: Memoria simple document editor renders narrative body and documents list
+  test('Memoria simple document editor renders narrative body and documents list', () => {
+    const rawMarkdown = `Adxuntamos a memoria de actividades.
+
+## Contacto e axuda
+
+Para calquera dúbida ou cuestión, podes contactar con:
+- **ANPA Ensino Rabadeira:** [anpaensinorabadeira@gmail.com](mailto:anpaensinorabadeira@gmail.com)`;
+
+    const context = {
+      title: 'Memoria Anual',
+      content: md.render(rawMarkdown),
+      documents: [
+        {
+          title: 'Memoria de Actividades (Curso 2023-2024)',
+          file: '/docs/memoria-curso-2023_2024.pdf',
+          description: 'Resumo de actividades, balance e xestión da ANPA'
+        }
+      ],
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<h1>Memoria Anual</h1>'));
+    assert(rendered.includes('Adxuntamos a memoria de actividades.'));
+    assert(rendered.includes('<h2>Contacto e axuda</h2>'));
+    assert(rendered.includes('anpaensinorabadeira@gmail.com'));
+    assert(rendered.includes('<h2>Documentación informativa</h2>'));
+    assert(rendered.includes('Memoria de Actividades (Curso 2023-2024)'));
+    assert(rendered.includes('/docs/memoria-curso-2023_2024.pdf'));
+  });
+
+  // Test 8c: Consello Escolar simple document editor renders narrative body with blog link and contact
+  test('Consello Escolar simple document editor renders narrative body with blog link and contact', () => {
+    const rawMarkdown = `O **Consello Escolar** é o órgano de participación da comunidade educativa no goberno do centro. A ANPA conta cun posto de representación nel, ademais dos reservados aos representantes das familias, profesorado, equipo directivo e Concello.
+
+No link inferior tendes a información das representantes das familias en dito Consello:
+
+[Blog do Consello Escolar Rabadeira](https://conselloescolarrabadeira.home.blog/)
+
+## Contacto e axuda
+
+Para calquera dúbida ou cuestión, podes contactar con:
+- **ANPA Ensino Rabadeira:** [anpaensinorabadeira@gmail.com](mailto:anpaensinorabadeira@gmail.com)`;
+
+    const context = {
+      title: 'Consello Escolar',
+      content: md.render(rawMarkdown),
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<h1>Consello Escolar</h1>'));
+    assert(rendered.includes('<strong>Consello Escolar</strong>'));
+    assert(rendered.includes('https://conselloescolarrabadeira.home.blog/'));
+    assert(rendered.includes('Blog do Consello Escolar Rabadeira'));
+    assert(rendered.includes('<h2>Contacto e axuda</h2>'));
+    assert(rendered.includes('anpaensinorabadeira@gmail.com'));
+  });
+
   // Test 9: Featured image renders saved image_alt value accurately
   test('Featured image renders saved image_alt value on page layout', () => {
     const context = {
