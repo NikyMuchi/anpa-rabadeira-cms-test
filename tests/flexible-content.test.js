@@ -389,6 +389,104 @@ Para calquera dúbida ou cuestión, podes contactar con:
     assert(rendered.includes('<img src="/img/uploads/xuntanza.jpg" alt="Xuntanza Xeral de Familias" class="post-single__image">'));
   });
 
+  // Test 13: Comedor simplified editor renders all 11 tutorial steps and handles empty states
+  test('Comedor simplified editor renders all 11 tutorial steps, screenshots, and handles empty state safely', () => {
+    const steps = [
+      { description: 'No apartado de CIDADÁNS, premes iniciar taxa', image: '/img/comedor/paso-1.png', image_alt: 'Paso 1 - Portal ATRIGA' },
+      { description: 'Candado aberto é para o acceso libre ao servizo. Pechado se tedes certificado dixital', image: '/img/comedor/paso-2.png', image_alt: 'Paso 2 - Candados' },
+      { description: 'Sen certificado dixital podes facer o pago a través da TPV', image: '/img/comedor/paso-3.png', image_alt: 'Paso 3 - Opcións de pago TPV' },
+      { description: 'Tedes que poner estes códigos para o pagamento do comedor:', image: '/img/comedor/paso-4.png', image_alt: 'Paso 4 - Códigos do comedor' },
+      { description: 'Completar os datos requeridos:', image: '/img/comedor/paso-5.png', image_alt: 'Paso 5 - Datos persoais' },
+      { description: 'Premer pagamento telemático:', image: '/img/comedor/paso-6.png', image_alt: 'Paso 6 - Pagamento telemático' },
+      { description: 'Na seguinte pantalla premer continuar co tipo de pagamento «telemático» e modo de pagamento «tarxeta»', image: '/img/comedor/paso-7.png', image_alt: 'Paso 7 - Tipo de pagamento' },
+      { description: 'Sairá esta outra pantalla, e premer ingresar:', image: '/img/comedor/paso-8.png', image_alt: 'Paso 8 - Premer ingresar' },
+      { description: 'Nos sairá esta outra mensaje para continuar co pagamento', image: '/img/comedor/paso-9.png', image_alt: 'Paso 9 - Confirmación' },
+      { description: 'E aquí xa podes intruducir os datos da túa tarxeta bancaria e proceder ao pagamento:', image: '/img/comedor/paso-10.png', image_alt: 'Paso 10 - Datos da tarxeta' },
+      { description: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email comedor.ceip.rabadeira@edu.xunta.gal, indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.', image: '/img/comedor/paso-11.png', image_alt: 'Paso 11 - Proceder ao pagamento' }
+    ];
+
+    const context = {
+      title: 'Pago Comedor',
+      intro: 'Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento...',
+      atriga_portal_url: 'https://ovt.atriga.gal',
+      steps: steps,
+      other_methods_note: 'Outras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.',
+      closing_note: 'Esperamos que esta guía sea de axuda para todos vós.',
+      documents: [
+        { title: 'Guía de Pago ATRIGA (PDF)', file: '/docs/guia-atriga.pdf', description: 'Descarga en PDF' }
+      ],
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<h1>Pago Comedor</h1>'));
+    assert(rendered.includes('<h2>PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)</h2>'));
+    assert(rendered.includes('https://ovt.atriga.gal'));
+    for (let i = 1; i <= 11; i++) {
+      assert(rendered.includes(`/img/comedor/paso-${i}.png`), `Missing paso-${i}.png`);
+    }
+    assert(rendered.includes('comedor.ceip.rabadeira@edu.xunta.gal'));
+    assert(rendered.includes('Outras formas de facer o pagamento'));
+    assert(rendered.includes('Guía de Pago ATRIGA (PDF)'));
+
+    // Empty state test
+    const emptyContext = {
+      title: 'Pago Comedor',
+      steps: [],
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+    const emptyRendered = env.render('layouts/page.njk', emptyContext);
+    assert(!emptyRendered.includes('<h2>PAGO COMEDOR'));
+    assert(!emptyRendered.includes('Portal tributario ATRIGA'));
+    assert(!emptyRendered.includes('Esperamos que esta guía'));
+  });
+
+  // Test 14: Inscrición simplified editor renders bank-box with exact IBAN and handles empty state
+  test('Inscrición simplified editor renders bank-box with exact IBAN, fee, and handles empty state safely', () => {
+    const context = {
+      title: 'Formulario Inscrición',
+      image: '/img/uploads/logo-post.jpg',
+      image_alt: '',
+      intro: 'No enlace inferior xa podedes facer a alta como socios...',
+      membership_fee: '25€/familia',
+      bank_iban: 'ES76 0049 2731 64 2114103625',
+      transfer_concept_note: 'indicar o nome da familia (apelidos do neno/a) no concepto da transferencia.',
+      registration_form_url: 'https://forms.gle/nrS3vcx7YGAskn5c8',
+      registration_button_label: 'Acceder ao formulario de inscrición (Google Forms)',
+      closing_text: 'Grazas!',
+      documents: [
+        { title: 'Ficha de Inscrición 2025-2026', file: '/docs/ficha-de-inscripcion-rabadeira-curso-2025-2026.pdf', description: 'Formulario imprimible' }
+      ],
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+
+    const rendered = env.render('layouts/page.njk', context);
+    assert(rendered.includes('<h1>Formulario Inscrición</h1>'));
+    assert(rendered.includes('<img src="/img/uploads/logo-post.jpg" alt="">'));
+    assert(rendered.includes('25€/familia'));
+    assert(rendered.includes('class="bank-box"'));
+    assert(rendered.includes('ES76 0049 2731 64 2114103625'));
+    assert(rendered.includes('Importante:</strong> indicar o nome da familia'));
+    assert(rendered.includes('https://forms.gle/nrS3vcx7YGAskn5c8'));
+    assert(rendered.includes('Acceder ao formulario de inscrición (Google Forms)'));
+    assert(rendered.includes('Grazas!'));
+    assert(rendered.includes('Ficha de Inscrición 2025-2026'));
+
+    // Empty state test: when bank_iban is absent, zero bank-box rendered
+    const emptyContext = {
+      title: 'Formulario Inscrición',
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+    const emptyRendered = env.render('layouts/page.njk', emptyContext);
+    assert(!emptyRendered.includes('class="bank-box"'));
+    assert(!emptyRendered.includes('Número de conta (IBAN)'));
+    assert(!emptyRendered.includes('Grazas!'));
+  });
+
   console.log(`\nFlexible Content Test Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) process.exit(1);
 }

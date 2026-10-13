@@ -2,6 +2,7 @@
 title: "Formulario Inscrición"
 permalink: /inscripcion/
 image: "/img/uploads/logo-post.jpg"
+image_alt: ""
 layout: layouts/page.njk
 icon: "📝"
 navLabel: "Inscrición"
