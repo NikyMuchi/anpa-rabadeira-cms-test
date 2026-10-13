@@ -89,10 +89,11 @@ exports.handler = async function (event) {
       provider: "github",
     });
 
-    // Explicit allowlist containing only the canonical sandbox and PR #1 Deploy Preview
+    // Explicit allowlist containing only the canonical sandbox, PR #1 and PR #7 Deploy Previews
     const allowedOrigins = [
       "https://anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app",
+      "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app",
     ];
 
     // Send postMessage strictly to the verified origin and opener source

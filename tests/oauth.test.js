@@ -123,6 +123,7 @@ async function runOAuthTests() {
     // Verify exact allowlist in the response
     assert(res.body.includes('"https://anpa-rabadeira-cms-test.netlify.app"'), "Missing canonical sandbox in allowlist");
     assert(res.body.includes('"https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 1 in allowlist");
+    assert(res.body.includes('"https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 7 in allowlist");
     assert(!res.body.includes('"https://anpa-rabadeira.netlify.app"'), "Production domain must NOT be in sandbox allowlist");
 
     // Verify origin and source checks
@@ -138,10 +139,11 @@ async function runOAuthTests() {
   });
 
   // Test 8: Simulate receiveMessage client-side logic across all test cases
-  await asyncTest("Client-side receiveMessage accepts only the 2 exact origins and legitimate opener", () => {
+  await asyncTest("Client-side receiveMessage accepts only the 3 exact origins and legitimate opener", () => {
     const allowedOrigins = [
       "https://anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app",
+      "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app",
     ];
 
     const mockOpener = {
@@ -182,6 +184,15 @@ async function runOAuthTests() {
       "PR #1 deploy preview origin must be accepted"
     );
     assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app");
+
+    // 2b. Exact PR #7 Deploy Preview (Legitimate opener) -> ACCEPTED
+    mockOpener.messagesSent = [];
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      true,
+      "PR #7 deploy preview origin must be accepted"
+    );
+    assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app");
 
     // 3. Production site -> REJECTED
     assert.strictEqual(
