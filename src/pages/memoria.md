@@ -1,21 +1,23 @@
 ---
-title: "Memoria Anual"
+showInNav: true
+iconColor: gold
 layout: layouts/page.njk
 permalink: /memoria/
-icon: "📊"
-navLabel: "Memoria"
 navOrder: 5
-showInNav: true
-iconColor: "gold"
+navLabel: Memoria
+title: Memoria Anual
 documents:
-  - title: "Memoria de Actividades (Curso 2023-2024)"
-    file: "/docs/memoria-curso-2023_2024.pdf"
-    description: "Resumo de actividades, balance e xestión da ANPA"
+  - title: Memoria de Actividades (Curso 2023-2024)
+    file: /docs/memoria-curso-2023_2024.pdf
+    description: Resumo de actividades, balance e xestión da ANPA
+icon: 📊
 ---
-
 Adxuntamos a memoria de actividades.
+
+PROBA NIKY — comprobación de borrador.
 
 ## Contacto e axuda
 
 Para calquera dúbida ou cuestión, podes contactar con:
-- **ANPA Ensino Rabadeira:** [anpaensinorabadeira@gmail.com](mailto:anpaensinorabadeira@gmail.com)
+
+* **ANPA Ensino Rabadeira:** [anpaensinorabadeira@gmail.com](mailto:anpaensinorabadeira@gmail.com)
