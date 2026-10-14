@@ -10,8 +10,6 @@ icon: 🏛️
 ---
 O **Consello Escolar** é o órgano de participación da comunidade educativa no goberno do centro. A ANPA conta cun posto de representación nel, ademais dos reservados aos representantes das familias, profesorado, equipo directivo e Concello.
 
-PROBA NIKY — comprobación de borrador
-
 No link inferior tendes a información das representantes das familias en dito Consello:
 
 [Blog do Consello Escolar Rabadeira](https://conselloescolarrabadeira.home.blog/)
