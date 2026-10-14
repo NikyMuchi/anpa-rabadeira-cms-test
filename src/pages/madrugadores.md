@@ -12,9 +12,6 @@ documents:
   - title: Tríptico Informativo Madrugadores 2026-2027
     file: /docs/triptico_madrugadores_2026-2027.pdf
     description: "Guía oficial de Jardanay: prazos, operativa e tarifas"
-  - title: PDF DE PROBA NIKY
-    file: /img/uploads/test-document-sandbox.pdf
-    description: ANPA Ensino Rabadeira
 icon: 🌅
 ---
 
