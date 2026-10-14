@@ -1,13 +1,13 @@
 ---
 showInNav: true
-image_alt: Imaxe de proba de Niky
+image_alt: ""
 iconColor: green
 layout: layouts/page.njk
 permalink: /madrugadores/
 navOrder: 3
 navLabel: Madrugadores
 title: Servizo Madrugadores
-image: /img/uploads/charla-tea.png
+image: ""
 documents:
   - title: Tríptico Informativo Madrugadores 2026-2027
     file: /docs/triptico_madrugadores_2026-2027.pdf
