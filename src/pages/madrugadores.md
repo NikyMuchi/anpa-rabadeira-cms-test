@@ -1,16 +1,18 @@
 ---
-title: "Servizo Madrugadores"
-permalink: /madrugadores/
-layout: layouts/page.njk
-icon: "🌅"
-navLabel: "Madrugadores"
-navOrder: 3
 showInNav: true
-iconColor: "green"
+image_alt: Imaxe de proba de Niky
+iconColor: green
+layout: layouts/page.njk
+permalink: /madrugadores/
+navOrder: 3
+navLabel: Madrugadores
+title: Servizo Madrugadores
+image: /img/uploads/charla-tea.png
 documents:
-  - title: "Tríptico Informativo Madrugadores 2026-2027"
-    file: "/docs/triptico_madrugadores_2026-2027.pdf"
+  - title: Tríptico Informativo Madrugadores 2026-2027
+    file: /docs/triptico_madrugadores_2026-2027.pdf
     description: "Guía oficial de Jardanay: prazos, operativa e tarifas"
+icon: 🌅
 ---
 
 O servizo de madrugadores está dispoñible de **7:30 a 8:45** con posibilidade de almorzo. O servizo é xestionado pola empresa Jardanay ([www.jardanay.es](https://www.jardanay.es/)).
