@@ -14,8 +14,6 @@ icon: 📊
 ---
 Adxuntamos a memoria de actividades.
 
-PROBA NIKY — comprobación de borrador.
-
 ## Contacto e axuda
 
 Para calquera dúbida ou cuestión, podes contactar con:
