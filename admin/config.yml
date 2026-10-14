@@ -197,9 +197,9 @@ collections:
             required: false
             summary: "Paso: {{fields.description}}"
             fields:
-              - { label: "Descrición e instrución do paso", name: "description", widget: "text" }
-              - { label: "Captura de pantalla", name: "image", widget: "image", required: false }
-              - { label: "Texto alternativo da captura (Alt)", name: "image_alt", widget: "string", required: false }
+              - { label: "Texto explicativo", name: "description", widget: "text", hint: "Texto e indicacións que acompañan a esta captura" }
+              - { label: "Imaxe do paso", name: "image", widget: "image", required: false, hint: "Prema para subir ou substituír a captura (JPG ou PNG)" }
+              - { label: "Descrición da imaxe (accesibilidade)", name: "image_alt", widget: "string", required: false, hint: "Breve descrición do que aparece na imaxe" }
           - { label: "Outras formas de pago", name: "other_methods_note", widget: "text", required: false }
           - { label: "Nota final / peche", name: "closing_note", widget: "string", required: false }
           - label: "Documentos / PDF (opcional)"
