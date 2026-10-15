@@ -26,7 +26,7 @@ collections:
     label_singular: "Artigo"
     folder: "src/posts"
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{fields.date}}-{{slug}}"
     sort: "date:desc"
     editor:
       preview: true
