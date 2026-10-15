@@ -122,6 +122,7 @@ async function runParityComparison() {
         const currIban = $curr('.bank-box__iban').text().trim();
         assert.strictEqual(currIban, 'ES76 0049 2731 64 2114103625', 'IBAN mismatch in inscripcion');
         assert.strictEqual(currIban, baseIban, 'IBAN differed from baseline');
+        assert($curr('.post-content').text().includes('2026-2027'), 'Expected updated academic year 2026-2027 in inscripcion content');
       }
 
       if (page.relPath === 'madrugadores/index.html') {
