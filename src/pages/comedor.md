@@ -7,7 +7,7 @@ navLabel: "Comedor"
 navOrder: 4
 showInNav: true
 iconColor: "blue"
-intro: "Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento, os adxuntamos as diferentes vias nas que poderes facelo sen ter que ir ao centro. Tamén tendes instrucións detalladas na web do centro."
+intro: "Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento, os adxuntamos as diferentes vias nas que poderes facelo sen ter que ir ao centro. Tamén tendes [instruccións detalladas na web do centro](http://www.edu.xunta.gal/centros/ceiprabadeira/node/268)."
 atriga_portal_url: "https://ovt.atriga.gal"
 steps:
   - description: "No apartado de CIDADÁNS, premes iniciar taxa"
@@ -40,9 +40,9 @@ steps:
   - description: "E aquí xa podes intruducir os datos da túa tarxeta bancaria e proceder ao pagamento:"
     image: "/img/comedor/paso-10.png"
     image_alt: "Paso 10 - Datos da tarxeta"
-  - description: "Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email comedor.ceip.rabadeira@edu.xunta.gal, indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo."
-    image: "/img/comedor/paso-11.png"
+  - image: "/img/comedor/paso-11.png"
     image_alt: "Paso 11 - Proceder ao pagamento"
+receipt_instructions: "Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo."
 other_methods_note: "Outras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar."
 closing_note: "Esperamos que esta guía sea de axuda para todos vós."
 ---

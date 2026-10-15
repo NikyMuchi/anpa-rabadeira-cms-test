@@ -402,14 +402,15 @@ Para calquera dúbida ou cuestión, podes contactar con:
       { description: 'Sairá esta outra pantalla, e premer ingresar:', image: '/img/comedor/paso-8.png', image_alt: 'Paso 8 - Premer ingresar' },
       { description: 'Nos sairá esta outra mensaje para continuar co pagamento', image: '/img/comedor/paso-9.png', image_alt: 'Paso 9 - Confirmación' },
       { description: 'E aquí xa podes intruducir os datos da túa tarxeta bancaria e proceder ao pagamento:', image: '/img/comedor/paso-10.png', image_alt: 'Paso 10 - Datos da tarxeta' },
-      { description: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email comedor.ceip.rabadeira@edu.xunta.gal, indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.', image: '/img/comedor/paso-11.png', image_alt: 'Paso 11 - Proceder ao pagamento' }
+      { image: '/img/comedor/paso-11.png', image_alt: 'Paso 11 - Proceder ao pagamento' }
     ];
 
     const context = {
       title: 'Pago Comedor',
-      intro: 'Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento...',
+      intro: 'Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento, os adxuntamos as diferentes vias nas que poderes facelo sen ter que ir ao centro. Tamén tendes [instruccións detalladas na web do centro](http://www.edu.xunta.gal/centros/ceiprabadeira/node/268).',
       atriga_portal_url: 'https://ovt.atriga.gal',
       steps: steps,
+      receipt_instructions: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.',
       other_methods_note: 'Outras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.',
       closing_note: 'Esperamos que esta guía sea de axuda para todos vós.',
       documents: [
@@ -423,10 +424,12 @@ Para calquera dúbida ou cuestión, podes contactar con:
     assert(rendered.includes('<h1>Pago Comedor</h1>'));
     assert(rendered.includes('<h2>PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)</h2>'));
     assert(rendered.includes('https://ovt.atriga.gal'));
+    assert(rendered.includes('<a href="http://www.edu.xunta.gal/centros/ceiprabadeira/node/268">instruccións detalladas na web do centro</a>'));
     for (let i = 1; i <= 11; i++) {
       assert(rendered.includes(`/img/comedor/paso-${i}.png`), `Missing paso-${i}.png`);
     }
-    assert(rendered.includes('comedor.ceip.rabadeira@edu.xunta.gal'));
+    assert(rendered.includes('<a href="mailto:comedor.ceip.rabadeira@edu.xunta.gal">comedor.ceip.rabadeira@edu.xunta.gal</a>'));
+    assert(rendered.indexOf('/img/comedor/paso-11.png') < rendered.indexOf('mailto:comedor.ceip.rabadeira@edu.xunta.gal'), 'Screenshot 11 must appear before receipt instructions');
     assert(rendered.includes('Outras formas de facer o pagamento'));
     assert(rendered.includes('Guía de Pago ATRIGA (PDF)'));
 

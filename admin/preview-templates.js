@@ -286,6 +286,7 @@
                 stepImg ? h('img', { src: stepImg.toString(), alt: st.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }) : null
               );
             }),
+            data.receipt_instructions ? (formatMarkdown(data.receipt_instructions) || h('p', null, data.receipt_instructions)) : null,
             data.other_methods_note ? h('p', null, data.other_methods_note) : null,
             data.closing_note ? h('p', null, data.closing_note) : null
           ) : null,

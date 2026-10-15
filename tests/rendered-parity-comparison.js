@@ -111,6 +111,10 @@ async function runParityComparison() {
         for (let i = 1; i <= 11; i++) {
           assert(currImgs.some(img => img.src === `/img/comedor/paso-${i}.png`), `Missing paso-${i}.png in Comedor guide`);
         }
+        assert.strictEqual(currLinks.length, 3, `Expected 3 in-page links in Comedor, found ${currLinks.length}`);
+        assert(currLinks.some(l => l.href === 'http://www.edu.xunta.gal/centros/ceiprabadeira/node/268'), 'Missing school web link');
+        assert(currLinks.some(l => l.href === 'https://ovt.atriga.gal'), 'Missing ATRIGA link');
+        assert(currLinks.some(l => l.href === 'mailto:comedor.ceip.rabadeira@edu.xunta.gal'), 'Missing comedor email mailto link');
       }
 
       if (page.relPath === 'inscripcion/index.html') {
