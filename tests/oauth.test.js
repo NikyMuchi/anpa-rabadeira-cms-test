@@ -120,14 +120,14 @@ async function runOAuthTests() {
 
     assert.strictEqual(res.statusCode, 200);
 
-    // Verify exact allowlist in the response
+    // Verify origin validation in generated HTML response
+    assert(res.body.includes("function isAllowedOrigin(origin)"), "Missing isAllowedOrigin function in response");
     assert(res.body.includes('"https://anpa-rabadeira-cms-test.netlify.app"'), "Missing canonical sandbox in allowlist");
-    assert(res.body.includes('"https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 1 in allowlist");
-    assert(res.body.includes('"https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 7 in allowlist");
+    assert(res.body.includes("/^https:\\/\\/deploy-preview-\\d+--anpa-rabadeira-cms-test\\.netlify\\.app$/"), "Missing Deploy Preview regex in response");
     assert(!res.body.includes('"https://anpa-rabadeira.netlify.app"'), "Production domain must NOT be in sandbox allowlist");
 
     // Verify origin and source checks
-    assert(res.body.includes("allowedOrigins.indexOf(e.origin) === -1"), "Missing exact allowlist origin check");
+    assert(res.body.includes("!isAllowedOrigin(e.origin)"), "Missing isAllowedOrigin check");
     assert(res.body.includes("e.source !== window.opener"), "Missing e.source === window.opener check");
 
     // Verify targeted postMessage (no wildcard for credentials)
@@ -136,15 +136,25 @@ async function runOAuthTests() {
 
     // Verify secret is not exposed in HTML
     assert(!res.body.includes("mock_client_secret_xyz"), "Client secret must never be exposed");
+
+    // Directly evaluate the extracted browser function to verify regular expression escaping and execution
+    const matchFn = res.body.match(/function isAllowedOrigin\(origin\) \{[\s\S]*?\}/);
+    assert(matchFn, "isAllowedOrigin function must be extractable from response HTML");
+    const isAllowedOriginEvaluated = new Function("origin", matchFn[0] + "; return isAllowedOrigin(origin);");
+
+    assert.strictEqual(isAllowedOriginEvaluated("https://anpa-rabadeira-cms-test.netlify.app"), true, "Canonical sandbox must be accepted by extracted script");
+    assert.strictEqual(isAllowedOriginEvaluated("https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app"), true, "Deploy preview 17 must be accepted by extracted script");
+    assert.strictEqual(isAllowedOriginEvaluated("https://anpa-rabadeira.netlify.app"), false, "Production domain must be rejected by extracted script");
+    assert.strictEqual(isAllowedOriginEvaluated("https://deploy-preview-17--anpa-rabadeira.netlify.app"), false, "Production deploy preview must be rejected by extracted script");
   });
 
-  // Test 8: Simulate receiveMessage client-side logic across all test cases
-  await asyncTest("Client-side receiveMessage accepts only the 3 exact origins and legitimate opener", () => {
-    const allowedOrigins = [
-      "https://anpa-rabadeira-cms-test.netlify.app",
-      "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app",
-      "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app",
-    ];
+  // Test 8: Simulate receiveMessage client-side logic across comprehensive test cases
+  await asyncTest("Client-side receiveMessage accepts canonical sandbox and numbered sandbox previews, strictly rejecting all others", () => {
+    function isAllowedOrigin(origin) {
+      if (!origin || typeof origin !== "string") return false;
+      return origin === "https://anpa-rabadeira-cms-test.netlify.app" ||
+        /^https:\/\/deploy-preview-\d+--anpa-rabadeira-cms-test\.netlify\.app$/.test(origin);
+    }
 
     const mockOpener = {
       messagesSent: [],
@@ -161,12 +171,14 @@ async function runOAuthTests() {
     };
 
     function simulateReceiveMessage(event, windowOpener) {
-      if (!event || allowedOrigins.indexOf(event.origin) === -1 || event.source !== windowOpener) {
+      if (!event || !isAllowedOrigin(event.origin) || event.source !== windowOpener) {
         return false; // Rejected
       }
       windowOpener.postMessage("authorization:github:success:mock_payload", event.origin);
       return true; // Accepted
     }
+
+    // --- POSITIVE TEST CASES (Accepted) ---
 
     // 1. Exact Canonical Sandbox (Legitimate opener) -> ACCEPTED
     assert.strictEqual(
@@ -176,29 +188,31 @@ async function runOAuthTests() {
     );
     assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, "https://anpa-rabadeira-cms-test.netlify.app");
 
-    // 2. Exact PR #1 Deploy Preview (Legitimate opener) -> ACCEPTED
-    mockOpener.messagesSent = [];
-    assert.strictEqual(
-      simulateReceiveMessage({ origin: "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
-      true,
-      "PR #1 deploy preview origin must be accepted"
-    );
-    assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app");
+    // 2. Numbered Deploy Previews (#1, #7, #17, future #99, future #2048) -> ACCEPTED
+    const acceptedPreviews = [1, 7, 17, 99, 2048];
+    for (const prNum of acceptedPreviews) {
+      mockOpener.messagesSent = [];
+      const origin = `https://deploy-preview-${prNum}--anpa-rabadeira-cms-test.netlify.app`;
+      assert.strictEqual(
+        simulateReceiveMessage({ origin: origin, source: mockOpener }, mockOpener),
+        true,
+        `Deploy preview #${prNum} origin must be accepted`
+      );
+      assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, origin, `Target origin must match exactly for PR #${prNum}`);
+    }
 
-    // 2b. Exact PR #7 Deploy Preview (Legitimate opener) -> ACCEPTED
-    mockOpener.messagesSent = [];
-    assert.strictEqual(
-      simulateReceiveMessage({ origin: "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
-      true,
-      "PR #7 deploy preview origin must be accepted"
-    );
-    assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app");
+    // --- NEGATIVE TEST CASES (Strictly Rejected) ---
 
-    // 3. Production site -> REJECTED
+    // 3. Production site and production previews -> REJECTED
     assert.strictEqual(
       simulateReceiveMessage({ origin: "https://anpa-rabadeira.netlify.app", source: mockOpener }, mockOpener),
       false,
       "Production site must be rejected"
+    );
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-17--anpa-rabadeira.netlify.app", source: mockOpener }, mockOpener),
+      false,
+      "Production deploy preview must be rejected"
     );
 
     // 4. Other Netlify sites / external sites -> REJECTED
@@ -217,24 +231,81 @@ async function runOAuthTests() {
     assert.strictEqual(
       simulateReceiveMessage({ origin: "https://anpa-rabadeira-cms-test.netlify.app.evil.com", source: mockOpener }, mockOpener),
       false,
-      "Lookalike domain must be rejected"
+      "Lookalike canonical domain must be rejected"
+    );
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app.evil.com", source: mockOpener }, mockOpener),
+      false,
+      "Lookalike preview domain must be rejected"
     );
 
-    // 6. Arbitrary sandbox branch / preview origins (not in allowlist) -> REJECTED
+    // 6. Subdomain prefix / infix spoofing -> REJECTED
     assert.strictEqual(
-      simulateReceiveMessage({ origin: "https://deploy-preview-2--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      simulateReceiveMessage({ origin: "https://evil-anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
       false,
-      "Unwhitelisted PR preview must be rejected"
+      "Prefix spoofed domain must be rejected"
     );
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-17--evil--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      false,
+      "Infix spoofed domain must be rejected"
+    );
+
+    // 7. Non-numeric preview ID and empty preview ID -> REJECTED
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-abc--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      false,
+      "Non-numeric PR preview must be rejected"
+    );
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview---anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      false,
+      "Empty PR preview number must be rejected"
+    );
+
+    // 8. Branch deploys -> REJECTED
     assert.strictEqual(
       simulateReceiveMessage({ origin: "https://feat-test--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
       false,
       "Branch deploy origin must be rejected"
     );
 
-    // 7. Legitimate origin but message from a different window/iframe -> REJECTED
+    // 9. Insecure HTTP protocol -> REJECTED
     assert.strictEqual(
-      simulateReceiveMessage({ origin: "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app", source: mockDifferentWindow }, mockOpener),
+      simulateReceiveMessage({ origin: "http://anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      false,
+      "HTTP canonical origin must be rejected"
+    );
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "http://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app", source: mockOpener }, mockOpener),
+      false,
+      "HTTP preview origin must be rejected"
+    );
+
+    // 10. Port injection & Path injection -> REJECTED
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app:8080", source: mockOpener }, mockOpener),
+      false,
+      "Port-injected origin must be rejected"
+    );
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app/admin", source: mockOpener }, mockOpener),
+      false,
+      "Path-injected origin must be rejected"
+    );
+
+    // 11. Malformed / non-string / falsy origins -> REJECTED
+    for (const badOrigin of [null, undefined, "", 12345, {}, []]) {
+      assert.strictEqual(
+        simulateReceiveMessage({ origin: badOrigin, source: mockOpener }, mockOpener),
+        false,
+        `Malformed origin ${JSON.stringify(badOrigin)} must be rejected`
+      );
+    }
+
+    // 12. Legitimate origin but message from a different window/iframe -> REJECTED
+    assert.strictEqual(
+      simulateReceiveMessage({ origin: "https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app", source: mockDifferentWindow }, mockOpener),
       false,
       "Message from window other than window.opener must be rejected"
     );
