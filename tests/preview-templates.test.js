@@ -309,6 +309,151 @@ function runTests() {
     assert.strictEqual(collectionHasBody('consello_escolar'), true, 'consello_escolar in config.yml MUST have a body field');
   });
 
+  // Test 7: Exact Visual Sequence of Comedor Tutorial Content in Live Preview
+  test('Comedor preview reproduces approved production content sequence (11 steps -> Paso 11 -> Receipt -> Other -> Closing)', () => {
+    const comedorFieldNames = [
+      'title', 'image', 'image_alt', 'intro', 'atriga_portal_url',
+      'steps', 'receipt_instructions', 'other_methods_note', 'closing_note', 'documents'
+    ];
+
+    const comedorData = {
+      title: 'Pago Comedor',
+      intro: 'Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento, os adxuntamos as diferentes vias nas que poderes facelo sen ter que ir ao centro. Tamén tendes [instruccións detalladas na web do centro](http://www.edu.xunta.gal/centros/ceiprabadeira/node/268).',
+      atriga_portal_url: 'https://ovt.atriga.gal',
+      steps: [
+        { description: 'No apartado de CIDADÁNS, premes iniciar taxa', image: '/img/comedor/paso-1.png', image_alt: 'Paso 1 - Portal ATRIGA' },
+        { description: 'Candado aberto é para o acceso libre ao servizo. Pechado se tedes certificado dixital', image: '/img/comedor/paso-2.png', image_alt: 'Paso 2 - Candados' },
+        { description: 'Sen certificado dixital podes facer o pago a través da TPV', image: '/img/comedor/paso-3.png', image_alt: 'Paso 3 - Opcións de pago TPV' },
+        { description: 'Tedes que poner estes códigos para o pagamento do comedor:', image: '/img/comedor/paso-4.png', image_alt: 'Paso 4 - Códigos do comedor' },
+        { description: 'Completar os datos requeridos:', image: '/img/comedor/paso-5.png', image_alt: 'Paso 5 - Datos persoais' },
+        { description: 'Premer pagamento telemático:', image: '/img/comedor/paso-6.png', image_alt: 'Paso 6 - Pagamento telemático' },
+        { description: 'Na seguinte pantalla premer continuar co tipo de pagamento «telemático» e modo de pagamento «tarxeta»', image: '/img/comedor/paso-7.png', image_alt: 'Paso 7 - Tipo de pagamento' },
+        { description: 'Sairá esta outra pantalla, e premer ingresar:', image: '/img/comedor/paso-8.png', image_alt: 'Paso 8 - Premer ingresar' },
+        { description: 'Nos sairá esta outra mensaje para continuar co pagamento', image: '/img/comedor/paso-9.png', image_alt: 'Paso 9 - Confirmación' },
+        { description: 'E aquí xa podes intruducir os datos da túa tarxeta bancaria e proceder ao pagamento:', image: '/img/comedor/paso-10.png', image_alt: 'Paso 10 - Datos da tarxeta' },
+        { image: '/img/comedor/paso-11.png', image_alt: 'Paso 11 - Proceder ao pagamento' }
+      ],
+      receipt_instructions: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.',
+      other_methods_note: 'Outras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.',
+      closing_note: 'Esperamos que esta guía sea de axuda para todos vós.'
+    };
+
+    const props = createDecapProps({
+      data: comedorData,
+      fieldNames: comedorFieldNames
+    });
+
+    const component = new PagePreview(props);
+    const vdom = component.render();
+
+    // 1. Verify all 11 images exist and are in exact sequential order
+    const images = findNodes(vdom, n => n.tag === 'img');
+    assert.strictEqual(images.length, 11, 'Must render exactly 11 tutorial images');
+    for (let i = 1; i <= 11; i++) {
+      assert(images[i - 1].props.src.endsWith(`paso-${i}.png`), `Image at index ${i - 1} must be paso-${i}.png`);
+    }
+
+    // 2. Serialize tree to inspect linear ordering of nodes
+    function serializeNode(node) {
+      if (!node) return '';
+      let str = '';
+      if (node.tag === 'img') {
+        str += `[IMG:${node.props.src}]`;
+      }
+      if (node.props && node.props.dangerouslySetInnerHTML && node.props.dangerouslySetInnerHTML.__html) {
+        str += node.props.dangerouslySetInnerHTML.__html;
+      }
+      if (node.children) {
+        if (Array.isArray(node.children)) {
+          for (const c of node.children) {
+            str += typeof c === 'string' ? c : serializeNode(c);
+          }
+        } else if (typeof node.children === 'string') {
+          str += node.children;
+        }
+      }
+      return str;
+    }
+
+    const fullText = serializeNode(vdom);
+
+    // Positions of key elements in serialized output
+    const posPaso10Desc = fullText.indexOf('E aquí xa podes intruducir os datos da túa tarxeta bancaria e proceder ao pagamento:');
+    const posPaso10Img = fullText.indexOf('[IMG:/img/comedor/paso-10.png]');
+    const posPaso11Img = fullText.indexOf('[IMG:/img/comedor/paso-11.png]');
+    const posReceipt = fullText.indexOf('Unha vez feito o pago, envíase o xustificante');
+    const posMailto = fullText.indexOf('href="mailto:comedor.ceip.rabadeira@edu.xunta.gal"');
+    const posOtherMethods = fullText.indexOf('Outras formas de facer o pagamento é presencialmente na oficina bancaria');
+    const posClosing = fullText.indexOf('Esperamos que esta guía sea de axuda para todos vós.');
+
+    // Assert strict ordering:
+    // paso-10 description -> paso-10 img -> paso-11 img -> receipt instructions -> other methods -> closing note
+    assert(posPaso10Desc !== -1, 'Paso 10 description must exist');
+    assert(posPaso10Img !== -1, 'Paso 10 image must exist');
+    assert(posPaso11Img !== -1, 'Paso 11 image (Sabadell) must exist');
+    assert(posReceipt !== -1, 'Receipt instructions must exist');
+    assert(posMailto !== -1, 'Comedor email must render as a clickable mailto link');
+    assert(posOtherMethods !== -1, 'Other payment methods note must exist');
+    assert(posClosing !== -1, 'Closing note must exist');
+
+    assert(posPaso10Desc < posPaso10Img, 'Paso 10 description must appear BEFORE paso-10 image');
+    assert(posPaso10Img < posPaso11Img, 'Paso 10 image must appear BEFORE paso-11 image');
+    assert(posPaso11Img < posReceipt, 'Paso 11 Sabadell screenshot must appear BEFORE receipt instructions paragraph');
+    assert(posReceipt < posOtherMethods, 'Receipt instructions must appear BEFORE other payment methods note');
+    assert(posOtherMethods < posClosing, 'Other payment methods must appear BEFORE closing message');
+
+    // Assert each of the three paragraphs appears exactly once
+    assert.strictEqual(fullText.split('Unha vez feito o pago').length - 1, 1, 'Receipt instructions must appear exactly once');
+    assert.strictEqual(fullText.split('Outras formas de facer o pagamento').length - 1, 1, 'Other payment methods must appear exactly once');
+    assert.strictEqual(fullText.split('Esperamos que esta guía sea de axuda').length - 1, 1, 'Closing note must appear exactly once');
+  });
+
+  // Test 8: Defensive resilience against legacy entries where Step 11 description had receipt text
+  test('Comedor preview defensively guards against legacy data where step 11 description had receipt text', () => {
+    const legacyComedorData = {
+      title: 'Pago Comedor',
+      steps: [
+        { description: 'Paso 1', image: '/img/comedor/paso-1.png' },
+        { description: 'Paso 10', image: '/img/comedor/paso-10.png' },
+        { description: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email comedor.ceip.rabadeira@edu.xunta.gal...', image: '/img/comedor/paso-11.png' }
+      ],
+      other_methods_note: 'Outras formas de facer o pagamento.',
+      closing_note: 'Esperamos que esta guía sea de axuda.'
+    };
+
+    const props = createDecapProps({
+      data: legacyComedorData,
+      fieldNames: ['title', 'steps', 'receipt_instructions', 'other_methods_note', 'closing_note']
+    });
+
+    const component = new PagePreview(props);
+    const vdom = component.render();
+
+    function serializeNode(node) {
+      if (!node) return '';
+      let str = '';
+      if (node.tag === 'img') str += `[IMG:${node.props.src}]`;
+      if (node.props && node.props.dangerouslySetInnerHTML && node.props.dangerouslySetInnerHTML.__html) str += node.props.dangerouslySetInnerHTML.__html;
+      if (node.children) {
+        if (Array.isArray(node.children)) {
+          for (const c of node.children) str += typeof c === 'string' ? c : serializeNode(c);
+        } else if (typeof node.children === 'string') {
+          str += node.children;
+        }
+      }
+      return str;
+    }
+
+    const fullText = serializeNode(vdom);
+    const posPaso11Img = fullText.indexOf('[IMG:/img/comedor/paso-11.png]');
+    const posReceipt = fullText.indexOf('Unha vez feito o pago');
+
+    assert(posPaso11Img !== -1, 'Paso 11 image must exist');
+    assert(posReceipt !== -1, 'Receipt instructions must exist');
+    assert(posPaso11Img < posReceipt, 'Even with legacy data, Paso 11 screenshot must appear BEFORE receipt text');
+    assert.strictEqual(fullText.split('Unha vez feito o pago').length - 1, 1, 'Receipt instructions must never be duplicated');
+  });
+
   console.log(`\nPreview Templates Test Summary: ${passed} passed, ${failed} failed.\n`);
 
   if (failed > 0) {

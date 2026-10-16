@@ -346,17 +346,28 @@
           // 3. Comedor Steps
           data.steps && data.steps.length > 0 ? h('div', null,
             h('h2', null, 'PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)'),
-            data.atriga_portal_url ? h('p', null, 'Un deles é a través da Axencia Tributaria de Galicia: ', h('span', null, 'Portal tributario ATRIGA')) : null,
+            data.atriga_portal_url ? h('p', null, 'Un deles é a través da Axencia Tributaria de Galicia: ', h('a', { href: data.atriga_portal_url, target: '_blank', rel: 'noopener noreferrer' }, 'Portal tributario ATRIGA'), '.') : null,
             data.steps.map((st, idx) => {
               const stepImg = st.image ? getAsset(st.image) : null;
+              // Ensure receipt instructions never appear before step 11 screenshot
+              const isReceiptText = st.description && st.description.toLowerCase().includes('unha vez feito o pago');
+              const stepDesc = isReceiptText ? null : st.description;
               return h('div', { key: idx, style: { margin: '1rem 0' } },
-                st.description ? h('p', null, st.description) : null,
+                stepDesc ? h('p', null, stepDesc) : null,
                 stepImg ? h('img', { src: stepImg.toString(), alt: st.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }) : null
               );
             }),
-            data.receipt_instructions ? (formatMarkdown(data.receipt_instructions) || h('p', null, data.receipt_instructions)) : null,
-            data.other_methods_note ? h('p', null, data.other_methods_note) : null,
-            data.closing_note ? h('p', null, data.closing_note) : null
+            (() => {
+              let receiptText = data.receipt_instructions;
+              if (!receiptText && data.steps) {
+                const found = data.steps.find(st => st.description && st.description.toLowerCase().includes('unha vez feito o pago'));
+                if (found) receiptText = found.description;
+              }
+              if (!receiptText) return null;
+              return formatMarkdown(receiptText) || h('p', null, receiptText);
+            })(),
+            data.other_methods_note ? (formatMarkdown(data.other_methods_note) || h('p', null, data.other_methods_note)) : null,
+            data.closing_note ? (formatMarkdown(data.closing_note) || h('p', null, data.closing_note)) : null
           ) : null,
 
           // 4. Inscrición Bank Box
