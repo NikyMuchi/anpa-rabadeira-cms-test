@@ -4,6 +4,73 @@
  */
 
 (function () {
+  const globalObj = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+  const h = (typeof globalObj.h === 'function') ? globalObj.h : function (tag, props, ...children) {
+    return { tag, props: props || {}, children: children.flat ? children.flat() : children };
+  };
+  const createClass = (typeof globalObj.createClass === 'function') ? globalObj.createClass : function (spec) {
+    function Component(props) {
+      this.props = props || {};
+    }
+    if (spec) {
+      for (const key in spec) {
+        if (Object.prototype.hasOwnProperty.call(spec, key)) {
+          Component.prototype[key] = spec[key];
+        }
+      }
+    }
+    return Component;
+  };
+
+  function hasField(props, fieldName) {
+    if (!props) return false;
+    const candidates = [];
+    if (props.fields) candidates.push(props.fields);
+    if (props.collection) {
+      const colFields = typeof props.collection.get === 'function'
+        ? props.collection.get('fields')
+        : props.collection.fields;
+      if (colFields) candidates.push(colFields);
+    }
+
+    for (let i = 0; i < candidates.length; i++) {
+      const list = candidates[i];
+      if (!list) continue;
+
+      if (typeof list.some === 'function') {
+        const found = list.some(function (f) {
+          if (!f) return false;
+          if (typeof f.get === 'function') return f.get('name') === fieldName;
+          return f.name === fieldName;
+        });
+        if (found) return true;
+      }
+
+      if (Array.isArray(list)) {
+        const found = list.some(function (f) {
+          if (!f) return false;
+          if (typeof f.get === 'function') return f.get('name') === fieldName;
+          return f.name === fieldName;
+        });
+        if (found) return true;
+      }
+
+      if (typeof list.toJS === 'function') {
+        try {
+          const jsList = list.toJS();
+          if (Array.isArray(jsList)) {
+            const found = jsList.some(function (f) { return f && f.name === fieldName; });
+            if (found) return true;
+          }
+        } catch (e) {
+          // ignore toJS error
+        }
+      }
+    }
+
+    return false;
+  }
+
   const mesesGalego = [
     "xaneiro", "febreiro", "marzo", "abril", "maio", "xuño",
     "xullo", "agosto", "setembro", "outubro", "novembro", "decembro"
@@ -89,7 +156,7 @@
             formattedDate ? h('time', { className: 'post-single__date' }, `📅 ${formattedDate}`) : null,
             imageSrc ? h('img', { src: imageSrc.toString(), alt: title, className: 'post-single__image' }) : null
           ),
-          h('div', { className: 'post-content' }, this.props.widgetFor ? this.props.widgetFor('body') : null)
+          h('div', { className: 'post-content' }, (hasField(this.props, 'body') && this.props.widgetFor) ? this.props.widgetFor('body') : (entry.getIn(['data', 'body']) ? formatMarkdown(entry.getIn(['data', 'body'])) : null))
         )
       );
     }
@@ -258,6 +325,7 @@
       const image = data.image ? this.props.getAsset(data.image) : null;
       const imageAlt = typeof data.image_alt === 'string' ? data.image_alt : '';
       const getAsset = this.props.getAsset;
+      const hasBody = hasField(this.props, 'body');
 
       return h('div', { className: 'preview-root container page-content' },
         image ? h('div', { className: 'post-single__image' },
@@ -270,24 +338,36 @@
           // 1. Top flexible sections
           renderBlocks(data.top_sections, getAsset),
 
-          // Primary Markdown body (for document pages like Madrugadores)
+          // Primary Markdown body (for document pages like Madrugadores, Memoria, Consello Escolar)
           (!data.steps && !data.bank_iban && !data.blog_url) ? (
-            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
+            (hasBody && this.props.widgetFor) ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
           ) : null,
 
           // 3. Comedor Steps
           data.steps && data.steps.length > 0 ? h('div', null,
             h('h2', null, 'PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)'),
-            data.atriga_portal_url ? h('p', null, 'Un deles é a través da Axencia Tributaria de Galicia: ', h('span', null, 'Portal tributario ATRIGA')) : null,
+            data.atriga_portal_url ? h('p', null, 'Un deles é a través da Axencia Tributaria de Galicia: ', h('a', { href: data.atriga_portal_url, target: '_blank', rel: 'noopener noreferrer' }, 'Portal tributario ATRIGA'), '.') : null,
             data.steps.map((st, idx) => {
               const stepImg = st.image ? getAsset(st.image) : null;
+              // Ensure receipt instructions never appear before step 11 screenshot
+              const isReceiptText = st.description && st.description.toLowerCase().includes('unha vez feito o pago');
+              const stepDesc = isReceiptText ? null : st.description;
               return h('div', { key: idx, style: { margin: '1rem 0' } },
-                st.description ? h('p', null, st.description) : null,
+                stepDesc ? h('p', null, stepDesc) : null,
                 stepImg ? h('img', { src: stepImg.toString(), alt: st.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }) : null
               );
             }),
-            data.other_methods_note ? h('p', null, data.other_methods_note) : null,
-            data.closing_note ? h('p', null, data.closing_note) : null
+            (() => {
+              let receiptText = data.receipt_instructions;
+              if (!receiptText && data.steps) {
+                const found = data.steps.find(st => st.description && st.description.toLowerCase().includes('unha vez feito o pago'));
+                if (found) receiptText = found.description;
+              }
+              if (!receiptText) return null;
+              return formatMarkdown(receiptText) || h('p', null, receiptText);
+            })(),
+            data.other_methods_note ? (formatMarkdown(data.other_methods_note) || h('p', null, data.other_methods_note)) : null,
+            data.closing_note ? (formatMarkdown(data.closing_note) || h('p', null, data.closing_note)) : null
           ) : null,
 
           // 4. Inscrición Bank Box
@@ -349,7 +429,7 @@
 
           // Trailing Markdown body (for structured pages with trailing markdown)
           (data.steps || data.bank_iban || data.blog_url) ? (
-            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
+            (hasBody && this.props.widgetFor) ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
           ) : null
         )
       );
@@ -357,7 +437,7 @@
   });
 
   // Rexistrar estilos e compoñentes no CMS
-  if (window.CMS) {
+  if (typeof window !== 'undefined' && window.CMS) {
     CMS.registerPreviewStyle('/css/style.css');
     CMS.registerPreviewTemplate('posts', PostPreview);
     CMS.registerPreviewTemplate('extraescolares', ExtraescolaresPreview);
@@ -368,5 +448,17 @@
     CMS.registerPreviewTemplate('inscripcion', PagePreview);
     CMS.registerPreviewTemplate('memoria', PagePreview);
     CMS.registerPreviewTemplate('consello_escolar', PagePreview);
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      hasField,
+      formatGalicianDate,
+      renderInlineMarkdown,
+      formatMarkdown,
+      PostPreview,
+      ExtraescolaresPreview,
+      PagePreview
+    };
   }
 })();
