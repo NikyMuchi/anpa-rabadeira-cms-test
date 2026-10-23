@@ -4,7 +4,7 @@
 backend:
   name: github
   repo: NikyMuchi/anpa-rabadeira-cms-test
-  branch: main
+  branch: feat/cms-comedor-inscripcion
   base_url: https://anpa-rabadeira-cms-test.netlify.app
   auth_endpoint: auth
 
@@ -181,84 +181,49 @@ collections:
               - { label: "Ficheiro PDF", name: "file", widget: "file" }
               - { label: "Descrición breve", name: "description", widget: "string", required: false }
 
-      # --- COMEDOR ESCOLAR ---
+      # --- COMEDOR ESCOLAR (GUÍA ILUSTRADA DE PAGO) ---
       - name: "comedor"
         label: "🍽️ Pago do Comedor"
         file: "src/pages/comedor.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Texto introdutorio", name: "intro", widget: "text", required: false }
-          - label: "📢 Avisos e seccións superiores"
-            name: "top_sections"
-            widget: "list"
+          - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
+          - label: "Texto introdutorio"
+            name: "intro"
+            widget: "markdown"
             required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: &flexible_types
-              - label: "📝 Texto / Sección con título"
-                name: "text_block"
-                widget: "object"
-                fields:
-                  - { label: "Título da sección (H2)", name: "title", widget: "string", required: false }
-                  - { label: "Texto formatado (Markdown)", name: "body", widget: "markdown" }
-              - label: "📢 Caixa de aviso destacada"
-                name: "callout_block"
-                widget: "object"
-                fields:
-                  - { label: "Título do aviso", name: "title", widget: "string", required: false }
-                  - { label: "Mensaxe do aviso", name: "text", widget: "markdown" }
-                  - label: "Tipo / Estilo de aviso"
-                    name: "style"
-                    widget: "select"
-                    options:
-                      - { label: "ℹ️ Informativo (Azul)", value: "info" }
-                      - { label: "⚠️ Aviso / Importante (Amarelo)", value: "warning" }
-                      - { label: "✅ Novidade / Éxito (Verde)", value: "success" }
-                    default: "info"
-                  - { label: "Ligazón opcional (URL)", name: "url", widget: "string", required: false }
-                  - { label: "Texto da ligazón", name: "url_label", widget: "string", required: false }
-              - label: "🖼️ Imaxe con texto descritivo"
-                name: "image_block"
-                widget: "object"
-                fields:
-                  - { label: "Imaxe", name: "image", widget: "image" }
-                  - { label: "Texto alternativo (Alt)", name: "image_alt", widget: "string" }
-                  - { label: "Pé de foto (opcional)", name: "caption", widget: "string", required: false }
-              - label: "📄 Documento PDF ou Descarga"
-                name: "document_block"
-                widget: "object"
-                fields:
-                  - { label: "Título do documento", name: "title", widget: "string" }
-                  - { label: "Ficheiro PDF", name: "file", widget: "file" }
-                  - { label: "Descrición breve", name: "description", widget: "string", required: false }
-                  - { label: "Texto do botón", name: "button_label", widget: "string", default: "Abrir PDF", required: false }
-              - label: "🔗 Botón de acción / Ligazón"
-                name: "button_block"
-                widget: "object"
-                fields:
-                  - { label: "Texto do botón", name: "label", widget: "string" }
-                  - { label: "Ligazón (URL)", name: "url", widget: "string" }
-                  - { label: "Nota explicativa (opcional)", name: "note", widget: "string", required: false }
-          - { label: "Portal tributario ATRIGA (URL)", name: "atriga_portal_url", widget: "string", required: false }
-          - label: "Pasos da guía de pago ATRIGA"
+            buttons: ["bold", "italic", "link"]
+            modes: ["rich_text", "raw"]
+            hint: "Explicación xeral sobre o pagamento do comedor. Seleccione texto e use a icona 🔗 para crear ou editar ligazóns web ou emails."
+          - { label: "Portal tributario ATRIGA (URL)", name: "atriga_portal_url", widget: "string", required: false, hint: "Ex: https://ovt.atriga.gal" }
+          - label: "Pasos da guía ilustrada (11 pasos)"
             name: "steps"
             widget: "list"
             required: false
             summary: "Paso: {{fields.description}}"
             fields:
-              - { label: "Descrición e instrución do paso", name: "description", widget: "text" }
-              - { label: "Captura de pantalla", name: "image", widget: "image", required: false }
-              - { label: "Texto alternativo da captura (Alt)", name: "image_alt", widget: "string", required: false }
-          - { label: "Instrucións de envío de xustificante", name: "receipt_instructions", widget: "text", required: false }
+              - { label: "Texto explicativo", name: "description", widget: "text", required: false, hint: "Texto e indicacións que acompañan a esta captura" }
+              - { label: "Imaxe do paso", name: "image", widget: "image", required: false, hint: "Prema para subir ou substituír a captura (JPG ou PNG)" }
+              - { label: "Descrición da imaxe (accesibilidade)", name: "image_alt", widget: "string", required: false, hint: "Breve descrición do que aparece na imaxe" }
+          - label: "Instrucións de envío de xustificante"
+            name: "receipt_instructions"
+            widget: "markdown"
+            required: false
+            buttons: ["bold", "italic", "link"]
+            modes: ["rich_text", "raw"]
+            hint: "Instrucións para enviar o xustificante. Seleccione o enderezo de correo e use a icona 🔗 para configurar o enlace de email (ex: mailto:comedor.ceip.rabadeira@edu.xunta.gal)."
           - { label: "Outras formas de pago", name: "other_methods_note", widget: "text", required: false }
           - { label: "Nota final / peche", name: "closing_note", widget: "string", required: false }
-          - label: "📄 Seccións adicionais reordenables"
-            name: "sections"
+          - label: "Documentos / PDF (opcional)"
+            name: "documents"
             widget: "list"
             required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - { label: "Email de contacto para dúbidas", name: "contact_email", widget: "string", required: false }
-          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
+            summary: "{{fields.title}} (PDF)"
+            fields:
+              - { label: "Título do documento", name: "title", widget: "string" }
+              - { label: "Ficheiro PDF", name: "file", widget: "file" }
+              - { label: "Descrición breve", name: "description", widget: "string", required: false }
 
       # --- INSCRICIÓN / ALTA DE SOCIOS ---
       - name: "inscripcion"
@@ -266,27 +231,24 @@ collections:
         file: "src/pages/inscripcion.md"
         fields:
           - { label: "Título da páxina", name: "title", widget: "string" }
-          - { label: "Imaxe de cabeceira", name: "image", widget: "image", required: false }
-          - { label: "Texto explicativo", name: "intro", widget: "text", required: false }
-          - label: "📢 Avisos e seccións superiores"
-            name: "top_sections"
-            widget: "list"
-            required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
+          - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
+          - { label: "Texto explicativo", name: "intro", widget: "text", required: false, hint: "Información e prazo de alta de socios" }
           - { label: "Cota anual de socio", name: "membership_fee", widget: "string", required: false, hint: "Ex: 25€/familia" }
-          - { label: "Número de conta bancaria (IBAN)", name: "bank_iban", widget: "string", required: false }
+          - { label: "Número de conta bancaria (IBAN)", name: "bank_iban", widget: "string", required: false, hint: "Conta onde realizar a transferencia" }
           - { label: "Instrución de concepto da transferencia", name: "transfer_concept_note", widget: "string", required: false }
           - { label: "Formulario de inscrición (Google Forms URL)", name: "registration_form_url", widget: "string", required: false }
           - { label: "Texto do botón de inscrición", name: "registration_button_label", widget: "string", required: false }
           - { label: "Mensaxe final", name: "closing_text", widget: "string", required: false }
-          - label: "📄 Seccións adicionais reordenables"
-            name: "sections"
+          - label: "Documentos / PDF (opcional)"
+            name: "documents"
             widget: "list"
             required: false
-            summary: "{{fields.title}} [{{fields.type}}]"
-            types: *flexible_types
-          - { label: "Contido adicional libre (Markdown)", name: "body", widget: "markdown", required: false }
+            summary: "{{fields.title}} (PDF)"
+            fields:
+              - { label: "Título do documento", name: "title", widget: "string" }
+              - { label: "Ficheiro PDF", name: "file", widget: "file" }
+              - { label: "Descrición breve", name: "description", widget: "string", required: false }
 
       # --- MEMORIA ANUAL (EDITOR DE DOCUMENTO SIMPLE) ---
       - name: "memoria"

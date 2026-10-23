@@ -99,7 +99,7 @@ layout: layouts/base.njk
       {% endfor %}
 
       {% if receipt_instructions %}
-        <p>{{ receipt_instructions }}</p>
+        {{ receipt_instructions | md | safe }}
       {% endif %}
 
       {% if other_methods_note %}
