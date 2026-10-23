@@ -60,65 +60,72 @@ collections:
         file: "src/_data/extraescolares.json"
         description: "Xestión íntegra de curso, horario oficial, 18 actividades, tarifas e cadro de convivencia"
         fields:
-          - { label: "Curso académico", name: "academic_year", widget: "string", hint: "Ex: 2026-2027" }
-          - { label: "Imaxe do Horario Completo", name: "schedule_image", widget: "image", hint: "Suba ou substitúa a imaxe oficial do cadro de horarios" }
-          - { label: "Texto de introdución", name: "intro", widget: "text", required: false }
-          - { label: "Texto de novidades", name: "subintro", widget: "text", required: false }
-          - { label: "Aviso de prazos e baixas", name: "deadlines_note", widget: "text", required: false }
+          - { label: "Curso académico", name: "academic_year", widget: "string", hint: "Ano académico de referencia (ex: 2026-2027)" }
+          - { label: "Imaxe do Horario Completo", name: "schedule_image", widget: "image", hint: "Imaxe oficial do cadro de horarios (JPG ou PNG). Atención: trátase dunha imaxe fixa e non se actualiza automaticamente ao modificar actividades" }
+          - { label: "Texto de introdución xeral", name: "intro", widget: "text", required: false, hint: "Parágrafo inicial de presentación das actividades extraescolares" }
+          - { label: "Texto de novidades do curso", name: "subintro", widget: "text", required: false, hint: "Detalle das novidades e cambios respecto ao curso anterior" }
+          - { label: "Aviso de prazos e baixas", name: "deadlines_note", widget: "text", required: false, hint: "Lembrete de prazos para inscricións, baixas ou modificacións (antes do día 20 do mes anterior)" }
           - label: "Socios e Matrícula"
             name: "membership"
             widget: "object"
+            collapsed: true
             fields:
-              - { label: "Título", name: "title", widget: "string" }
-              - { label: "Texto de alta de socio", name: "join_label", widget: "string" }
-              - { label: "Ligazón alta de socio", name: "join_url", widget: "string" }
-              - { label: "Nota para non socios", name: "non_member_note", widget: "text" }
-              - { label: "Texto matrícula non socios", name: "non_member_label", widget: "string" }
-              - { label: "Ligazón matrícula non socios", name: "non_member_url", widget: "string" }
+              - { label: "Título da sección", name: "title", widget: "string", hint: "Título do bloque de socios (ex: Alta de socio/a e cotas de matrícula)" }
+              - { label: "Texto do botón de alta de socio", name: "join_label", widget: "string", hint: "Texto do botón (ex: Alta de socio/a da ANPA)" }
+              - { label: "Ligazón de alta de socio", name: "join_url", widget: "string", hint: "URL do formulario de Google para alta de socios" }
+              - { label: "Nota para non socios", name: "non_member_note", widget: "text", hint: "Explicación sobre a matrícula de 10€ por actividade e menor para non socios" }
+              - { label: "Texto do botón matrícula non socios", name: "non_member_label", widget: "string", hint: "Texto do botón (ex: Abono de matrícula non socios (10€))" }
+              - { label: "Ligazón matrícula non socios", name: "non_member_url", widget: "string", hint: "URL do formulario de Google para matrícula de non socios" }
           - label: "Listado de Actividades (18 actividades)"
             name: "activities"
             widget: "list"
-            summary: "{{fields.name}} - {{fields.stage}} ({{fields.price}}) [{{fields.status}}]"
+            collapsed: true
+            summary: "{{fields.name}} ({{fields.stage}}) — {{fields.price}} [{{fields.status}}]"
             fields:
-              - { label: "Identificador (slug)", name: "id", widget: "string" }
-              - { label: "Nome da actividade", name: "name", widget: "string" }
-              - { label: "Etapa educativa", name: "stage", widget: "string" }
-              - { label: "Prezo / mes", name: "price", widget: "string" }
-              - { label: "Entidade / Monitor", name: "provider", widget: "string", required: false }
-              - label: "Estado"
+              - { label: "Nome da actividade", name: "name", widget: "string", hint: "Nome visible da actividade (ex: 'Baile moderno', 'Judo')" }
+              - label: "Estado de dispoñibilidade"
                 name: "status"
                 widget: "select"
                 options:
-                  - { label: "Normal (dispoñible)", value: "available" }
-                  - { label: "🔴 Completa", value: "full" }
-                  - { label: "🟡 Parcialmente completa", value: "partial" }
+                  - { label: "🟢 Dispoñible (aberta para inscrición)", value: "available" }
+                  - { label: "🔴 Completa (sen prazas dispoñibles)", value: "full" }
+                  - { label: "🟡 Parcialmente completa (algunha quenda chea)", value: "partial" }
                 default: "available"
-              - { label: "Etiqueta de estado", name: "status_label", widget: "string", required: false }
-              - { label: "Aviso de estado ou descrición curta", name: "status_note", widget: "string", required: false }
-              - label: "Tipo de rexistro"
+                hint: "Indica se hai prazas dispoñibles: 'available', 'full' ou 'partial'. Controla os distintivos visuais na páxina"
+              - { label: "Aviso de estado ou descrición curta", name: "status_note", widget: "string", required: false, hint: "Nota explicativa para a tarxeta (ex: 'Actividade completa. Non admite máis alumnado.' ou quendas dispoñibles)" }
+              - { label: "Etiqueta de estado", name: "status_label", widget: "string", required: false, hint: "Texto da etiqueta cando non está dispoñible (ex: 'Completa' ou 'Parcialmente completa'). Deixar baleiro se está dispoñible" }
+              - { label: "Prezo / mes", name: "price", widget: "string", hint: "Prezo mensual amosado na tarxeta (ex: '22€ / mes'). Atención: este valor non actualiza o Cadro de tarifas inferior, mantense por separado" }
+              - label: "Tipo de rexistro ou inscrición"
                 name: "registration_type"
                 widget: "select"
                 required: false
                 options:
-                  - { label: "Google Form", value: "google_form" }
-                  - { label: "PDF Descargable", value: "pdf" }
-                  - { label: "Ligazón Externa", value: "external_url" }
-              - { label: "Ligazón de inscrición ou información", name: "registration_url", widget: "string", required: false }
-              - { label: "Email de contacto", name: "contact_email", widget: "string", required: false }
-              - { label: "Texto do botón", name: "button_label", widget: "string", required: false }
+                  - { label: "Formulario de Google (Google Form)", value: "google_form" }
+                  - { label: "Ficha en PDF descargable", value: "pdf" }
+                  - { label: "Ligazón web externa", value: "external_url" }
+                hint: "Modalidade de inscrición. Débese deixar baleiro se a actividade está completa"
+              - { label: "Ligazón de inscrición ou información", name: "registration_url", widget: "string", required: false, hint: "Enderezo web do formulario de Google, ruta ao ficheiro PDF (/docs/...) ou ligazón externa" }
+              - { label: "Texto do botón", name: "button_label", widget: "string", required: false, hint: "Texto do botón (ex: 'Inscrición', 'Ficha de inscrición (PDF)'). Se se deixa baleiro amosará 'Inscrición'" }
+              - { label: "Email de contacto", name: "contact_email", widget: "string", required: false, hint: "Correo de contacto para inscrición ou envío de fichas en PDF (ex: 'portobellow11@yahoo.es' en Inglés)" }
+              - { label: "Etapa educativa", name: "stage", widget: "string", hint: "Cursos recomendados (ex: 'Infantil e Primaria', 'Primaria', 'Infantil')" }
+              - { label: "Entidade / Monitor", name: "provider", widget: "string", required: false, hint: "Nome da entidade colaboradora ou monitor/a (ex: 'Sadanza', 'Judo Hércules', 'Portobello')" }
+              - { label: "Identificador (slug)", name: "id", widget: "string", hint: "Identificador técnico interno (ex: 'baile-moderno'). Usado para áncoras web. Non o modifique salvo necesidade estrita" }
           - label: "Cadro de tarifas e cotas"
             name: "pricing_table"
             widget: "list"
             required: false
-            summary: "{{fields.name}} - {{fields.hours}} - {{fields.price}}"
+            collapsed: true
+            summary: "{{fields.name}} — {{fields.hours}} — {{fields.price}}"
+            hint: "Cadro resumo de tarifas ao pé da páxina. Atención: mantense de forma independente e separada dos prezos de cada actividade"
             fields:
-              - { label: "Actividade", name: "name", widget: "string" }
-              - { label: "Horas semanais", name: "hours", widget: "string" }
-              - { label: "Cota mensual", name: "price", widget: "string" }
+              - { label: "Actividade", name: "name", widget: "string", hint: "Nome da actividade no cadro" }
+              - { label: "Horas semanais", name: "hours", widget: "string", hint: "Carga horaria (ex: 2 horas/semana)" }
+              - { label: "Cota mensual", name: "price", widget: "string", hint: "Prezo mensual (ex: 22€ / mes)" }
           - label: "Condicións xerais do servizo"
             name: "general_conditions"
             widget: "list"
             required: false
+            collapsed: true
             summary: "{{fields.number}}. {{fields.title}}"
             fields:
               - { label: "Número de orde", name: "number", widget: "number", value_type: "int" }
@@ -133,6 +140,7 @@ collections:
             name: "coexistence_articles"
             widget: "object"
             required: false
+            collapsed: true
             fields:
               - { label: "Título xeral", name: "title", widget: "string" }
               - label: "Artigo 65 (Condutas graves)"

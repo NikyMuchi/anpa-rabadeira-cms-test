@@ -161,6 +161,67 @@ function runTests() {
     assert(comedor.includes('https://ovt.atriga.gal'), 'Missing ATRIGA portal in comedor.md');
   });
 
+  // Test 8: Extraescolares Editor Simplification & Preservation Fidelity
+  test('admin/config.yml Extraescolares editor features collapsed lists, clear hints, and exact status options', () => {
+    const configContent = fs.readFileSync(configYmlPath, 'utf8');
+
+    // Collapsed lists
+    assert(configContent.includes('name: "activities"') && configContent.includes('collapsed: true'), 'activities list should have collapsed: true');
+    assert(configContent.includes('name: "pricing_table"') && configContent.includes('collapsed: true'), 'pricing_table should have collapsed: true');
+    assert(configContent.includes('name: "general_conditions"') && configContent.includes('collapsed: true'), 'general_conditions should have collapsed: true');
+
+    // Status options fidelity: available, full, partial - no invented waiting list
+    assert(configContent.includes('value: "available"'), 'Missing available status option');
+    assert(configContent.includes('value: "full"'), 'Missing full status option');
+    assert(configContent.includes('value: "partial"'), 'Missing partial status option');
+    assert(!configContent.includes('waiting_list') && !configContent.includes('lista_agarda') && !configContent.includes('lista de agarda'), 'Must not invent a waiting-list feature');
+
+    // Clarification hints
+    assert(configContent.includes('non se actualiza automaticamente'), 'Missing timetable static image hint');
+    assert(configContent.includes('mantense de forma independente e separada dos prezos') || configContent.includes('mantense por separado') || configContent.includes('mantense de xeito independente'), 'Missing price/pricing_table separation hint');
+    assert(configContent.includes('Identificador técnico interno (ex: \'baile-moderno\')'), 'Missing id technical slug hint');
+    assert(configContent.includes('status_label'), 'Missing status_label field');
+
+    // Field coverage in activities
+    const requiredActFields = ['id', 'name', 'stage', 'price', 'provider', 'status', 'status_label', 'status_note', 'registration_type', 'registration_url', 'contact_email', 'button_label'];
+    for (const f of requiredActFields) {
+      assert(configContent.includes(`name: "${f}"`), `Missing activity field ${f} in config.yml`);
+    }
+  });
+
+  // Test 9: Extraescolares Exact JSON Data Preservation
+  test('extraescolares.json maintains all 18 activities with exact keys, nulls, and absence distinctions', () => {
+    const data = JSON.parse(fs.readFileSync(extraescolaresPath, 'utf8'));
+    assert.strictEqual(data.activities.length, 18, 'Expected 18 activities');
+
+    const fullActivities = ['arte', 'teatro-musical', 'musica-movemento', 'taekwondo', 'minichef'];
+    for (const id of fullActivities) {
+      const act = data.activities.find(a => a.id === id);
+      assert(act, `Activity ${id} not found`);
+      assert.strictEqual(act.status, 'full', `${id} must have status 'full'`);
+      assert.strictEqual(act.status_label, 'Completa', `${id} must have status_label 'Completa'`);
+      assert.strictEqual(act.registration_type, null, `${id} must have registration_type null`);
+      assert.strictEqual(act.registration_url, null, `${id} must have registration_url null`);
+      assert.strictEqual(act.button_label, null, `${id} must have button_label null`);
+    }
+
+    const partialAct = data.activities.find(a => a.id === 'multiaventura');
+    assert.strictEqual(partialAct.status, 'partial');
+    assert.strictEqual(partialAct.status_label, 'Parcialmente completa');
+    assert.strictEqual(partialAct.registration_type, 'google_form');
+
+    const ingles = data.activities.find(a => a.id === 'ingles');
+    assert.strictEqual(ingles.registration_type, 'pdf');
+    assert.strictEqual(ingles.contact_email, 'portobellow11@yahoo.es');
+
+    // Ensure contact_email is only present on ingles, absent on all others
+    for (const act of data.activities) {
+      if (act.id !== 'ingles') {
+        assert(!Object.prototype.hasOwnProperty.call(act, 'contact_email'), `Activity ${act.id} should not have contact_email property`);
+      }
+    }
+  });
+
   console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) {
     process.exit(1);
