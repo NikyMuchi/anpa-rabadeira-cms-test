@@ -84,9 +84,13 @@ layout: layouts/base.njk
 
     {# ===== 3. PASOS GUÍA COMEDOR ===== #}
     {% if steps and steps.length > 0 %}
-      <h2>PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)</h2>
-      {% if atriga_portal_url %}
-      <p>Un deles é a través da Axencia Tributaria de Galicia: <a href="{{ atriga_portal_url }}" target="_blank" rel="noopener noreferrer">Portal tributario ATRIGA</a>.</p>
+      {% if atriga_info %}
+        {{ atriga_info | md | safe }}
+      {% else %}
+        <h2>PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)</h2>
+        {% if atriga_portal_url %}
+        <p>Un deles é a través da Axencia Tributaria de Galicia: <a href="{{ atriga_portal_url }}" target="_blank" rel="noopener noreferrer">Portal tributario ATRIGA</a>.</p>
+        {% endif %}
       {% endif %}
 
       {% for st in steps %}
@@ -98,16 +102,20 @@ layout: layouts/base.njk
         {% endif %}
       {% endfor %}
 
-      {% if receipt_instructions %}
-        {{ receipt_instructions | md | safe }}
-      {% endif %}
+      {% if closing_info %}
+        {{ closing_info | md | safe }}
+      {% else %}
+        {% if receipt_instructions %}
+          {{ receipt_instructions | md | safe }}
+        {% endif %}
 
-      {% if other_methods_note %}
-        <p>{{ other_methods_note }}</p>
-      {% endif %}
+        {% if other_methods_note %}
+          <p>{{ other_methods_note }}</p>
+        {% endif %}
 
-      {% if closing_note %}
-        <p>{{ closing_note }}</p>
+        {% if closing_note %}
+          <p>{{ closing_note }}</p>
+        {% endif %}
       {% endif %}
     {% endif %}
 

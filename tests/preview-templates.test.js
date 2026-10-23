@@ -136,14 +136,14 @@ function runTests() {
   // Test 2: Comedor Preview without body field (Prevents Decap crash)
   test('Comedor preview executes safely without body field and does not invoke widgetFor("body")', () => {
     const comedorFieldNames = [
-      'title', 'image', 'image_alt', 'intro', 'atriga_portal_url',
-      'steps', 'receipt_instructions', 'other_methods_note', 'closing_note', 'documents'
+      'title', 'image', 'image_alt', 'intro', 'atriga_info',
+      'steps', 'closing_info', 'documents'
     ];
 
     const comedorData = {
       title: 'Pago Comedor',
       intro: 'Información sobre o pagamento do comedor.',
-      atriga_portal_url: 'https://ovt.atriga.gal',
+      atriga_info: '## PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)\n\nUn deles é a través da Axencia Tributaria de Galicia: [Portal tributario ATRIGA](https://ovt.atriga.gal).',
       steps: [
         { description: 'Paso 1: inicio', image: '/img/comedor/paso-1.png', image_alt: 'Paso 1' },
         { description: 'Paso 2: candado', image: '/img/comedor/paso-2.png', image_alt: 'Paso 2' },
@@ -157,9 +157,7 @@ function runTests() {
         { description: 'Paso 10: tarxeta bancaria', image: '/img/comedor/paso-10.png', image_alt: 'Paso 10' },
         { image: '/img/comedor/paso-11.png', image_alt: 'Paso 11' }
       ],
-      receipt_instructions: 'Unha vez feito o pago, envíase o xustificante a comedor.ceip.rabadeira@edu.xunta.gal',
-      other_methods_note: 'Outras formas de facer o pagamento presencialmente.',
-      closing_note: 'Esperamos que esta guía sexa de axuda.'
+      closing_info: 'Unha vez feito o pago, envíase o xustificante a [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal)'
     };
 
     const widgetCalls = [];
@@ -312,14 +310,14 @@ function runTests() {
   // Test 7: Exact Visual Sequence of Comedor Tutorial Content in Live Preview
   test('Comedor preview reproduces approved production content sequence (11 steps -> Paso 11 -> Receipt -> Other -> Closing)', () => {
     const comedorFieldNames = [
-      'title', 'image', 'image_alt', 'intro', 'atriga_portal_url',
-      'steps', 'receipt_instructions', 'other_methods_note', 'closing_note', 'documents'
+      'title', 'image', 'image_alt', 'intro', 'atriga_info',
+      'steps', 'closing_info', 'documents'
     ];
 
     const comedorData = {
       title: 'Pago Comedor',
       intro: 'Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento, os adxuntamos as diferentes vias nas que poderes facelo sen ter que ir ao centro. Tamén tendes [instruccións detalladas na web do centro](http://www.edu.xunta.gal/centros/ceiprabadeira/node/268).',
-      atriga_portal_url: 'https://ovt.atriga.gal',
+      atriga_info: '## PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)\n\nUn deles é a través da Axencia Tributaria de Galicia: [Portal tributario ATRIGA](https://ovt.atriga.gal).',
       steps: [
         { description: 'No apartado de CIDADÁNS, premes iniciar taxa', image: '/img/comedor/paso-1.png', image_alt: 'Paso 1 - Portal ATRIGA' },
         { description: 'Candado aberto é para o acceso libre ao servizo. Pechado se tedes certificado dixital', image: '/img/comedor/paso-2.png', image_alt: 'Paso 2 - Candados' },
@@ -333,9 +331,7 @@ function runTests() {
         { description: 'E aquí xa podes intruducir os datos da túa tarxeta bancaria e proceder ao pagamento:', image: '/img/comedor/paso-10.png', image_alt: 'Paso 10 - Datos da tarxeta' },
         { image: '/img/comedor/paso-11.png', image_alt: 'Paso 11 - Proceder ao pagamento' }
       ],
-      receipt_instructions: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.',
-      other_methods_note: 'Outras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.',
-      closing_note: 'Esperamos que esta guía sea de axuda para todos vós.'
+      closing_info: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.\n\nOutras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.\n\nEsperamos que esta guía sea de axuda para todos vós.'
     };
 
     const props = createDecapProps({

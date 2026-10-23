@@ -408,11 +408,9 @@ Para calquera dúbida ou cuestión, podes contactar con:
     const context = {
       title: 'Pago Comedor',
       intro: 'Para todas aquelas familias que dirixéronse ao ANPA coas dúbidas sobre os trámites para facer o pagamento, os adxuntamos as diferentes vias nas que poderes facelo sen ter que ir ao centro. Tamén tendes [instruccións detalladas na web do centro](http://www.edu.xunta.gal/centros/ceiprabadeira/node/268).',
-      atriga_portal_url: 'https://ovt.atriga.gal',
+      atriga_info: '## PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)\n\nUn deles é a través da Axencia Tributaria de Galicia: [Portal tributario ATRIGA](https://ovt.atriga.gal).',
       steps: steps,
-      receipt_instructions: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.',
-      other_methods_note: 'Outras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.',
-      closing_note: 'Esperamos que esta guía sea de axuda para todos vós.',
+      closing_info: 'Unha vez feito o pago, envíase o xustificante en pdf ou jpg o email [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal), indicando o nome e curso do alumno no asunto ou corpo do mensaxe para facilitar o trámite administrativo.\n\nOutras formas de facer o pagamento é presencialmente na oficina bancaria ou a través da plataforma Abalar.\n\nEsperamos que esta guía sea de axuda para todos vós.',
       documents: [
         { title: 'Guía de Pago ATRIGA (PDF)', file: '/docs/guia-atriga.pdf', description: 'Descarga en PDF' }
       ],
@@ -432,6 +430,22 @@ Para calquera dúbida ou cuestión, podes contactar con:
     assert(rendered.indexOf('/img/comedor/paso-11.png') < rendered.indexOf('mailto:comedor.ceip.rabadeira@edu.xunta.gal'), 'Screenshot 11 must appear before receipt instructions');
     assert(rendered.includes('Outras formas de facer o pagamento'));
     assert(rendered.includes('Guía de Pago ATRIGA (PDF)'));
+
+    // Backward-compatibility fallback test with legacy fields
+    const fallbackContext = {
+      title: 'Pago Comedor (Legacy)',
+      atriga_portal_url: 'https://ovt.atriga.gal',
+      steps: steps,
+      receipt_instructions: 'Unha vez feito o pago [comedor.ceip.rabadeira@edu.xunta.gal](mailto:comedor.ceip.rabadeira@edu.xunta.gal)',
+      other_methods_note: 'Outras formas de facer o pagamento.',
+      closing_note: 'Esperamos que esta guía sea de axuda.',
+      site: { name: 'ANPA Rabadeira' },
+      collections: { navPages: [] }
+    };
+    const fallbackRendered = env.render('layouts/page.njk', fallbackContext);
+    assert(fallbackRendered.includes('<h2>PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)</h2>'));
+    assert(fallbackRendered.includes('https://ovt.atriga.gal'));
+    assert(fallbackRendered.includes('mailto:comedor.ceip.rabadeira@edu.xunta.gal'));
 
     // Empty state test
     const emptyContext = {
