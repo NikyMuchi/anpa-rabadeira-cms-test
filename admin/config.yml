@@ -189,7 +189,13 @@ collections:
           - { label: "Título da páxina", name: "title", widget: "string" }
           - { label: "Imaxe destacada (opcional)", name: "image", widget: "image", required: false, hint: "Imaxe opcional de cabeceira da páxina" }
           - { label: "Texto alternativo da imaxe (Alt)", name: "image_alt", widget: "string", required: false }
-          - { label: "Texto introdutorio", name: "intro", widget: "text", required: false, hint: "Explicación xeral sobre o pagamento do comedor" }
+          - label: "Texto introdutorio"
+            name: "intro"
+            widget: "markdown"
+            required: false
+            buttons: ["bold", "italic", "link"]
+            modes: ["rich_text", "raw"]
+            hint: "Explicación xeral sobre o pagamento do comedor. Seleccione texto e use a icona 🔗 para crear ou editar ligazóns web ou emails."
           - { label: "Portal tributario ATRIGA (URL)", name: "atriga_portal_url", widget: "string", required: false, hint: "Ex: https://ovt.atriga.gal" }
           - label: "Pasos da guía ilustrada (11 pasos)"
             name: "steps"
@@ -200,7 +206,13 @@ collections:
               - { label: "Texto explicativo", name: "description", widget: "text", required: false, hint: "Texto e indicacións que acompañan a esta captura" }
               - { label: "Imaxe do paso", name: "image", widget: "image", required: false, hint: "Prema para subir ou substituír a captura (JPG ou PNG)" }
               - { label: "Descrición da imaxe (accesibilidade)", name: "image_alt", widget: "string", required: false, hint: "Breve descrición do que aparece na imaxe" }
-          - { label: "Instrucións de envío de xustificante", name: "receipt_instructions", widget: "text", required: false, hint: "Instrucións para enviar o xustificante por email" }
+          - label: "Instrucións de envío de xustificante"
+            name: "receipt_instructions"
+            widget: "markdown"
+            required: false
+            buttons: ["bold", "italic", "link"]
+            modes: ["rich_text", "raw"]
+            hint: "Instrucións para enviar o xustificante. Seleccione o enderezo de correo e use a icona 🔗 para configurar o enlace de email (ex: mailto:comedor.ceip.rabadeira@edu.xunta.gal)."
           - { label: "Outras formas de pago", name: "other_methods_note", widget: "text", required: false }
           - { label: "Nota final / peche", name: "closing_note", widget: "string", required: false }
           - label: "Documentos / PDF (opcional)"
