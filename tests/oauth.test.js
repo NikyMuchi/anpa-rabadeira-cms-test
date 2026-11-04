@@ -125,6 +125,7 @@ async function runOAuthTests() {
     assert(res.body.includes('"https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 1 in allowlist");
     assert(res.body.includes('"https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 7 in allowlist");
     assert(res.body.includes('"https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 17 in allowlist");
+    assert(res.body.includes('"https://deploy-preview-23--anpa-rabadeira-cms-test.netlify.app"'), "Missing PR 23 in allowlist");
     assert(!res.body.includes('"https://anpa-rabadeira.netlify.app"'), "Production domain must NOT be in sandbox allowlist");
 
     // Verify origin and source checks
@@ -147,16 +148,18 @@ async function runOAuthTests() {
       "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app",
-    ], "Extracted browser allowlist must contain exactly the 4 approved origins");
+      "https://deploy-preview-23--anpa-rabadeira-cms-test.netlify.app",
+    ], "Extracted browser allowlist must contain exactly the 5 approved origins");
   });
 
   // Test 8: Simulate receiveMessage client-side logic across all test cases
-  await asyncTest("Client-side receiveMessage accepts only the 4 exact origins and legitimate opener", () => {
+  await asyncTest("Client-side receiveMessage accepts only the 5 exact origins and legitimate opener", () => {
     const allowedOrigins = [
       "https://anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-1--anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-7--anpa-rabadeira-cms-test.netlify.app",
       "https://deploy-preview-17--anpa-rabadeira-cms-test.netlify.app",
+      "https://deploy-preview-23--anpa-rabadeira-cms-test.netlify.app",
     ];
 
     const mockOpener = {
@@ -191,8 +194,8 @@ async function runOAuthTests() {
     );
     assert.strictEqual(mockOpener.messagesSent[0].targetOrigin, "https://anpa-rabadeira-cms-test.netlify.app");
 
-    // 2. Exact Approved Deploy Previews (#1, #7, #17) -> ACCEPTED
-    for (const prNum of [1, 7, 17]) {
+    // 2. Exact Approved Deploy Previews (#1, #7, #17, #23) -> ACCEPTED
+    for (const prNum of [1, 7, 17, 23]) {
       mockOpener.messagesSent = [];
       const origin = `https://deploy-preview-${prNum}--anpa-rabadeira-cms-test.netlify.app`;
       assert.strictEqual(
@@ -205,7 +208,7 @@ async function runOAuthTests() {
 
     // --- NEGATIVE TEST CASES (Strictly Rejected) ---
 
-    // 3. Non-allowlisted Deploy Previews (#2, #99, etc.) -> REJECTED
+    // 3. Non-allowlisted Deploy Previews (#2, #8, #16, #18, #99, etc.) -> REJECTED
     for (const unwhitelistedPr of [2, 8, 16, 18, 99]) {
       assert.strictEqual(
         simulateReceiveMessage({ origin: `https://deploy-preview-${unwhitelistedPr}--anpa-rabadeira-cms-test.netlify.app`, source: mockOpener }, mockOpener),
