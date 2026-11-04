@@ -93,7 +93,7 @@ collections:
                 default: "available"
                 hint: "Indica se hai prazas dispoñibles: 'available', 'full' ou 'partial'. Controla os distintivos visuais na páxina"
               - { label: "Aviso de estado ou descrición curta", name: "status_note", widget: "string", required: false, hint: "Nota explicativa para a tarxeta (ex: 'Actividade completa. Non admite máis alumnado.' ou quendas dispoñibles)" }
-              - { label: "Etiqueta de estado", name: "status_label", widget: "string", required: false, hint: "Texto da etiqueta cando non está dispoñible (ex: 'Completa' ou 'Parcialmente completa'). Deixar baleiro se está dispoñible" }
+              - { label: "Etiqueta de estado", name: "status_label", widget: "string", required: false, hint: "Campo de compatibilidade de datos preservado. Atención: os distintivos visuais da web ('Completa' / 'Parcialmente completa') xéranse directamente a partir do campo 'Estado' anterior" }
               - { label: "Prezo / mes", name: "price", widget: "string", hint: "Prezo mensual amosado na tarxeta (ex: '22€ / mes'). Atención: este valor non actualiza o Cadro de tarifas inferior, mantense por separado" }
               - label: "Tipo de rexistro ou inscrición"
                 name: "registration_type"
