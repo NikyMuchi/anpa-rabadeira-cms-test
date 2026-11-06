@@ -222,6 +222,118 @@ function runTests() {
     }
   });
 
+  // Test 10: Extraescolares contact_email and id hints verification
+  test('admin/config.yml contains explicit Galician hints for contact_email and id uniqueness/renaming', () => {
+    const configContent = fs.readFileSync(configYmlPath, 'utf8');
+
+    // contact_email hint checks
+    assert(configContent.includes('Enderezo de correo opcional'), 'Missing contact_email hint opening');
+    assert(configContent.includes('Contactar por email'), 'Missing "Contactar por email" button reference in hint');
+    assert(configContent.includes('non envía correos de maneira automática'), 'Missing automatic email disclaimer in hint');
+
+    // id hint checks
+    assert(configContent.includes('Cambiar o nome da actividade non require cambiar o seu ID'), 'Missing renaming ID explanation in hint');
+    assert(configContent.includes('debe asignarlle un ID único'), 'Missing unique ID explanation in hint');
+  });
+
+  // Test 11: Extraescolares rendered template contact email, registration and status fidelity
+  test('extraescolares.njk rendered HTML displays secondary email button when valid and preserves all registration rules', () => {
+    const njkContent = fs.readFileSync(path.join(pagesDir, 'extraescolares.njk'), 'utf8');
+
+    // Check template logic in njk
+    assert(njkContent.includes('Contactar por email'), 'Missing "Contactar por email" button in template');
+    assert(njkContent.includes('mailto:'), 'Missing mailto: link generation in template');
+    assert(njkContent.includes('btn-action--secondary'), 'Missing btn-action--secondary class');
+    assert(njkContent.includes('activity-card__actions'), 'Missing activity-card__actions container');
+
+    // Email validation logic in template (non-empty, contains @, no whitespace)
+    assert(njkContent.includes("@' in act.contact_email"), 'Missing @ validation for email');
+    assert(njkContent.includes("not (' ' in act.contact_email.trim())"), 'Missing whitespace check for email');
+
+    // Live rendered site checks via Cheerio
+    const cheerio = require('cheerio');
+    const siteHtmlPath = path.join(rootDir, '_site', 'extraescolares', 'index.html');
+    if (fs.existsSync(siteHtmlPath)) {
+      const html = fs.readFileSync(siteHtmlPath, 'utf8');
+      const $ = cheerio.load(html);
+
+      // 1. Ingles has both registration PDF and contact email
+      const ingles = $('#act-ingles');
+      const inglesLinks = ingles.find('.btn-action');
+      assert.strictEqual(inglesLinks.length, 2, 'Ingles should have 2 action buttons');
+      assert.strictEqual(inglesLinks.eq(0).text().trim(), 'Ficha de inscrición (PDF)');
+      assert.strictEqual(inglesLinks.eq(0).attr('href'), '/docs/ficha-inscricion-ingles-2026-2027.pdf');
+      assert.strictEqual(inglesLinks.eq(1).text().trim(), 'Contactar por email');
+      assert.strictEqual(inglesLinks.eq(1).attr('href'), 'mailto:portobellow11%40yahoo.es');
+      assert(inglesLinks.eq(1).hasClass('btn-action--secondary'), 'Email button should have btn-action--secondary');
+
+      // 2. Arte is full with no email: 0 action buttons
+      const arte = $('#act-arte');
+      assert.strictEqual(arte.find('.btn-action').length, 0, 'Arte should have 0 action buttons');
+      assert.strictEqual(arte.find('.status-badge--full').text().trim(), 'Completa');
+
+      // 3. Baile moderno is available with registration but no email: 1 action button
+      const baile = $('#act-baile-moderno');
+      const baileLinks = baile.find('.btn-action');
+      assert.strictEqual(baileLinks.length, 1, 'Baile moderno should have 1 action button');
+      assert.strictEqual(baileLinks.eq(0).text().trim(), 'Inscrición');
+      assert.strictEqual(baileLinks.eq(0).attr('href'), 'https://forms.gle/cwrwMYrVDUxiJ2Fy5');
+    }
+
+    // Nunjucks unit test across edge cases (full activity with email, invalid emails, absent email)
+    const nunjucks = require('nunjucks');
+    const env = new nunjucks.Environment();
+
+    const snippet = `
+    {% set has_reg = (act.status != 'full' and act.registration_url) %}
+    {% set has_email = (act.contact_email and '@' in act.contact_email and not (' ' in act.contact_email.trim())) %}
+    {% if has_reg or has_email %}
+    <div class="activity-card__actions">
+      {% if has_reg %}
+      <a href="{{ act.registration_url }}" class="btn-action">{{ act.button_label or 'Inscrición' }}</a>
+      {% endif %}
+      {% if has_email %}
+      <a href="mailto:{{ act.contact_email | trim | urlencode }}" class="btn-action btn-action--secondary">Contactar por email</a>
+      {% endif %}
+    </div>
+    {% endif %}
+    `;
+
+    // Case A: Full activity with valid email -> Shows email button only, NO registration button, NO waiting list
+    const resA = env.renderString(snippet, {
+      act: { status: 'full', registration_url: 'https://form.example.com', contact_email: 'provider@example.com' }
+    });
+    assert(resA.includes('Contactar por email'), 'Full activity with email must show contact button');
+    assert(!resA.includes('btn-action">Inscrición'), 'Full activity with email must NOT show registration button');
+    assert(!resA.includes('waiting') && !resA.includes('agarda'), 'Must not include waiting-list wording');
+
+    // Case B: Available activity with empty/whitespace email -> Shows registration only, no email button
+    const resB = env.renderString(snippet, {
+      act: { status: 'available', registration_url: 'https://form.example.com', contact_email: '   ' }
+    });
+    assert(resB.includes('btn-action">Inscrición'), 'Available activity must show registration');
+    assert(!resB.includes('Contactar por email'), 'Whitespace email must NOT render contact button');
+
+    // Case C: Invalid email without @ -> Shows registration only, no email button
+    const resC = env.renderString(snippet, {
+      act: { status: 'available', registration_url: 'https://form.example.com', contact_email: 'notanemail' }
+    });
+    assert(resC.includes('btn-action">Inscrición'), 'Available activity must show registration');
+    assert(!resC.includes('Contactar por email'), 'Invalid email without @ must NOT render contact button');
+
+    // Case D: Email containing whitespace (e.g. multiple words or broken input) -> Rejected
+    const resD = env.renderString(snippet, {
+      act: { status: 'available', registration_url: 'https://form.example.com', contact_email: 'foo @bar.com' }
+    });
+    assert(!resD.includes('Contactar por email'), 'Email containing whitespace must NOT render contact button');
+
+    // Case E: Null/absent contact_email on full activity -> 0 buttons rendered
+    const resE = env.renderString(snippet, {
+      act: { status: 'full', registration_url: null, contact_email: null }
+    });
+    assert(!resE.includes('activity-card__actions'), 'Full activity with null email must render no actions container');
+  });
+
   console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) {
     process.exit(1);

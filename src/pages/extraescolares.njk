@@ -65,11 +65,20 @@ iconColor: "gold"
       {{ act.status_note }}
     </p>
     {% endif %}
-    {% if act.status != 'full' and act.registration_url %}
-    <div>
+    {% set has_reg = (act.status != 'full' and act.registration_url) %}
+    {% set has_email = (act.contact_email and '@' in act.contact_email and not (' ' in act.contact_email.trim())) %}
+    {% if has_reg or has_email %}
+    <div class="activity-card__actions">
+      {% if has_reg %}
       <a href="{{ act.registration_url }}" target="_blank" rel="noopener noreferrer" class="btn-action">
         {{ act.button_label or 'Inscrición' }}
       </a>
+      {% endif %}
+      {% if has_email %}
+      <a href="mailto:{{ act.contact_email | trim | urlencode }}" class="btn-action btn-action--secondary">
+        Contactar por email
+      </a>
+      {% endif %}
     </div>
     {% endif %}
   </article>

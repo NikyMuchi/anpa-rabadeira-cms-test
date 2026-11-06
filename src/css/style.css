@@ -1796,6 +1796,23 @@ a:hover {
   outline-offset: 2px;
 }
 
+.btn-action--secondary {
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-700) !important;
+  border: 1px solid var(--clr-gray-200);
+}
+
+.btn-action--secondary:hover {
+  background: var(--clr-gray-200);
+  color: var(--clr-gray-900) !important;
+  border-color: var(--clr-gray-300);
+}
+
+.btn-action--secondary:focus-visible {
+  outline: 2px solid var(--clr-gray-500);
+  outline-offset: 2px;
+}
+
 /* Action button spacing within content */
 .activity-btn,
 .post-content p:has(> .btn-action),
@@ -1973,6 +1990,22 @@ a:hover {
   background: #fffbeb;
   border-left-color: #f59e0b;
   color: #92400e;
+}
+
+.activity-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+@media (min-width: 600px) {
+  .activity-card__actions {
+    flex-direction: row;
+  }
+  .activity-card__actions .btn-action {
+    flex: 1;
+    width: auto;
+  }
 }
 
 /* Callout box for Membership & Non-Member Fees */

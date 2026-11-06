@@ -156,9 +156,21 @@
                 act.provider ? h('span', { className: 'activity-card__detail-item' }, h('strong', null, 'Imparte: '), act.provider) : null
               ),
               act.status_note ? h('p', { className: 'activity-card__note' }, act.status_note) : null,
-              act.status !== 'full' && act.registration_url ? h('div', null,
-                h('span', { className: 'btn-action' }, act.button_label || 'Inscrición')
-              ) : null
+              (() => {
+                const hasReg = act.status !== 'full' && act.registration_url;
+                const emailStr = typeof act.contact_email === 'string' ? act.contact_email.trim() : '';
+                const hasEmail = emailStr && emailStr.includes('@') && !emailStr.includes(' ');
+                if (!hasReg && !hasEmail) return null;
+
+                const actions = [];
+                if (hasReg) {
+                  actions.push(h('span', { key: 'reg', className: 'btn-action' }, act.button_label || 'Inscrición'));
+                }
+                if (hasEmail) {
+                  actions.push(h('span', { key: 'email', className: 'btn-action btn-action--secondary' }, 'Contactar por email'));
+                }
+                return h('div', { className: 'activity-card__actions' }, actions);
+              })()
             );
           })
         ),

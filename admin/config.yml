@@ -106,10 +106,10 @@ collections:
                 hint: "Modalidade de inscrición. Débese deixar baleiro se a actividade está completa"
               - { label: "Ligazón de inscrición ou información", name: "registration_url", widget: "string", required: false, hint: "Enderezo web do formulario de Google, ruta ao ficheiro PDF (/docs/...) ou ligazón externa" }
               - { label: "Texto do botón", name: "button_label", widget: "string", required: false, hint: "Texto do botón (ex: 'Inscrición', 'Ficha de inscrición (PDF)'). Se se deixa baleiro amosará 'Inscrición'" }
-              - { label: "Email de contacto", name: "contact_email", widget: "string", required: false, hint: "Correo de contacto para inscrición ou envío de fichas en PDF (ex: 'portobellow11@yahoo.es' en Inglés)" }
+              - { label: "Email de contacto", name: "contact_email", widget: "string", required: false, hint: "Enderezo de correo opcional (ex: 'portobellow11@yahoo.es'). Amosará un botón secundario de 'Contactar por email' na tarxeta da actividade; non envía correos de maneira automática" }
               - { label: "Etapa educativa", name: "stage", widget: "string", hint: "Cursos recomendados (ex: 'Infantil e Primaria', 'Primaria', 'Infantil')" }
               - { label: "Entidade / Monitor", name: "provider", widget: "string", required: false, hint: "Nome da entidade colaboradora ou monitor/a (ex: 'Sadanza', 'Judo Hércules', 'Portobello')" }
-              - { label: "Identificador (slug)", name: "id", widget: "string", hint: "Identificador técnico interno (ex: 'baile-moderno'). Usado para áncoras web. Non o modifique salvo necesidade estrita" }
+              - { label: "Identificador (slug)", name: "id", widget: "string", hint: "Identificador técnico interno (ex: 'baile-moderno'). Usado para as ligazóns internas e áncoras da páxina. Cambiar o nome da actividade non require cambiar o seu ID. Se engade unha nova actividade, debe asignarlle un ID único" }
           - label: "Cadro de tarifas e cotas"
             name: "pricing_table"
             widget: "list"
