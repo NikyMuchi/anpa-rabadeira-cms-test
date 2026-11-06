@@ -144,6 +144,79 @@
     }
   }
 
+  /**
+   * Creates a draft-aware getAsset resolver for Decap CMS ImageControl.
+   * Intercepts queries under /img/uploads/ and checks the repository path (src/img/uploads/...)
+   * where Decap CMS stores in-memory File/Blob assets and authenticated draft media.
+   */
+  function createDraftAwareGetAsset(originalGetAsset) {
+    return function (path, field) {
+      if (!path) return null;
+      if (typeof path === 'string') {
+        const trimmed = path.trim();
+        if (!trimmed) return null;
+        if (trimmed.startsWith('/img/uploads/') || trimmed.startsWith('img/uploads/') || trimmed.startsWith('src/img/uploads/')) {
+          const filename = trimmed.replace(/^\/?(src\/)?img\/uploads\//, '');
+          if (filename && typeof originalGetAsset === 'function') {
+            try {
+              const repoPath = 'src/img/uploads/' + filename;
+              const asset = originalGetAsset(repoPath, field);
+              if (asset) {
+                const urlStr = typeof asset.toString === 'function' ? asset.toString() : String(asset.url || '');
+                if (urlStr.startsWith('blob:') || urlStr.startsWith('data:') || asset.fileObj) {
+                  return asset;
+                }
+              }
+            } catch (e) {
+              // Ignore lookup error and fall through
+            }
+          }
+        }
+        return typeof originalGetAsset === 'function' ? originalGetAsset(trimmed, field) : trimmed;
+      }
+      return typeof originalGetAsset === 'function' ? originalGetAsset(path, field) : path;
+    };
+  }
+
+  /**
+   * Subclasses Decap CMS's built-in FileControl (ImageControl) directly.
+   * Preserves 100% of native lifecycle: controlID generation, shouldComponentUpdate,
+   * componentDidUpdate, mediaPaths, and onChange propagation.
+   * Provides draft-aware getAsset strictly during renderImages() for the thumbnail.
+   */
+  function createSubclassImageControl(BuiltinControl) {
+    if (!BuiltinControl || typeof BuiltinControl !== 'function') return null;
+
+    class SubclassImageControl extends BuiltinControl {
+      constructor(props) {
+        super(props);
+        const originalRenderImages = this.renderImages;
+        if (typeof originalRenderImages === 'function') {
+          this.renderImages = () => {
+            const originalGetAsset = this.props.getAsset;
+            const draftGetAsset = createDraftAwareGetAsset(originalGetAsset);
+            this._patchedProps = Object.assign({}, this.props, { getAsset: draftGetAsset });
+            try {
+              return originalRenderImages.call(this);
+            } finally {
+              this._patchedProps = null;
+            }
+          };
+        }
+      }
+
+      get props() {
+        return this._patchedProps || this._realProps;
+      }
+
+      set props(val) {
+        this._realProps = val;
+      }
+    }
+
+    return SubclassImageControl;
+  }
+
   function renderInlineMarkdown(str) {
     if (!str) return '';
     return str
@@ -522,6 +595,22 @@
     CMS.registerPreviewTemplate('inscripcion', PagePreview);
     CMS.registerPreviewTemplate('memoria', PagePreview);
     CMS.registerPreviewTemplate('consello_escolar', PagePreview);
+
+    // Subclass Image Control: extends Decap's built-in FileControl directly
+    // Preserves native controlID, mediaPaths, and onChange lifecycle while resolving draft thumbnails
+    if (typeof CMS.getWidget === 'function') {
+      try {
+        const existingImageWidget = CMS.getWidget('image');
+        if (existingImageWidget && existingImageWidget.control) {
+          const SubclassControl = createSubclassImageControl(existingImageWidget.control);
+          if (SubclassControl) {
+            CMS.registerWidget('image', SubclassControl, existingImageWidget.preview);
+          }
+        }
+      } catch (e) {
+        // Safe fallback if widget wrapping encounters an unexpected environment
+      }
+    }
   }
 
   if (typeof module !== 'undefined' && module.exports) {
@@ -531,6 +620,8 @@
       renderInlineMarkdown,
       formatMarkdown,
       resolveAsset,
+      createDraftAwareGetAsset,
+      createSubclassImageControl,
       PostPreview,
       ExtraescolaresPreview,
       PagePreview

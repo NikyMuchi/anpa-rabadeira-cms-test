@@ -14,7 +14,7 @@ const assert = require('assert');
 
 // Load preview-templates
 const previewTemplates = require('../admin/preview-templates.js');
-const { hasField, formatMarkdown, resolveAsset, PagePreview, PostPreview } = previewTemplates;
+const { hasField, formatMarkdown, resolveAsset, createDraftAwareGetAsset, createSubclassImageControl, PagePreview, PostPreview } = previewTemplates;
 
 function runTests() {
   let passed = 0;
@@ -614,6 +614,166 @@ function runTests() {
     assert.strictEqual(renderedImages[0], '/img/comedor/paso-1.png', 'Step 1 must preserve original screenshot');
     assert.strictEqual(renderedImages[1], '/img/comedor/paso-10.png', 'Step 10 must preserve original screenshot');
     assert.strictEqual(renderedImages[2], 'blob:https://deploy-preview-17.example.com/blob-step-11-jpg', 'Step 11 must render newly uploaded pending JPG blob URL');
+  });
+
+  // Test 14: createDraftAwareGetAsset resolves newly uploaded draft JPG and PNG media to in-memory Blob URLs
+  test('createDraftAwareGetAsset resolves newly uploaded draft JPG and PNG media to in-memory Blob URLs', () => {
+    const stagedAssets = {
+      'src/img/uploads/novas-foto.jpg': {
+        path: 'src/img/uploads/novas-foto.jpg',
+        url: 'blob:https://deploy-preview-17.example.com/blob-jpg-uuid',
+        fileObj: { name: 'novas-foto.jpg', type: 'image/jpeg' },
+        toString: () => 'blob:https://deploy-preview-17.example.com/blob-jpg-uuid'
+      },
+      'src/img/uploads/paso-11-updated.png': {
+        path: 'src/img/uploads/paso-11-updated.png',
+        url: 'blob:https://deploy-preview-17.example.com/blob-png-uuid',
+        fileObj: { name: 'paso-11-updated.png', type: 'image/png' },
+        toString: () => 'blob:https://deploy-preview-17.example.com/blob-png-uuid'
+      }
+    };
+
+    const mockOriginalGetAsset = (assetPath) => {
+      if (stagedAssets[assetPath]) return stagedAssets[assetPath];
+      return {
+        path: assetPath,
+        url: assetPath,
+        toString: () => assetPath
+      };
+    };
+
+    const resolver = createDraftAwareGetAsset(mockOriginalGetAsset);
+
+    // Newly uploaded JPG
+    const resolvedJpg = resolver('/img/uploads/novas-foto.jpg');
+    assert(resolvedJpg, 'Resolved JPG must not be null');
+    assert.strictEqual(resolvedJpg.toString(), 'blob:https://deploy-preview-17.example.com/blob-jpg-uuid', 'Draft JPG must resolve to Blob URL');
+
+    // Newly uploaded PNG
+    const resolvedPng = resolver('/img/uploads/paso-11-updated.png');
+    assert(resolvedPng, 'Resolved PNG must not be null');
+    assert.strictEqual(resolvedPng.toString(), 'blob:https://deploy-preview-17.example.com/blob-png-uuid', 'Draft PNG must resolve to Blob URL');
+
+    // Existing deployed image (charla-tea.png)
+    const existingDeployed = resolver('/img/uploads/charla-tea.png');
+    assert.strictEqual(existingDeployed.toString(), '/img/uploads/charla-tea.png', 'Existing deployed upload must resolve to public path');
+
+    // Existing Comedor tutorial screenshot (paso-1.png)
+    const existingScreenshot = resolver('/img/comedor/paso-1.png');
+    assert.strictEqual(existingScreenshot.toString(), '/img/comedor/paso-1.png', 'Existing Comedor screenshot must bypass normalization');
+  });
+
+  // Test 15: createSubclassImageControl inherits BuiltinControl properties and preserves controlID
+  test('createSubclassImageControl inherits BuiltinControl and initializes native controlID', () => {
+    class MockFileControl {
+      constructor(props) {
+        this.props = props;
+        this.controlID = 'test-control-id-123';
+        this.renderImages = () => ({ tag: 'img', src: this.props.value });
+      }
+      shouldComponentUpdate(nextProps) {
+        return this.props.value !== nextProps.value;
+      }
+    }
+
+    const SubclassControl = createSubclassImageControl(MockFileControl);
+    assert(SubclassControl, 'SubclassControl must be created');
+
+    const instance = new SubclassControl({ value: '/img/comedor/paso-11.png' });
+    assert.strictEqual(instance.controlID, 'test-control-id-123', 'SubclassControl must inherit native controlID');
+    assert.strictEqual(instance instanceof MockFileControl, true, 'SubclassControl must be instance of BuiltinControl');
+  });
+
+  // Test 16: createSubclassImageControl preserves shouldComponentUpdate, componentDidUpdate, and resolves draft thumbnail
+  test('createSubclassImageControl preserves mediaPaths lifecycle and resolves draft thumbnail', () => {
+    class MockFileControl {
+      constructor(props) {
+        this.props = props;
+        this.controlID = 'control-uuid-xyz';
+        this.renderImages = () => {
+          const { getAsset, value, field } = this.props;
+          const asset = getAsset ? getAsset(value, field) : null;
+          return { tag: 'img', src: asset ? asset.toString() : null };
+        };
+      }
+
+      shouldComponentUpdate(nextProps) {
+        if (this.props.value !== nextProps.value) return true;
+        const media = nextProps.mediaPaths ? nextProps.mediaPaths.get(this.controlID) : null;
+        return !(!media || nextProps.value === media);
+      }
+
+      componentDidUpdate() {
+        const { mediaPaths, value, onChange } = this.props;
+        const media = mediaPaths ? mediaPaths.get(this.controlID) : null;
+        if (media && media !== value) {
+          onChange(media);
+        }
+      }
+    }
+
+    const SubclassControl = createSubclassImageControl(MockFileControl);
+
+    const mediaStore = new Map();
+    let changedValue = null;
+    let currentValue = '/img/comedor/paso-11.png';
+
+    const stagedAssets = {
+      'src/img/uploads/new-photo.jpg': {
+        path: 'src/img/uploads/new-photo.jpg',
+        url: 'blob:https://app.test/blob-photo-xyz',
+        fileObj: { name: 'new-photo.jpg' },
+        toString: () => 'blob:https://app.test/blob-photo-xyz'
+      }
+    };
+
+    const initialProps = {
+      value: currentValue,
+      mediaPaths: mediaStore,
+      onChange: (v) => { changedValue = v; },
+      getAsset: (p) => stagedAssets[p] || { toString: () => p, url: p }
+    };
+
+    const instance = new SubclassControl(initialProps);
+
+    // Initial render displays existing image
+    const initialThumb = instance.renderImages();
+    assert.strictEqual(initialThumb.src, '/img/comedor/paso-11.png');
+
+    // Simulate user selecting media in Media Library
+    mediaStore.set(instance.controlID, '/img/uploads/new-photo.jpg');
+
+    const nextProps = {
+      value: currentValue,
+      mediaPaths: mediaStore,
+      onChange: (v) => { changedValue = v; },
+      getAsset: (p) => stagedAssets[p] || { toString: () => p, url: p }
+    };
+
+    // Verify shouldComponentUpdate returns TRUE (does NOT block wN update!)
+    const shouldUpdate = instance.shouldComponentUpdate(nextProps);
+    assert.strictEqual(shouldUpdate, true, 'shouldComponentUpdate must return true when mediaPaths updates');
+
+    // React sets props and triggers componentDidUpdate
+    instance.props = nextProps;
+    instance.componentDidUpdate();
+
+    // Verify onChange was called with the new uploaded image path
+    assert.strictEqual(changedValue, '/img/uploads/new-photo.jpg', 'onChange must be called with new image path');
+
+    // Entry state updates with new value
+    instance.props = Object.assign({}, nextProps, { value: changedValue });
+
+    // Verify the thumbnail re-renders with the in-memory Blob URL
+    const updatedThumb = instance.renderImages();
+    assert.strictEqual(updatedThumb.src, 'blob:https://app.test/blob-photo-xyz', 'Thumbnail must resolve to in-memory Blob URL');
+  });
+
+  // Test 17: createSubclassImageControl safely handles null, undefined, or missing BuiltinControl
+  test('createSubclassImageControl gracefully handles invalid input', () => {
+    assert.strictEqual(createSubclassImageControl(null), null);
+    assert.strictEqual(createSubclassImageControl(undefined), null);
+    assert.strictEqual(createSubclassImageControl('not-a-function'), null);
   });
 
   console.log(`\nPreview Templates Test Summary: ${passed} passed, ${failed} failed.\n`);
