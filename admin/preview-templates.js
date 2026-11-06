@@ -144,6 +144,57 @@
     }
   }
 
+  /**
+   * Creates a draft-aware getAsset resolver for Decap CMS ImageControl.
+   * Intercepts queries under /img/uploads/ and checks the repository path (src/img/uploads/...)
+   * where Decap CMS stores in-memory File/Blob assets and authenticated draft media.
+   */
+  function createDraftAwareGetAsset(originalGetAsset) {
+    return function (path, field) {
+      if (!path) return null;
+      if (typeof path === 'string') {
+        const trimmed = path.trim();
+        if (!trimmed) return null;
+        if (trimmed.startsWith('/img/uploads/') || trimmed.startsWith('img/uploads/') || trimmed.startsWith('src/img/uploads/')) {
+          const filename = trimmed.replace(/^\/?(src\/)?img\/uploads\//, '');
+          if (filename && typeof originalGetAsset === 'function') {
+            try {
+              const repoPath = 'src/img/uploads/' + filename;
+              const asset = originalGetAsset(repoPath, field);
+              if (asset) {
+                const urlStr = typeof asset.toString === 'function' ? asset.toString() : String(asset.url || '');
+                if (urlStr.startsWith('blob:') || urlStr.startsWith('data:') || asset.fileObj) {
+                  return asset;
+                }
+              }
+            } catch (e) {
+              // Ignore lookup error and fall through
+            }
+          }
+        }
+        return typeof originalGetAsset === 'function' ? originalGetAsset(trimmed, field) : trimmed;
+      }
+      return typeof originalGetAsset === 'function' ? originalGetAsset(path, field) : path;
+    };
+  }
+
+  /**
+   * Scoped ImageControl wrapper component that reuses 100% of Decap's built-in ImageControl
+   * but injects the draft-aware getAsset resolver into its props so the thumbnail renders correctly.
+   */
+  function createScopedImageControl(BuiltinControl) {
+    if (!BuiltinControl) return null;
+    return createClass({
+      render: function () {
+        const originalGetAsset = this.props.getAsset;
+        const patchedProps = Object.assign({}, this.props, {
+          getAsset: createDraftAwareGetAsset(originalGetAsset)
+        });
+        return h(BuiltinControl, patchedProps);
+      }
+    });
+  }
+
   function renderInlineMarkdown(str) {
     if (!str) return '';
     return str
@@ -522,6 +573,22 @@
     CMS.registerPreviewTemplate('inscripcion', PagePreview);
     CMS.registerPreviewTemplate('memoria', PagePreview);
     CMS.registerPreviewTemplate('consello_escolar', PagePreview);
+
+    // Scoped Image Control: wraps Decap's built-in ImageControl with draft-aware asset resolution
+    // Ensures left-hand form thumbnails resolve pending draft media without altering Media Library UI
+    if (typeof CMS.getWidget === 'function') {
+      try {
+        const existingImageWidget = CMS.getWidget('image');
+        if (existingImageWidget && existingImageWidget.control) {
+          const ScopedControl = createScopedImageControl(existingImageWidget.control);
+          if (ScopedControl) {
+            CMS.registerWidget('image', ScopedControl, existingImageWidget.preview);
+          }
+        }
+      } catch (e) {
+        // Safe fallback if widget wrapping encounters an unexpected environment
+      }
+    }
   }
 
   if (typeof module !== 'undefined' && module.exports) {
@@ -531,6 +598,8 @@
       renderInlineMarkdown,
       formatMarkdown,
       resolveAsset,
+      createDraftAwareGetAsset,
+      createScopedImageControl,
       PostPreview,
       ExtraescolaresPreview,
       PagePreview
