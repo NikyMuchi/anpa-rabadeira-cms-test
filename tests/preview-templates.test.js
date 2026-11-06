@@ -14,7 +14,7 @@ const assert = require('assert');
 
 // Load preview-templates
 const previewTemplates = require('../admin/preview-templates.js');
-const { hasField, formatMarkdown, PagePreview, PostPreview } = previewTemplates;
+const { hasField, formatMarkdown, resolveAsset, PagePreview, PostPreview } = previewTemplates;
 
 function runTests() {
   let passed = 0;
@@ -448,6 +448,172 @@ function runTests() {
     assert(posReceipt !== -1, 'Receipt instructions must exist');
     assert(posPaso11Img < posReceipt, 'Even with legacy data, Paso 11 screenshot must appear BEFORE receipt text');
     assert.strictEqual(fullText.split('Unha vez feito o pago').length - 1, 1, 'Receipt instructions must never be duplicated');
+  });
+
+  // Test 9: resolveAsset preserves existing /img/comedor/ screenshots without alteration
+  test('resolveAsset correctly resolves existing /img/comedor/ screenshots', () => {
+    const mockGetAsset = (path) => ({
+      path,
+      url: path,
+      toString: () => path
+    });
+
+    for (let i = 1; i <= 11; i++) {
+      const originalPath = `/img/comedor/paso-${i}.png`;
+      const resolved = resolveAsset(mockGetAsset, originalPath);
+      assert.strictEqual(resolved.toString(), originalPath, `Step ${i} original screenshot must resolve to ${originalPath}`);
+    }
+  });
+
+  // Test 10: resolveAsset normalizes /img/uploads/ JPG and PNG to find in-memory Blob assets
+  test('resolveAsset normalizes /img/uploads/ JPG and PNG to match in-memory Blob assets', () => {
+    // Simulating Decap CMS Redux store state.medias containing pending assets keyed by repo path
+    const inMemoryMedias = {
+      'src/img/uploads/test-comedor-b2-niky.jpg': {
+        path: 'src/img/uploads/test-comedor-b2-niky.jpg',
+        url: 'blob:https://deploy-preview-17.example.com/mock-blob-jpg-uuid',
+        fileObj: { name: 'test-comedor-b2-niky.jpg', type: 'image/jpeg' },
+        toString: () => 'blob:https://deploy-preview-17.example.com/mock-blob-jpg-uuid'
+      },
+      'src/img/uploads/new-screenshot.png': {
+        path: 'src/img/uploads/new-screenshot.png',
+        url: 'blob:https://deploy-preview-17.example.com/mock-blob-png-uuid',
+        fileObj: { name: 'new-screenshot.png', type: 'image/png' },
+        toString: () => 'blob:https://deploy-preview-17.example.com/mock-blob-png-uuid'
+      }
+    };
+
+    const mockGetAsset = (assetPath) => {
+      if (inMemoryMedias[assetPath]) {
+        return inMemoryMedias[assetPath];
+      }
+      return {
+        path: assetPath,
+        url: assetPath,
+        toString: () => assetPath
+      };
+    };
+
+    // JPG test
+    const jpgPath = '/img/uploads/test-comedor-b2-niky.jpg';
+    const resolvedJpg = resolveAsset(mockGetAsset, jpgPath);
+    assert(resolvedJpg, 'Resolved JPG asset must not be null');
+    assert.strictEqual(resolvedJpg.toString(), 'blob:https://deploy-preview-17.example.com/mock-blob-jpg-uuid', 'Pending JPG must resolve to in-memory Blob URL');
+
+    // PNG test
+    const pngPath = '/img/uploads/new-screenshot.png';
+    const resolvedPng = resolveAsset(mockGetAsset, pngPath);
+    assert(resolvedPng, 'Resolved PNG asset must not be null');
+    assert.strictEqual(resolvedPng.toString(), 'blob:https://deploy-preview-17.example.com/mock-blob-png-uuid', 'Pending PNG must resolve to in-memory Blob URL');
+
+    // Relative img/uploads without leading slash
+    const relativeJpg = resolveAsset(mockGetAsset, 'img/uploads/test-comedor-b2-niky.jpg');
+    assert.strictEqual(relativeJpg.toString(), 'blob:https://deploy-preview-17.example.com/mock-blob-jpg-uuid', 'Relative img/uploads/ path must also resolve');
+  });
+
+  // Test 11: resolveAsset gracefully falls back to public path when uploaded media is not in-memory
+  test('resolveAsset gracefully falls back to public path when uploaded media is not in-memory', () => {
+    const mockGetAsset = (assetPath) => ({
+      path: assetPath,
+      url: assetPath,
+      toString: () => assetPath
+    });
+
+    const publishedPath = '/img/uploads/published-earlier.jpg';
+    const resolved = resolveAsset(mockGetAsset, publishedPath);
+    assert.strictEqual(resolved.toString(), publishedPath, 'Published upload must fall back to public path, never leaking raw repo prefix');
+  });
+
+  // Test 12: resolveAsset gracefully handles null, empty, whitespace, external URLs, and throw exceptions
+  test('resolveAsset handles null, empty, whitespace, external URLs, and exceptions safely', () => {
+    const mockGetAsset = (path) => ({ toString: () => path });
+
+    assert.strictEqual(resolveAsset(mockGetAsset, null), null);
+    assert.strictEqual(resolveAsset(mockGetAsset, undefined), null);
+    assert.strictEqual(resolveAsset(mockGetAsset, ''), null);
+    assert.strictEqual(resolveAsset(mockGetAsset, '   '), null);
+
+    // External URLs
+    const external = 'https://example.com/image.png';
+    assert.strictEqual(resolveAsset(mockGetAsset, external), external);
+
+    const blobUrl = 'blob:http://localhost/123';
+    assert.strictEqual(resolveAsset(mockGetAsset, blobUrl), blobUrl);
+
+    // If getAsset throws
+    const throwingGetAsset = () => { throw new Error('Decap getAsset internal failure'); };
+    assert.doesNotThrow(() => {
+      const fallback = resolveAsset(throwingGetAsset, '/img/comedor/paso-1.png');
+      assert.strictEqual(fallback, '/img/comedor/paso-1.png');
+    });
+  });
+
+  // Test 13: PagePreview renders pending in-memory media in Comedor tutorial steps
+  test('PagePreview renders pending in-memory JPG/PNG media in Comedor tutorial steps while preserving existing steps', () => {
+    const inMemoryMedias = {
+      'src/img/uploads/new-step-11.jpg': {
+        path: 'src/img/uploads/new-step-11.jpg',
+        url: 'blob:https://deploy-preview-17.example.com/blob-step-11-jpg',
+        fileObj: { name: 'new-step-11.jpg', type: 'image/jpeg' },
+        toString: () => 'blob:https://deploy-preview-17.example.com/blob-step-11-jpg'
+      }
+    };
+
+    const mockGetAsset = (assetPath) => {
+      if (inMemoryMedias[assetPath]) {
+        return inMemoryMedias[assetPath];
+      }
+      return {
+        path: assetPath,
+        url: assetPath,
+        toString: () => assetPath
+      };
+    };
+
+    const stepsData = [
+      { description: 'Paso 1', image: '/img/comedor/paso-1.png' },
+      { description: 'Paso 10', image: '/img/comedor/paso-10.png' },
+      { description: 'Paso 11 con nova imaxe JPG', image: '/img/uploads/new-step-11.jpg' }
+    ];
+
+    const fields = createImmutableFields(['title', 'steps', 'atriga_info', 'closing_info']);
+    const props = {
+      entry: createMockEntry({
+        title: 'Pago Comedor',
+        steps: stepsData,
+        atriga_info: 'Información ATRIGA',
+        closing_info: 'Información final'
+      }),
+      fields,
+      collection: {
+        get: (prop) => (prop === 'fields' ? fields : undefined)
+      },
+      getAsset: mockGetAsset,
+      widgetFor: () => null
+    };
+
+    const component = new PagePreview(props);
+    const vdom = component.render();
+
+    function findImages(node) {
+      const imgs = [];
+      if (!node) return imgs;
+      if (node.tag === 'img' && node.props && node.props.src) imgs.push(node.props.src);
+      if (node.children) {
+        if (Array.isArray(node.children)) {
+          for (const c of node.children) imgs.push(...findImages(c));
+        } else if (typeof node.children === 'object') {
+          imgs.push(...findImages(node.children));
+        }
+      }
+      return imgs;
+    }
+
+    const renderedImages = findImages(vdom);
+    assert.strictEqual(renderedImages.length, 3, 'All 3 steps must render an image');
+    assert.strictEqual(renderedImages[0], '/img/comedor/paso-1.png', 'Step 1 must preserve original screenshot');
+    assert.strictEqual(renderedImages[1], '/img/comedor/paso-10.png', 'Step 10 must preserve original screenshot');
+    assert.strictEqual(renderedImages[2], 'blob:https://deploy-preview-17.example.com/blob-step-11-jpg', 'Step 11 must render newly uploaded pending JPG blob URL');
   });
 
   console.log(`\nPreview Templates Test Summary: ${passed} passed, ${failed} failed.\n`);
