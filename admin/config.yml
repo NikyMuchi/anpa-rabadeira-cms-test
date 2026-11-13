@@ -157,6 +157,8 @@ collections:
                   - { label: "Título", name: "title", widget: "string" }
                   - { label: "Texto introdutorio", name: "intro", widget: "text" }
                   - { label: "Puntos / Letras", name: "points", widget: "list" }
+          - { label: "Imaxe Plan Corresponsables (opcional)", name: "corresponsables_image", widget: "image", required: false, hint: "Imaxe oficial de pé de páxina (ex: Plan Corresponsables). Se non se especifica ningunha imaxe, amosarase a imaxe predeterminada (/img/extraescolares-corresponsables.jpg)" }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "corresponsables_image_alt", widget: "string", required: false, hint: "Texto descritivo de accesibilidade para a imaxe (predeterminado: 'Plan Corresponsables - Xunta de Galicia')" }
 
   # ===== 3. PÁXINAS DE INFORMACIÓN (CAMPOS ESTRUTURADOS E BLOQUES FLEXIBLES) =====
   - name: "pages"

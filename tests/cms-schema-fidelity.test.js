@@ -334,6 +334,50 @@ function runTests() {
     assert(!resE.includes('activity-card__actions'), 'Full activity with null email must render no actions container');
   });
 
+  // Test 12: Extraescolares Live Preview template completes conditions, coexistence, and corresponsables image
+  test('admin/preview-templates.js ExtraescolaresPreview renders general_conditions, coexistence_articles, and corresponsables image', () => {
+    const previewContent = fs.readFileSync(path.join(rootDir, 'admin', 'preview-templates.js'), 'utf8');
+
+    // Section header
+    assert(previewContent.includes('Condicións xerais e réxime de convivencia'), 'Missing conditions and coexistence header in ExtraescolaresPreview');
+
+    // Accordions
+    assert(previewContent.includes('conditions-accordion'), 'Missing conditions-accordion class in ExtraescolaresPreview');
+    assert(previewContent.includes('Condicións xerais do servizo de actividades extraescolares'), 'Missing general conditions summary');
+    assert(previewContent.includes('coexistence.title || \'Marco Legal de Convivencia (Lei 4/2011)\''), 'Missing coexistence summary');
+
+    // Fields coverage in general_conditions preview
+    assert(previewContent.includes('cond.paragraphs'), 'Missing paragraphs support in preview');
+    assert(previewContent.includes('cond.options'), 'Missing options support in preview');
+    assert(previewContent.includes('cond.extra_text'), 'Missing extra_text support in preview');
+    assert(previewContent.includes('cond.subheading'), 'Missing subheading support in preview');
+    assert(previewContent.includes('cond.sub_items'), 'Missing sub_items support in preview');
+    assert(previewContent.includes('cond.statement'), 'Missing statement support in preview');
+
+    // Fields coverage in coexistence preview
+    assert(previewContent.includes('article_65'), 'Missing article_65 support in preview');
+    assert(previewContent.includes('article_66'), 'Missing article_66 support in preview');
+
+    // Corresponsables image
+    assert(previewContent.includes('corresponsables_image'), 'Missing corresponsables_image handling in preview');
+    assert(previewContent.includes('/img/extraescolares-corresponsables.jpg'), 'Missing fallback image path in preview');
+    assert(previewContent.includes('Plan Corresponsables - Xunta de Galicia'), 'Missing fallback alt text in preview');
+  });
+
+  // Test 13: Corresponsables image fields in config.yml and template fallback behavior
+  test('admin/config.yml exposes corresponsables image fields and public template preserves default fallback', () => {
+    const configContent = fs.readFileSync(configYmlPath, 'utf8');
+    const njkContent = fs.readFileSync(path.join(pagesDir, 'extraescolares.njk'), 'utf8');
+
+    // config.yml field coverage
+    assert(configContent.includes('name: "corresponsables_image"'), 'Missing corresponsables_image field in config.yml');
+    assert(configContent.includes('name: "corresponsables_image_alt"'), 'Missing corresponsables_image_alt field in config.yml');
+
+    // extraescolares.njk fallback logic
+    assert(njkContent.includes("extraescolares.corresponsables_image or '/img/extraescolares-corresponsables.jpg'"), 'Missing fallback image in extraescolares.njk');
+    assert(njkContent.includes("extraescolares.corresponsables_image_alt or 'Plan Corresponsables - Xunta de Galicia'"), 'Missing fallback alt in extraescolares.njk');
+  });
+
   console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) {
     process.exit(1);

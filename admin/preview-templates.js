@@ -106,6 +106,12 @@
       const activities = data.activities || [];
       const membership = data.membership || {};
       const pricingTable = data.pricing_table || [];
+      const generalConditions = data.general_conditions || [];
+      const coexistence = data.coexistence_articles || null;
+      const corresponsablesRaw = data.corresponsables_image;
+      const corresponsablesAsset = corresponsablesRaw ? (this.props.getAsset ? this.props.getAsset(corresponsablesRaw) : corresponsablesRaw) : '/img/extraescolares-corresponsables.jpg';
+      const corresponsablesSrc = (corresponsablesAsset && typeof corresponsablesAsset.toString === 'function') ? corresponsablesAsset.toString() : (corresponsablesAsset || '/img/extraescolares-corresponsables.jpg');
+      const corresponsablesAlt = (typeof data.corresponsables_image_alt === 'string' && data.corresponsables_image_alt.trim()) ? data.corresponsables_image_alt : 'Plan Corresponsables - Xunta de Galicia';
 
       return h('div', { className: 'preview-root container' },
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, `Actividades Extraescolares ${academicYear}`),
@@ -178,6 +184,11 @@
         // Cadro de tarifas
         pricingTable.length > 0 ? h('div', { style: { marginTop: '2.5rem' } },
           h('h2', null, `Cadro de tarifas e cotas (${academicYear})`),
+          h('p', null,
+            'É necesaria a alta como socio/a da ANPA para acceder a estas tarifas. As actividades de carácter xeral teñen un prezo de ',
+            h('strong', null, '22 € / 2 horas semanais'),
+            ', agás aquelas con custos específicos de material ou monitores homologados.'
+          ),
           h('div', { className: 'pricing-table-container' },
             h('table', { className: 'pricing-table' },
               h('thead', null,
@@ -198,6 +209,94 @@
               )
             )
           )
+        ) : null,
+
+        // Condicións xerais e réxime de convivencia
+        (generalConditions.length > 0 || coexistence) ? h('div', { style: { marginTop: '2.5rem' } },
+          h('h2', null, 'Condicións xerais e réxime de convivencia'),
+
+          // Acordeón 1: Condicións xerais do servizo
+          generalConditions.length > 0 ? h('details', { className: 'conditions-accordion' },
+            h('summary', null, 'Condicións xerais do servizo de actividades extraescolares'),
+            h('div', { className: 'conditions-accordion__content' },
+              h('ol', null,
+                generalConditions.map((cond, idx) => {
+                  const items = [];
+                  if (cond.title) {
+                    items.push(h('strong', { key: 'title' }, `${cond.title}: `));
+                  }
+
+                  if (Array.isArray(cond.paragraphs) && cond.paragraphs.length > 0) {
+                    cond.paragraphs.forEach((p, pIdx) => {
+                      if (pIdx === 0) {
+                        items.push(p);
+                      } else {
+                        items.push(h('p', { key: `p-${pIdx}`, className: 'conditions-subtext' }, p));
+                      }
+                    });
+                  } else if (cond.text) {
+                    items.push(cond.text);
+                  }
+
+                  if (Array.isArray(cond.options) && cond.options.length > 0) {
+                    items.push(h('ul', { key: 'opts', className: 'conditions-options' },
+                      cond.options.map((opt, oIdx) => h('li', { key: oIdx }, opt))
+                    ));
+                  }
+
+                  if (cond.extra_text) {
+                    items.push(h('p', { key: 'extra', className: 'conditions-extra-text' }, cond.extra_text));
+                  }
+
+                  if (cond.subheading) {
+                    items.push(h('p', { key: 'subhead', className: 'conditions-subheading' },
+                      h('strong', null, cond.subheading)
+                    ));
+                  }
+
+                  if (Array.isArray(cond.sub_items) && cond.sub_items.length > 0) {
+                    items.push(h('ul', { key: 'subitems', className: 'conditions-sub-items' },
+                      cond.sub_items.map((sub, sIdx) => h('li', { key: sIdx }, sub))
+                    ));
+                  }
+
+                  if (cond.statement) {
+                    items.push(h('p', { key: 'statement', className: 'conditions-statement' },
+                      h('strong', null, cond.statement)
+                    ));
+                  }
+
+                  return h('li', { key: cond.number || idx }, items);
+                })
+              )
+            )
+          ) : null,
+
+          // Acordeón 2: Marco Legal de Convivencia
+          coexistence ? h('details', { className: 'conditions-accordion' },
+            h('summary', null, coexistence.title || 'Marco Legal de Convivencia (Lei 4/2011)'),
+            h('div', { className: 'conditions-accordion__content' },
+              coexistence.article_65 ? h('div', null,
+                coexistence.article_65.title ? h('h4', null, coexistence.article_65.title) : null,
+                coexistence.article_65.intro ? h('p', null, coexistence.article_65.intro) : null,
+                Array.isArray(coexistence.article_65.points) && coexistence.article_65.points.length > 0 ? h('ul', null,
+                  coexistence.article_65.points.map((pt, pIdx) => h('li', { key: pIdx }, pt))
+                ) : null
+              ) : null,
+              coexistence.article_66 ? h('div', null,
+                coexistence.article_66.title ? h('h4', null, coexistence.article_66.title) : null,
+                coexistence.article_66.intro ? h('p', null, coexistence.article_66.intro) : null,
+                Array.isArray(coexistence.article_66.points) && coexistence.article_66.points.length > 0 ? h('ul', null,
+                  coexistence.article_66.points.map((pt, pIdx) => h('li', { key: pIdx }, pt))
+                ) : null
+              ) : null
+            )
+          ) : null
+        ) : null,
+
+        // Imaxe Plan Corresponsables
+        corresponsablesSrc ? h('p', { style: { marginTop: '2rem' } },
+          h('img', { src: corresponsablesSrc, alt: corresponsablesAlt, style: { maxWidth: '100%', height: 'auto', borderRadius: '4px' } })
         ) : null
       );
     }
