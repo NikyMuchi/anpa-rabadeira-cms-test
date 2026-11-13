@@ -161,6 +161,223 @@ function runTests() {
     assert(comedor.includes('https://ovt.atriga.gal'), 'Missing ATRIGA portal in comedor.md');
   });
 
+  // Test 8: Extraescolares Editor Simplification & Preservation Fidelity
+  test('admin/config.yml Extraescolares editor features collapsed lists, clear hints, and exact status options', () => {
+    const configContent = fs.readFileSync(configYmlPath, 'utf8');
+
+    // Collapsed lists
+    assert(configContent.includes('name: "activities"') && configContent.includes('collapsed: true'), 'activities list should have collapsed: true');
+    assert(configContent.includes('name: "pricing_table"') && configContent.includes('collapsed: true'), 'pricing_table should have collapsed: true');
+    assert(configContent.includes('name: "general_conditions"') && configContent.includes('collapsed: true'), 'general_conditions should have collapsed: true');
+
+    // Status options fidelity: available, full, partial - no invented waiting list
+    assert(configContent.includes('value: "available"'), 'Missing available status option');
+    assert(configContent.includes('value: "full"'), 'Missing full status option');
+    assert(configContent.includes('value: "partial"'), 'Missing partial status option');
+    assert(!configContent.includes('waiting_list') && !configContent.includes('lista_agarda') && !configContent.includes('lista de agarda'), 'Must not invent a waiting-list feature');
+
+    // Clarification hints
+    assert(configContent.includes('non se actualiza automaticamente'), 'Missing timetable static image hint');
+    assert(configContent.includes('mantense de forma independente e separada dos prezos') || configContent.includes('mantense por separado') || configContent.includes('mantense de xeito independente'), 'Missing price/pricing_table separation hint');
+    assert(configContent.includes('Identificador técnico interno (ex: \'baile-moderno\')'), 'Missing id technical slug hint');
+    assert(configContent.includes('status_label'), 'Missing status_label field');
+
+    // Field coverage in activities
+    const requiredActFields = ['id', 'name', 'stage', 'price', 'provider', 'status', 'status_label', 'status_note', 'registration_type', 'registration_url', 'contact_email', 'button_label'];
+    for (const f of requiredActFields) {
+      assert(configContent.includes(`name: "${f}"`), `Missing activity field ${f} in config.yml`);
+    }
+  });
+
+  // Test 9: Extraescolares Exact JSON Data Preservation
+  test('extraescolares.json maintains all 18 activities with exact keys, nulls, and absence distinctions', () => {
+    const data = JSON.parse(fs.readFileSync(extraescolaresPath, 'utf8'));
+    assert.strictEqual(data.activities.length, 18, 'Expected 18 activities');
+
+    const fullActivities = ['arte', 'teatro-musical', 'musica-movemento', 'taekwondo', 'minichef'];
+    for (const id of fullActivities) {
+      const act = data.activities.find(a => a.id === id);
+      assert(act, `Activity ${id} not found`);
+      assert.strictEqual(act.status, 'full', `${id} must have status 'full'`);
+      assert.strictEqual(act.status_label, 'Completa', `${id} must have status_label 'Completa'`);
+      assert.strictEqual(act.registration_type, null, `${id} must have registration_type null`);
+      assert.strictEqual(act.registration_url, null, `${id} must have registration_url null`);
+      assert.strictEqual(act.button_label, null, `${id} must have button_label null`);
+    }
+
+    const partialAct = data.activities.find(a => a.id === 'multiaventura');
+    assert.strictEqual(partialAct.status, 'partial');
+    assert.strictEqual(partialAct.status_label, 'Parcialmente completa');
+    assert.strictEqual(partialAct.registration_type, 'google_form');
+
+    const ingles = data.activities.find(a => a.id === 'ingles');
+    assert.strictEqual(ingles.registration_type, 'pdf');
+    assert.strictEqual(ingles.contact_email, 'portobellow11@yahoo.es');
+
+    // Ensure contact_email is only present on ingles, absent on all others
+    for (const act of data.activities) {
+      if (act.id !== 'ingles') {
+        assert(!Object.prototype.hasOwnProperty.call(act, 'contact_email'), `Activity ${act.id} should not have contact_email property`);
+      }
+    }
+  });
+
+  // Test 10: Extraescolares contact_email and id hints verification
+  test('admin/config.yml contains explicit Galician hints for contact_email and id uniqueness/renaming', () => {
+    const configContent = fs.readFileSync(configYmlPath, 'utf8');
+
+    // contact_email hint checks
+    assert(configContent.includes('Enderezo de correo opcional'), 'Missing contact_email hint opening');
+    assert(configContent.includes('Contactar por email'), 'Missing "Contactar por email" button reference in hint');
+    assert(configContent.includes('non envía correos de maneira automática'), 'Missing automatic email disclaimer in hint');
+
+    // id hint checks
+    assert(configContent.includes('Cambiar o nome da actividade non require cambiar o seu ID'), 'Missing renaming ID explanation in hint');
+    assert(configContent.includes('debe asignarlle un ID único'), 'Missing unique ID explanation in hint');
+  });
+
+  // Test 11: Extraescolares rendered template contact email, registration and status fidelity
+  test('extraescolares.njk rendered HTML displays secondary email button when valid and preserves all registration rules', () => {
+    const njkContent = fs.readFileSync(path.join(pagesDir, 'extraescolares.njk'), 'utf8');
+
+    // Check template logic in njk
+    assert(njkContent.includes('Contactar por email'), 'Missing "Contactar por email" button in template');
+    assert(njkContent.includes('mailto:'), 'Missing mailto: link generation in template');
+    assert(njkContent.includes('btn-action--secondary'), 'Missing btn-action--secondary class');
+    assert(njkContent.includes('activity-card__actions'), 'Missing activity-card__actions container');
+
+    // Email validation logic in template (non-empty, contains @, no whitespace)
+    assert(njkContent.includes("@' in act.contact_email"), 'Missing @ validation for email');
+    assert(njkContent.includes("not (' ' in act.contact_email.trim())"), 'Missing whitespace check for email');
+
+    // Live rendered site checks via Cheerio
+    const cheerio = require('cheerio');
+    const siteHtmlPath = path.join(rootDir, '_site', 'extraescolares', 'index.html');
+    if (fs.existsSync(siteHtmlPath)) {
+      const html = fs.readFileSync(siteHtmlPath, 'utf8');
+      const $ = cheerio.load(html);
+
+      // 1. Ingles has both registration PDF and contact email
+      const ingles = $('#act-ingles');
+      const inglesLinks = ingles.find('.btn-action');
+      assert.strictEqual(inglesLinks.length, 2, 'Ingles should have 2 action buttons');
+      assert.strictEqual(inglesLinks.eq(0).text().trim(), 'Ficha de inscrición (PDF)');
+      assert.strictEqual(inglesLinks.eq(0).attr('href'), '/docs/ficha-inscricion-ingles-2026-2027.pdf');
+      assert.strictEqual(inglesLinks.eq(1).text().trim(), 'Contactar por email');
+      assert.strictEqual(inglesLinks.eq(1).attr('href'), 'mailto:portobellow11%40yahoo.es');
+      assert(inglesLinks.eq(1).hasClass('btn-action--secondary'), 'Email button should have btn-action--secondary');
+
+      // 2. Arte is full with no email: 0 action buttons
+      const arte = $('#act-arte');
+      assert.strictEqual(arte.find('.btn-action').length, 0, 'Arte should have 0 action buttons');
+      assert.strictEqual(arte.find('.status-badge--full').text().trim(), 'Completa');
+
+      // 3. Baile moderno is available with registration but no email: 1 action button
+      const baile = $('#act-baile-moderno');
+      const baileLinks = baile.find('.btn-action');
+      assert.strictEqual(baileLinks.length, 1, 'Baile moderno should have 1 action button');
+      assert.strictEqual(baileLinks.eq(0).text().trim(), 'Inscrición');
+      assert.strictEqual(baileLinks.eq(0).attr('href'), 'https://forms.gle/cwrwMYrVDUxiJ2Fy5');
+    }
+
+    // Nunjucks unit test across edge cases (full activity with email, invalid emails, absent email)
+    const nunjucks = require('nunjucks');
+    const env = new nunjucks.Environment();
+
+    const snippet = `
+    {% set has_reg = (act.status != 'full' and act.registration_url) %}
+    {% set has_email = (act.contact_email and '@' in act.contact_email and not (' ' in act.contact_email.trim())) %}
+    {% if has_reg or has_email %}
+    <div class="activity-card__actions">
+      {% if has_reg %}
+      <a href="{{ act.registration_url }}" class="btn-action">{{ act.button_label or 'Inscrición' }}</a>
+      {% endif %}
+      {% if has_email %}
+      <a href="mailto:{{ act.contact_email | trim | urlencode }}" class="btn-action btn-action--secondary">Contactar por email</a>
+      {% endif %}
+    </div>
+    {% endif %}
+    `;
+
+    // Case A: Full activity with valid email -> Shows email button only, NO registration button, NO waiting list
+    const resA = env.renderString(snippet, {
+      act: { status: 'full', registration_url: 'https://form.example.com', contact_email: 'provider@example.com' }
+    });
+    assert(resA.includes('Contactar por email'), 'Full activity with email must show contact button');
+    assert(!resA.includes('btn-action">Inscrición'), 'Full activity with email must NOT show registration button');
+    assert(!resA.includes('waiting') && !resA.includes('agarda'), 'Must not include waiting-list wording');
+
+    // Case B: Available activity with empty/whitespace email -> Shows registration only, no email button
+    const resB = env.renderString(snippet, {
+      act: { status: 'available', registration_url: 'https://form.example.com', contact_email: '   ' }
+    });
+    assert(resB.includes('btn-action">Inscrición'), 'Available activity must show registration');
+    assert(!resB.includes('Contactar por email'), 'Whitespace email must NOT render contact button');
+
+    // Case C: Invalid email without @ -> Shows registration only, no email button
+    const resC = env.renderString(snippet, {
+      act: { status: 'available', registration_url: 'https://form.example.com', contact_email: 'notanemail' }
+    });
+    assert(resC.includes('btn-action">Inscrición'), 'Available activity must show registration');
+    assert(!resC.includes('Contactar por email'), 'Invalid email without @ must NOT render contact button');
+
+    // Case D: Email containing whitespace (e.g. multiple words or broken input) -> Rejected
+    const resD = env.renderString(snippet, {
+      act: { status: 'available', registration_url: 'https://form.example.com', contact_email: 'foo @bar.com' }
+    });
+    assert(!resD.includes('Contactar por email'), 'Email containing whitespace must NOT render contact button');
+
+    // Case E: Null/absent contact_email on full activity -> 0 buttons rendered
+    const resE = env.renderString(snippet, {
+      act: { status: 'full', registration_url: null, contact_email: null }
+    });
+    assert(!resE.includes('activity-card__actions'), 'Full activity with null email must render no actions container');
+  });
+
+  // Test 12: Extraescolares Live Preview template completes conditions, coexistence, and corresponsables image
+  test('admin/preview-templates.js ExtraescolaresPreview renders general_conditions, coexistence_articles, and corresponsables image', () => {
+    const previewContent = fs.readFileSync(path.join(rootDir, 'admin', 'preview-templates.js'), 'utf8');
+
+    // Section header
+    assert(previewContent.includes('Condicións xerais e réxime de convivencia'), 'Missing conditions and coexistence header in ExtraescolaresPreview');
+
+    // Accordions
+    assert(previewContent.includes('conditions-accordion'), 'Missing conditions-accordion class in ExtraescolaresPreview');
+    assert(previewContent.includes('Condicións xerais do servizo de actividades extraescolares'), 'Missing general conditions summary');
+    assert(previewContent.includes('coexistence.title || \'Marco Legal de Convivencia (Lei 4/2011)\''), 'Missing coexistence summary');
+
+    // Fields coverage in general_conditions preview
+    assert(previewContent.includes('cond.paragraphs'), 'Missing paragraphs support in preview');
+    assert(previewContent.includes('cond.options'), 'Missing options support in preview');
+    assert(previewContent.includes('cond.extra_text'), 'Missing extra_text support in preview');
+    assert(previewContent.includes('cond.subheading'), 'Missing subheading support in preview');
+    assert(previewContent.includes('cond.sub_items'), 'Missing sub_items support in preview');
+    assert(previewContent.includes('cond.statement'), 'Missing statement support in preview');
+
+    // Fields coverage in coexistence preview
+    assert(previewContent.includes('article_65'), 'Missing article_65 support in preview');
+    assert(previewContent.includes('article_66'), 'Missing article_66 support in preview');
+
+    // Corresponsables image
+    assert(previewContent.includes('corresponsables_image'), 'Missing corresponsables_image handling in preview');
+    assert(previewContent.includes('/img/extraescolares-corresponsables.jpg'), 'Missing fallback image path in preview');
+    assert(previewContent.includes('Plan Corresponsables - Xunta de Galicia'), 'Missing fallback alt text in preview');
+  });
+
+  // Test 13: Corresponsables image fields in config.yml and template fallback behavior
+  test('admin/config.yml exposes corresponsables image fields and public template preserves default fallback', () => {
+    const configContent = fs.readFileSync(configYmlPath, 'utf8');
+    const njkContent = fs.readFileSync(path.join(pagesDir, 'extraescolares.njk'), 'utf8');
+
+    // config.yml field coverage
+    assert(configContent.includes('name: "corresponsables_image"'), 'Missing corresponsables_image field in config.yml');
+    assert(configContent.includes('name: "corresponsables_image_alt"'), 'Missing corresponsables_image_alt field in config.yml');
+
+    // extraescolares.njk fallback logic
+    assert(njkContent.includes("extraescolares.corresponsables_image or '/img/extraescolares-corresponsables.jpg'"), 'Missing fallback image in extraescolares.njk');
+    assert(njkContent.includes("extraescolares.corresponsables_image_alt or 'Plan Corresponsables - Xunta de Galicia'"), 'Missing fallback alt in extraescolares.njk');
+  });
+
   console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);
   if (failed > 0) {
     process.exit(1);
