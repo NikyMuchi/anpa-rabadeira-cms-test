@@ -4,6 +4,73 @@
  */
 
 (function () {
+  const globalObj = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+  const h = (typeof globalObj.h === 'function') ? globalObj.h : function (tag, props, ...children) {
+    return { tag, props: props || {}, children: children.flat ? children.flat() : children };
+  };
+  const createClass = (typeof globalObj.createClass === 'function') ? globalObj.createClass : function (spec) {
+    function Component(props) {
+      this.props = props || {};
+    }
+    if (spec) {
+      for (const key in spec) {
+        if (Object.prototype.hasOwnProperty.call(spec, key)) {
+          Component.prototype[key] = spec[key];
+        }
+      }
+    }
+    return Component;
+  };
+
+  function hasField(props, fieldName) {
+    if (!props) return false;
+    const candidates = [];
+    if (props.fields) candidates.push(props.fields);
+    if (props.collection) {
+      const colFields = typeof props.collection.get === 'function'
+        ? props.collection.get('fields')
+        : props.collection.fields;
+      if (colFields) candidates.push(colFields);
+    }
+
+    for (let i = 0; i < candidates.length; i++) {
+      const list = candidates[i];
+      if (!list) continue;
+
+      if (typeof list.some === 'function') {
+        const found = list.some(function (f) {
+          if (!f) return false;
+          if (typeof f.get === 'function') return f.get('name') === fieldName;
+          return f.name === fieldName;
+        });
+        if (found) return true;
+      }
+
+      if (Array.isArray(list)) {
+        const found = list.some(function (f) {
+          if (!f) return false;
+          if (typeof f.get === 'function') return f.get('name') === fieldName;
+          return f.name === fieldName;
+        });
+        if (found) return true;
+      }
+
+      if (typeof list.toJS === 'function') {
+        try {
+          const jsList = list.toJS();
+          if (Array.isArray(jsList)) {
+            const found = jsList.some(function (f) { return f && f.name === fieldName; });
+            if (found) return true;
+          }
+        } catch (e) {
+          // ignore toJS error
+        }
+      }
+    }
+
+    return false;
+  }
+
   const mesesGalego = [
     "xaneiro", "febreiro", "marzo", "abril", "maio", "xuño",
     "xullo", "agosto", "setembro", "outubro", "novembro", "decembro"
@@ -14,6 +81,140 @@
     const d = new Date(dateValue);
     if (isNaN(d.getTime())) return String(dateValue);
     return `${d.getDate()} de ${mesesGalego[d.getMonth()]} de ${d.getFullYear()}`;
+  }
+
+  /**
+   * Resolves an asset for Decap CMS preview templates.
+   * Handles:
+   * 1. Newly uploaded pending media in browser session (Decap stores in-memory File/Blob
+   *    in Redux state.medias under repo path "src/img/uploads/...").
+   * 2. Existing static assets (/img/comedor/paso-X.png, /img/uploads/..., etc.).
+   * 3. External or blob/data URLs.
+   * 4. Missing or null assets (returns null gracefully).
+   */
+  function resolveAsset(getAsset, imagePath) {
+    if (!imagePath) return null;
+    if (typeof imagePath !== 'string' && typeof imagePath !== 'object') return null;
+
+    if (typeof getAsset !== 'function') {
+      return imagePath;
+    }
+
+    if (typeof imagePath === 'object') {
+      try {
+        const resolved = getAsset(imagePath);
+        return resolved || imagePath;
+      } catch (e) {
+        return imagePath;
+      }
+    }
+
+    const trimmed = imagePath.trim();
+    if (!trimmed) return null;
+
+    if (trimmed.startsWith('blob:') || trimmed.startsWith('data:') || /^https?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+
+    if (trimmed.startsWith('/img/uploads/') || trimmed.startsWith('img/uploads/') || trimmed.startsWith('src/img/uploads/')) {
+      const filename = trimmed.replace(/^\/?(src\/)?img\/uploads\//, '');
+      if (filename) {
+        const repoPath = 'src/img/uploads/' + filename;
+        try {
+          const pendingAsset = getAsset(repoPath);
+          if (pendingAsset) {
+            const urlStr = typeof pendingAsset.toString === 'function' ? pendingAsset.toString() : String(pendingAsset.url || '');
+            const hasBlobOrData = urlStr.startsWith('blob:') || urlStr.startsWith('data:');
+            const hasFileObj = Boolean(pendingAsset.fileObj);
+            if (hasBlobOrData || hasFileObj) {
+              return pendingAsset;
+            }
+          }
+        } catch (e) {
+          // Ignore and fall back to standard lookup
+        }
+      }
+    }
+
+    try {
+      const asset = getAsset(trimmed);
+      return asset || trimmed;
+    } catch (e) {
+      return trimmed;
+    }
+  }
+
+  /**
+   * Creates a draft-aware getAsset resolver for Decap CMS ImageControl.
+   * Intercepts queries under /img/uploads/ and checks the repository path (src/img/uploads/...)
+   * where Decap CMS stores in-memory File/Blob assets and authenticated draft media.
+   */
+  function createDraftAwareGetAsset(originalGetAsset) {
+    return function (path, field) {
+      if (!path) return null;
+      if (typeof path === 'string') {
+        const trimmed = path.trim();
+        if (!trimmed) return null;
+        if (trimmed.startsWith('/img/uploads/') || trimmed.startsWith('img/uploads/') || trimmed.startsWith('src/img/uploads/')) {
+          const filename = trimmed.replace(/^\/?(src\/)?img\/uploads\//, '');
+          if (filename && typeof originalGetAsset === 'function') {
+            try {
+              const repoPath = 'src/img/uploads/' + filename;
+              const asset = originalGetAsset(repoPath, field);
+              if (asset) {
+                const urlStr = typeof asset.toString === 'function' ? asset.toString() : String(asset.url || '');
+                if (urlStr.startsWith('blob:') || urlStr.startsWith('data:') || asset.fileObj) {
+                  return asset;
+                }
+              }
+            } catch (e) {
+              // Ignore lookup error and fall through
+            }
+          }
+        }
+        return typeof originalGetAsset === 'function' ? originalGetAsset(trimmed, field) : trimmed;
+      }
+      return typeof originalGetAsset === 'function' ? originalGetAsset(path, field) : path;
+    };
+  }
+
+  /**
+   * Subclasses Decap CMS's built-in FileControl (ImageControl) directly.
+   * Preserves 100% of native lifecycle: controlID generation, shouldComponentUpdate,
+   * componentDidUpdate, mediaPaths, and onChange propagation.
+   * Provides draft-aware getAsset strictly during renderImages() for the thumbnail.
+   */
+  function createSubclassImageControl(BuiltinControl) {
+    if (!BuiltinControl || typeof BuiltinControl !== 'function') return null;
+
+    class SubclassImageControl extends BuiltinControl {
+      constructor(props) {
+        super(props);
+        const originalRenderImages = this.renderImages;
+        if (typeof originalRenderImages === 'function') {
+          this.renderImages = () => {
+            const originalGetAsset = this.props.getAsset;
+            const draftGetAsset = createDraftAwareGetAsset(originalGetAsset);
+            this._patchedProps = Object.assign({}, this.props, { getAsset: draftGetAsset });
+            try {
+              return originalRenderImages.call(this);
+            } finally {
+              this._patchedProps = null;
+            }
+          };
+        }
+      }
+
+      get props() {
+        return this._patchedProps || this._realProps;
+      }
+
+      set props(val) {
+        this._realProps = val;
+      }
+    }
+
+    return SubclassImageControl;
   }
 
   function renderInlineMarkdown(str) {
@@ -77,7 +278,8 @@
       const date = entry.getIn(['data', 'date']);
       const category = entry.getIn(['data', 'category']) || 'Novas';
       const image = entry.getIn(['data', 'image']);
-      const imageSrc = image ? this.props.getAsset(image) : null;
+      const imageAsset = image ? resolveAsset(this.props.getAsset, image) : null;
+      const imageSrc = (imageAsset && typeof imageAsset.toString === 'function') ? imageAsset.toString() : (imageAsset || '');
       const formattedDate = date ? formatGalicianDate(date) : '';
 
       return h('div', { className: 'preview-root' },
@@ -87,9 +289,9 @@
             category ? h('span', { className: 'post-single__category' }, category) : null,
             h('h1', null, title),
             formattedDate ? h('time', { className: 'post-single__date' }, `📅 ${formattedDate}`) : null,
-            imageSrc ? h('img', { src: imageSrc.toString(), alt: title, className: 'post-single__image' }) : null
+            imageSrc ? h('img', { src: imageSrc, alt: title, className: 'post-single__image' }) : null
           ),
-          h('div', { className: 'post-content' }, this.props.widgetFor ? this.props.widgetFor('body') : null)
+          h('div', { className: 'post-content' }, (hasField(this.props, 'body') && this.props.widgetFor) ? this.props.widgetFor('body') : (entry.getIn(['data', 'body']) ? formatMarkdown(entry.getIn(['data', 'body'])) : null))
         )
       );
     }
@@ -102,7 +304,8 @@
       if (!entry) return null;
       const data = entry.getIn(['data']) ? entry.getIn(['data']).toJS() : {};
       const academicYear = data.academic_year || '2026-2027';
-      const scheduleImg = data.schedule_image ? this.props.getAsset(data.schedule_image) : null;
+      const scheduleAsset = data.schedule_image ? resolveAsset(this.props.getAsset, data.schedule_image) : null;
+      const scheduleImg = (scheduleAsset && typeof scheduleAsset.toString === 'function') ? scheduleAsset.toString() : (scheduleAsset || '');
       const activities = data.activities || [];
       const membership = data.membership || {};
       const pricingTable = data.pricing_table || [];
@@ -118,7 +321,7 @@
             h('h3', { className: 'schedule-card__title' }, `Horario Xeral Extraescolares (${academicYear})`)
           ),
           h('div', { className: 'schedule-card__scroll' },
-            h('img', { src: scheduleImg.toString(), alt: `Horario ${academicYear}`, className: 'schedule-card__img' })
+            h('img', { src: scheduleImg, alt: `Horario ${academicYear}`, className: 'schedule-card__img' })
           )
         ) : null,
 
@@ -216,10 +419,11 @@
         );
       }
       if (type === 'image_block' || type === 'image') {
-        const imgSrc = blk.image ? getAsset(blk.image) : null;
+        const imgAsset = blk.image ? resolveAsset(getAsset, blk.image) : null;
+        const imgSrc = (imgAsset && typeof imgAsset.toString === 'function') ? imgAsset.toString() : (imgAsset || '');
         if (!imgSrc) return null;
         return h('figure', { key: idx, style: { margin: '1.5rem 0' } },
-          h('img', { src: imgSrc.toString(), alt: blk.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }),
+          h('img', { src: imgSrc, alt: blk.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }),
           blk.caption ? h('figcaption', { style: { fontSize: '0.875rem', color: '#64748b', textAlign: 'center', marginTop: '0.5rem' } }, blk.caption) : null
         );
       }
@@ -255,13 +459,15 @@
       if (!entry) return null;
       const data = entry.getIn(['data']) ? entry.getIn(['data']).toJS() : {};
       const title = data.title || 'Título da páxina';
-      const image = data.image ? this.props.getAsset(data.image) : null;
-      const imageAlt = typeof data.image_alt === 'string' ? data.image_alt : '';
       const getAsset = this.props.getAsset;
+      const imageAsset = data.image ? resolveAsset(getAsset, data.image) : null;
+      const imageSrc = (imageAsset && typeof imageAsset.toString === 'function') ? imageAsset.toString() : (imageAsset || '');
+      const imageAlt = typeof data.image_alt === 'string' ? data.image_alt : '';
+      const hasBody = hasField(this.props, 'body');
 
       return h('div', { className: 'preview-root container page-content' },
-        image ? h('div', { className: 'post-single__image' },
-          h('img', { src: image.toString(), alt: imageAlt })
+        imageSrc ? h('div', { className: 'post-single__image' },
+          h('img', { src: imageSrc, alt: imageAlt })
         ) : null,
         h('h1', { style: { marginTop: '1.5rem', marginBottom: '1rem', color: '#13406a' } }, title),
         h('div', { className: 'post-content' },
@@ -270,24 +476,45 @@
           // 1. Top flexible sections
           renderBlocks(data.top_sections, getAsset),
 
-          // Primary Markdown body (for document pages like Madrugadores)
+          // Primary Markdown body (for document pages like Madrugadores, Memoria, Consello Escolar)
           (!data.steps && !data.bank_iban && !data.blog_url) ? (
-            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
+            (hasBody && this.props.widgetFor) ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
           ) : null,
 
           // 3. Comedor Steps
           data.steps && data.steps.length > 0 ? h('div', null,
-            h('h2', null, 'PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)'),
-            data.atriga_portal_url ? h('p', null, 'Un deles é a través da Axencia Tributaria de Galicia: ', h('span', null, 'Portal tributario ATRIGA')) : null,
+            data.atriga_info ? (formatMarkdown(data.atriga_info) || h('div', null, data.atriga_info)) : (
+              h('div', null,
+                h('h2', null, 'PAGO COMEDOR A TRAVÉS DE ATRIGA (AXENCIA TRIBUTARIA DE GALICIA)'),
+                data.atriga_portal_url ? h('p', null, 'Un deles é a través da Axencia Tributaria de Galicia: ', h('a', { href: data.atriga_portal_url, target: '_blank', rel: 'noopener noreferrer' }, 'Portal tributario ATRIGA'), '.') : null
+              )
+            ),
             data.steps.map((st, idx) => {
-              const stepImg = st.image ? getAsset(st.image) : null;
+              const stepAsset = st.image ? resolveAsset(getAsset, st.image) : null;
+              const stepImg = (stepAsset && typeof stepAsset.toString === 'function') ? stepAsset.toString() : (stepAsset || '');
+              // Ensure receipt instructions never appear before step 11 screenshot
+              const isReceiptText = st.description && st.description.toLowerCase().includes('unha vez feito o pago');
+              const stepDesc = isReceiptText ? null : st.description;
               return h('div', { key: idx, style: { margin: '1rem 0' } },
-                st.description ? h('p', null, st.description) : null,
-                stepImg ? h('img', { src: stepImg.toString(), alt: st.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }) : null
+                stepDesc ? h('p', null, stepDesc) : null,
+                stepImg ? h('img', { src: stepImg, alt: st.image_alt || '', style: { maxWidth: '100%', borderRadius: '8px' } }) : null
               );
             }),
-            data.other_methods_note ? h('p', null, data.other_methods_note) : null,
-            data.closing_note ? h('p', null, data.closing_note) : null
+            data.closing_info ? (formatMarkdown(data.closing_info) || h('div', null, data.closing_info)) : (
+              h('div', null,
+                (() => {
+                  let receiptText = data.receipt_instructions;
+                  if (!receiptText && data.steps) {
+                    const found = data.steps.find(st => st.description && st.description.toLowerCase().includes('unha vez feito o pago'));
+                    if (found) receiptText = found.description;
+                  }
+                  if (!receiptText) return null;
+                  return formatMarkdown(receiptText) || h('p', null, receiptText);
+                })(),
+                data.other_methods_note ? (formatMarkdown(data.other_methods_note) || h('p', null, data.other_methods_note)) : null,
+                data.closing_note ? (formatMarkdown(data.closing_note) || h('p', null, data.closing_note)) : null
+              )
+            )
           ) : null,
 
           // 4. Inscrición Bank Box
@@ -349,7 +576,7 @@
 
           // Trailing Markdown body (for structured pages with trailing markdown)
           (data.steps || data.bank_iban || data.blog_url) ? (
-            this.props.widgetFor ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
+            (hasBody && this.props.widgetFor) ? this.props.widgetFor('body') : (data.body ? formatMarkdown(data.body) : null)
           ) : null
         )
       );
@@ -357,7 +584,7 @@
   });
 
   // Rexistrar estilos e compoñentes no CMS
-  if (window.CMS) {
+  if (typeof window !== 'undefined' && window.CMS) {
     CMS.registerPreviewStyle('/css/style.css');
     CMS.registerPreviewTemplate('posts', PostPreview);
     CMS.registerPreviewTemplate('extraescolares', ExtraescolaresPreview);
@@ -368,5 +595,36 @@
     CMS.registerPreviewTemplate('inscripcion', PagePreview);
     CMS.registerPreviewTemplate('memoria', PagePreview);
     CMS.registerPreviewTemplate('consello_escolar', PagePreview);
+
+    // Subclass Image Control: extends Decap's built-in FileControl directly
+    // Preserves native controlID, mediaPaths, and onChange lifecycle while resolving draft thumbnails
+    if (typeof CMS.getWidget === 'function') {
+      try {
+        const existingImageWidget = CMS.getWidget('image');
+        if (existingImageWidget && existingImageWidget.control) {
+          const SubclassControl = createSubclassImageControl(existingImageWidget.control);
+          if (SubclassControl) {
+            CMS.registerWidget('image', SubclassControl, existingImageWidget.preview);
+          }
+        }
+      } catch (e) {
+        // Safe fallback if widget wrapping encounters an unexpected environment
+      }
+    }
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      hasField,
+      formatGalicianDate,
+      renderInlineMarkdown,
+      formatMarkdown,
+      resolveAsset,
+      createDraftAwareGetAsset,
+      createSubclassImageControl,
+      PostPreview,
+      ExtraescolaresPreview,
+      PagePreview
+    };
   }
 })();
