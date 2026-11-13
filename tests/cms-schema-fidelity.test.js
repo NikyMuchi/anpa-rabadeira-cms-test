@@ -347,16 +347,14 @@ function runTests() {
     assert(previewContent.includes('coexistence.title || \'Marco Legal de Convivencia (Lei 4/2011)\''), 'Missing coexistence summary');
 
     // Fields coverage in general_conditions preview
-    assert(previewContent.includes('cond.paragraphs'), 'Missing paragraphs support in preview');
-    assert(previewContent.includes('cond.options'), 'Missing options support in preview');
-    assert(previewContent.includes('cond.extra_text'), 'Missing extra_text support in preview');
-    assert(previewContent.includes('cond.subheading'), 'Missing subheading support in preview');
-    assert(previewContent.includes('cond.sub_items'), 'Missing sub_items support in preview');
-    assert(previewContent.includes('cond.statement'), 'Missing statement support in preview');
+    assert(previewContent.includes('cond.body'), 'Missing body support in general_conditions preview');
+    assert(previewContent.includes('cond.paragraphs'), 'Missing paragraphs fallback support in preview');
 
     // Fields coverage in coexistence preview
     assert(previewContent.includes('article_65'), 'Missing article_65 support in preview');
     assert(previewContent.includes('article_66'), 'Missing article_66 support in preview');
+    assert(previewContent.includes('coexistence.article_65.body'), 'Missing body support in article_65 preview');
+    assert(previewContent.includes('coexistence.article_66.body'), 'Missing body support in article_66 preview');
 
     // Corresponsables image
     assert(previewContent.includes('corresponsables_image'), 'Missing corresponsables_image handling in preview');
@@ -376,6 +374,34 @@ function runTests() {
     // extraescolares.njk fallback logic
     assert(njkContent.includes("extraescolares.corresponsables_image or '/img/extraescolares-corresponsables.jpg'"), 'Missing fallback image in extraescolares.njk');
     assert(njkContent.includes("extraescolares.corresponsables_image_alt or 'Plan Corresponsables - Xunta de Galicia'"), 'Missing fallback alt in extraescolares.njk');
+  });
+
+  // Test 14: Simplified Extraescolares schema & non-migrated data preservation
+  test('Simplified Extraescolares schema validates rich-text body and preserves all other data deeply', () => {
+    const data = JSON.parse(fs.readFileSync(extraescolaresPath, 'utf8'));
+
+    // 14 general conditions have title and non-empty body
+    assert.strictEqual(data.general_conditions.length, 14, 'Must have 14 general conditions');
+    data.general_conditions.forEach((c, idx) => {
+      assert(typeof c.title === 'string' && c.title.trim().length > 0, `Condition ${idx + 1} must have a valid title`);
+      assert(typeof c.body === 'string' && c.body.trim().length > 0, `Condition ${idx + 1} must have a valid rich-text body`);
+      assert(!Object.prototype.hasOwnProperty.call(c, 'number'), `Condition ${idx + 1} should not have manual number property`);
+    });
+
+    // coexistence_articles structure
+    assert.strictEqual(data.coexistence_articles.title, 'Marco Legal de Convivencia (Lei 4/2011)');
+    assert(typeof data.coexistence_articles.article_65.body === 'string' && data.coexistence_articles.article_65.body.length > 500);
+    assert(typeof data.coexistence_articles.article_66.body === 'string' && data.coexistence_articles.article_66.body.length > 200);
+
+    // Deep preservation of all 18 activities and pricing table
+    assert.strictEqual(data.activities.length, 18);
+    assert.strictEqual(data.pricing_table.length, 18);
+    assert.strictEqual(data.academic_year, '2026-2027');
+    assert.strictEqual(typeof data.schedule_image, 'string');
+    assert.strictEqual(typeof data.intro, 'string');
+    assert.strictEqual(typeof data.subintro, 'string');
+    assert.strictEqual(typeof data.deadlines_note, 'string');
+    assert(typeof data.membership === 'object');
   });
 
   console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);

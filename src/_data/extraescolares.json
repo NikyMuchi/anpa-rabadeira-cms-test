@@ -343,163 +343,71 @@
   ],
   "general_conditions": [
     {
-      "number": 1,
       "title": "Socio/a da ANPA",
-      "paragraphs": [
-        "No caso de non ser socio/a da ANPA, deberá aboarse unha matrícula de 10 € por cada neno/a e por cada actividade na que se inscriba."
-      ]
+      "body": "No caso de non ser socio/a da ANPA, deberá aboarse unha matrícula de 10 € por cada neno/a e por cada actividade na que se inscriba."
     },
     {
-      "number": 2,
       "title": "Número de socio/a",
-      "paragraphs": [
-        "Dende este ano cada familia socia contará con un número de socio."
-      ]
+      "body": "Dende este ano cada familia socia contará con un número de socio."
     },
     {
-      "number": 3,
       "title": "Seguro de accidentes",
-      "paragraphs": [
-        "Todos os participantes nas actividades extraescolares estarán cubertos polo seguro de accidentes correspondente segundo as condicións establecidas pola organización. A ANPA farase cargo da súa xestión.",
-        "No caso de non ser socio/a da ANPA, deberá aboarse unha matrícula de 10 € por cada neno/a e por cada actividade na que se inscriba."
-      ]
+      "body": "Todos os participantes nas actividades extraescolares estarán cubertos polo seguro de accidentes correspondente segundo as condicións establecidas pola organización. A ANPA farase cargo da súa xestión.\n\nNo caso de non ser socio/a da ANPA, deberá aboarse unha matrícula de 10 € por cada neno/a e por cada actividade na que se inscriba."
     },
     {
-      "number": 4,
       "title": "Autorización para a entrega e recollida dos menores",
-      "paragraphs": [
-        "As familias deberán indicar as persoas autorizadas para a entrega e recollida do menor ao remate da actividade.",
-        "Por motivos de seguridade, só se entregará o menor ás persoas previamente autorizadas."
-      ]
+      "body": "As familias deberán indicar as persoas autorizadas para a entrega e recollida do menor ao remate da actividade.\n\nPor motivos de seguridade, só se entregará o menor ás persoas previamente autorizadas."
     },
     {
-      "number": 5,
       "title": "Autorización de uso de imaxe",
-      "paragraphs": [
-        "Co fin de dar difusión ás actividades realizadas ao longo do curso, solicítase autorización para o uso de fotografías e vídeos nos que poida aparecer o alumnado participante. En ningún caso as imaxes serán utilizadas con fins comerciais nin cedidas a terceiros alleos á organización.",
-        "Deberá indicar á empresa se:"
-      ],
-      "options": [
-        "☐ Autorizo o uso da imaxe do menor.",
-        "☐ Non autorizo o uso da imaxe do menor."
-      ]
+      "body": "Co fin de dar difusión ás actividades realizadas ao longo do curso, solicítase autorización para o uso de fotografías e vídeos nos que poida aparecer o alumnado participante. En ningún caso as imaxes serán utilizadas con fins comerciais nin cedidas a terceiros alleos á organización.\n\nDeberá indicar á empresa se:\n\n- ☐ Autorizo o uso da imaxe do menor.\n- ☐ Non autorizo o uso da imaxe do menor."
     },
     {
-      "number": 6,
       "title": "Incorporación á actividade",
-      "paragraphs": [
-        "Deberá indicarse á empresa cando se incorporará o alumno ou alumna á actividade:"
-      ],
-      "options": [
-        "☐ Desde o primeiro día de inicio da actividade.",
-        "☐ Nunha data posterior."
-      ],
-      "extra_text": "Data de incorporación: ____ / ____ / ______"
+      "body": "Deberá indicarse á empresa cando se incorporará o alumno ou alumna á actividade:\n\n- ☐ Desde o primeiro día de inicio da actividade.\n- ☐ Nunha data posterior.\n\nData de incorporación: ____ / ____ / ______"
     },
     {
-      "number": 7,
       "title": "Forma de pagamento",
-      "paragraphs": [
-        "O método de pagamento será independente da ANPA e cada empresa establecerá o seu propio sistema de cobro."
-      ]
+      "body": "O método de pagamento será independente da ANPA e cada empresa establecerá o seu propio sistema de cobro."
     },
     {
-      "number": 8,
       "title": "Pagamentos e impagos",
-      "paragraphs": [
-        "A cota mensual deberá estar aboada antes do día 5 de cada mes.",
-        "No caso de acumular dúas mensualidades sen pagar, e tras ter sido informada previamente a familia da situación, o alumno ou alumna non poderá continuar asistindo á actividade, cedendo a súa praza á primeira persoa da lista de espera.",
-        "Non se poderá formalizar a inscrición nas actividades do vindeiro curso no caso de existir cotas, recibos ou calquera outro pagamento pendente correspondente ao presente curso."
-      ]
+      "body": "A cota mensual deberá estar aboada antes do día 5 de cada mes.\n\nNo caso de acumular dúas mensualidades sen pagar, e tras ter sido informada previamente a familia da situación, o alumno ou alumna non poderá continuar asistindo á actividade, cedendo a súa praza á primeira persoa da lista de espera.\n\nNon se poderá formalizar a inscrición nas actividades do vindeiro curso no caso de existir cotas, recibos ou calquera outro pagamento pendente correspondente ao presente curso."
     },
     {
-      "number": 9,
       "title": "Procedencia do alumnado",
-      "paragraphs": [
-        "Deberá indicar á empresa dende onde se incorporará o menor á actividade:"
-      ],
-      "options": [
-        "☐ Servizo de comedor.",
-        "☐ Desde a casa."
-      ],
-      "extra_text": "As familias non poderán acceder ao interior do centro para a entrega dos menores. Unha persoa responsable da actividade recollerá ao alumnado na porta de Educación Infantil no horario establecido."
+      "body": "Deberá indicar á empresa dende onde se incorporará o menor á actividade:\n\n- ☐ Servizo de comedor.\n- ☐ Desde a casa.\n\nAs familias non poderán acceder ao interior do centro para a entrega dos menores. Unha persoa responsable da actividade recollerá ao alumnado na porta de Educación Infantil no horario establecido."
     },
     {
-      "number": 10,
       "title": "Saída das actividades extraescolares",
-      "paragraphs": [
-        "A recollida dos menores deberá realizarse á hora acordada de saída. No caso de que transcorran 15 minutos desde esa hora sen que fosen recollidos e non sexa posible contactar cos pais, nais, titores legais ou persoas autorizadas, poñerase a situación en coñecemento da Garda Civil para que adopte as medidas oportunas e se faga cargo dos menores.",
-        "Queda terminantemente prohibido que os menores abandonen as instalacións ou regresen aos seus domicilios sen a compañía dun adulto autorizado, mesmo cando exista autorización expresa dos pais, nais ou titores legais."
-      ]
+      "body": "A recollida dos menores deberá realizarse á hora acordada de saída. No caso de que transcorran 15 minutos desde esa hora sen que fosen recollidos e non sexa posible contactar cos pais, nais, titores legais ou persoas autorizadas, poñerase a situación en coñecemento da Garda Civil para que adopte as medidas oportunas e se faga cargo dos menores.\n\nQueda terminantemente prohibido que os menores abandonen as instalacións ou regresen aos seus domicilios sen a compañía dun adulto autorizado, mesmo cando exista autorización expresa dos pais, nais ou titores legais."
     },
     {
-      "number": 11,
       "title": "Solicitude de baixa",
-      "paragraphs": [
-        "As baixas deberán comunicarse por escrito á empresa antes do día 20 do mes anterior ao que se desexe facer efectiva a baixa.",
-        "As solicitudes recibidas con posterioridade a esa data poderán implicar o cobro da mensualidade seguinte."
-      ]
+      "body": "As baixas deberán comunicarse por escrito á empresa antes do día 20 do mes anterior ao que se desexe facer efectiva a baixa.\n\nAs solicitudes recibidas con posterioridade a esa data poderán implicar o cobro da mensualidade seguinte."
     },
     {
-      "number": 12,
       "title": "Necesidades específicas de apoio",
-      "paragraphs": [
-        "Presenta o alumno ou alumna algunha necesidade específica, condición médica, alerxia ou circunstancia que deba ser coñecida polo persoal responsable da actividade?",
-        "En caso afirmativo deberá informar á empresa correspondente que lle pedirá a información necesaria para o bo funcionamento da actividade."
-      ]
+      "body": "Presenta o alumno ou alumna algunha necesidade específica, condición médica, alerxia ou circunstancia que deba ser coñecida polo persoal responsable da actividade?\n\nEn caso afirmativo deberá informar á empresa correspondente que lle pedirá a información necesaria para o bo funcionamento da actividade."
     },
     {
-      "number": 13,
       "title": "Outros datos de interese",
-      "paragraphs": [
-        "En caso de separación, divorcio ou outras situacións familiares que afecten á custodia ou recollida do menor, deberá achegarse a documentación legal correspondente.",
-        "En caso afirmativo deberá enviar a información e documentación correspondente á empresa."
-      ]
+      "body": "En caso de separación, divorcio ou outras situacións familiares que afecten á custodia ou recollida do menor, deberá achegarse a documentación legal correspondente.\n\nEn caso afirmativo deberá enviar a información e documentación correspondente á empresa."
     },
     {
-      "number": 14,
       "title": "Normas de convivencia das actividades extraescolares",
-      "paragraphs": [
-        "O alumnado participante deberá respectar as mesmas normas de convivencia, respecto e comportamento establecidas polo centro educativo."
-      ],
-      "subheading": "O réxime disciplinario:",
-      "sub_items": [
-        "Tres faltas leves equivalerán a unha falta grave.",
-        "A acumulación de tres faltas graves suporá a suspensión temporal do servizo durante unha semana.",
-        "No caso de que a conduta persista ou se produzan novas incidencias graves, a organización poderá acordar a expulsión definitiva do alumno ou alumna da actividade."
-      ],
-      "statement": "A INSCRICIÓN NAS ACTIVIDADES EXTRAESCOLARES IMPLICA A ACEPTACIÓN DESTAS NORMAS E CONDICIÓNS."
+      "body": "O alumnado participante deberá respectar as mesmas normas de convivencia, respecto e comportamento establecidas polo centro educativo.\n\n**O réxime disciplinario:**\n\n- Tres faltas leves equivalerán a unha falta grave.\n- A acumulación de tres faltas graves suporá a suspensión temporal do servizo durante unha semana.\n- No caso de que a conduta persista ou se produzan novas incidencias graves, a organización poderá acordar a expulsión definitiva do alumno ou alumna da actividade.\n\n<p class=\"conditions-statement\"><strong>A INSCRICIÓN NAS ACTIVIDADES EXTRAESCOLARES IMPLICA A ACEPTACIÓN DESTAS NORMAS E CONDICIÓNS.</strong></p>"
     }
   ],
   "coexistence_articles": {
     "title": "Marco Legal de Convivencia (Lei 4/2011)",
     "article_65": {
       "title": "Artigo 65. Condutas gravemente prexudiciais para a convivencia",
-      "intro": "Considéranse condutas gravemente prexudiciais para a convivencia nos centros docentes:",
-      "points": [
-        "a) As agresións físicas ou psíquicas, as inxurias e as ofensas graves, as ameazas e as coaccións contra os demais membros da comunidade educativa.",
-        "b) Os actos de discriminación grave contra membros da comunidade educativa por razón de nacemento, raza, sexo, orientación sexual, capacidade económica, nivel social, conviccións políticas, morais ou relixiosas, discapacidades físicas, sensoriais ou psíquicas, ou calquera outra condición ou circunstancia persoal ou social.",
-        "c) Os actos individuais ou colectivos de desafío á autoridade do profesorado e ao persoal de administración e de servizos que constitúan unha indisciplina grave.",
-        "d) A gravación, a manipulación e a difusión por calquera medio de imaxes ou informacións que atenten contra o dereito á honra, á dignidade da persoa, á intimidade persoal e familiar e á propia imaxe dos demais membros da comunidade educativa.",
-        "e) As actuacións que constitúan acoso escolar.",
-        "f) A suplantación de personalidade en actos da vida docente e a falsificación, alteración ou substracción de documentos académicos.",
-        "g) Os danos graves causados de forma intencionada ou por neglixencia grave ás instalacións e aos materiais dos centros docentes, incluídos os equipos informáticos e o software, ou aos bens doutros membros da comunidade educativa ou de terceiros, así como a súa subtracción.",
-        "h) Os actos inxustificados que perturben gravemente o normal desenvolvemento das actividades do centro, incluídas as de carácter complementario e extraescolar.",
-        "i) As actuacións gravemente prexudiciais para a saúde e a integridade persoal dos membros da comunidade educativa do centro, ou a incitación a elas.",
-        "j) Portar calquera obxecto, substancia ou produto gravemente perigoso para a saúde ou a integridade persoal de calquera membro da comunidade educativa. En todo caso, reputarase indisciplina grave a resistencia ou a negativa a entregar os obxectos a que se refire o punto terceiro do artigo 11 da Lei 4/2011, do 30 de xuño, de convivencia e participación da comunidade educativa cando se é requirido para iso polo profesorado.",
-        "k) A reiteración, nun mesmo curso escolar, de condutas leves contrarias á convivencia.",
-        "l) O incumprimento das sancións impostas."
-      ]
+      "body": "Considéranse condutas gravemente prexudiciais para a convivencia nos centros docentes:\n\n- a) As agresións físicas ou psíquicas, as inxurias e as ofensas graves, as ameazas e as coaccións contra os demais membros da comunidade educativa.\n- b) Os actos de discriminación grave contra membros da comunidade educativa por razón de nacemento, raza, sexo, orientación sexual, capacidade económica, nivel social, conviccións políticas, morais ou relixiosas, discapacidades físicas, sensoriais ou psíquicas, ou calquera outra condición ou circunstancia persoal ou social.\n- c) Os actos individuais ou colectivos de desafío á autoridade do profesorado e ao persoal de administración e de servizos que constitúan unha indisciplina grave.\n- d) A gravación, a manipulación e a difusión por calquera medio de imaxes ou informacións que atenten contra o dereito á honra, á dignidade da persoa, á intimidade persoal e familiar e á propia imaxe dos demais membros da comunidade educativa.\n- e) As actuacións que constitúan acoso escolar.\n- f) A suplantación de personalidade en actos da vida docente e a falsificación, alteración ou substracción de documentos académicos.\n- g) Os danos graves causados de forma intencionada ou por neglixencia grave ás instalacións e aos materiais dos centros docentes, incluídos os equipos informáticos e o software, ou aos bens doutros membros da comunidade educativa ou de terceiros, así como a súa subtracción.\n- h) Os actos inxustificados que perturben gravemente o normal desenvolvemento das actividades do centro, incluídas as de carácter complementario e extraescolar.\n- i) As actuacións gravemente prexudiciais para a saúde e a integridade persoal dos membros da comunidade educativa do centro, ou a incitación a elas.\n- j) Portar calquera obxecto, substancia ou produto gravemente perigoso para a saúde ou a integridade persoal de calquera membro da comunidade educativa. En todo caso, reputarase indisciplina grave a resistencia ou a negativa a entregar os obxectos a que se refire o punto terceiro do artigo 11 da Lei 4/2011, do 30 de xuño, de convivencia e participación da comunidade educativa cando se é requirido para iso polo profesorado.\n- k) A reiteración, nun mesmo curso escolar, de condutas leves contrarias á convivencia.\n- l) O incumprimento das sancións impostas."
     },
     "article_66": {
       "title": "Artigo 66. Condutas leves contrarias á convivencia",
-      "intro": "Considéranse condutas leves contrarias á convivencia:",
-      "points": [
-        "a) As condutas tipificadas como agresión, inxuria ou ofensa do apartado a), os actos de discriminación do apartado b), os actos de indisciplina do apartado c), os danos do apartado g), os actos inxustificados do apartado h) e as actuacións prexudiciais descritas no apartado i) do artigo anterior que non alcancen a gravidade requirida no devandito precepto.",
-        "b) Portar calquera obxecto, substancia ou produto expresamente prohibido polas normas do centro perigoso para a saúde ou a integridade persoal do alumnado ou dos demais membros da comunidade educativa ou que perturbe o normal desenvolvemento das actividades docentes, complementarias ou extraescolares, cando non constitúa conduta gravemente prexudicial para a convivencia de acordo co apartado l) do artigo anterior.",
-        "c) As faltas reiteradas de puntualidade.",
-        "d) A reiterada asistencia ao centro sen o material e equipamento preciso para participar activamente no desenvolvemento das clases."
-      ]
+      "body": "Considéranse condutas leves contrarias á convivencia:\n\n- a) As condutas tipificadas como agresión, inxuria ou ofensa do apartado a), os actos de discriminación do apartado b), os actos de indisciplina do apartado c), os danos do apartado g), os actos inxustificados do apartado h) e as actuacións prexudiciais descritas no apartado i) do artigo anterior que non alcancen a gravidade requirida no devandito precepto.\n- b) Portar calquera obxecto, substancia ou produto expresamente prohibido polas normas do centro perigoso para a saúde ou a integridade persoal do alumnado ou dos demais membros da comunidade educativa ou que perturbe o normal desenvolvemento das actividades docentes, complementarias ou extraescolares, cando non constitúa conduta gravemente prexudicial para a convivencia de acordo co apartado l) do artigo anterior.\n- c) As faltas reiteradas de puntualidade.\n- d) A reiterada asistencia ao centro sen o material e equipamento preciso para participar activamente no desenvolvemento das clases."
     }
   }
 }

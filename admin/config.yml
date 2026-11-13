@@ -126,16 +126,14 @@ collections:
             widget: "list"
             required: false
             collapsed: true
-            summary: "{{fields.number}}. {{fields.title}}"
+            summary: "{{fields.title}}"
             fields:
-              - { label: "Número de orde", name: "number", widget: "number", value_type: "int" }
               - { label: "Título da condición", name: "title", widget: "string" }
-              - { label: "Parágrafos explicativos", name: "paragraphs", widget: "list", required: false }
-              - { label: "Opcións de selección", name: "options", widget: "list", required: false }
-              - { label: "Texto adicional", name: "extra_text", widget: "string", required: false }
-              - { label: "Subtítulo de réxime", name: "subheading", widget: "string", required: false }
-              - { label: "Elementos de réxime", name: "sub_items", widget: "list", required: false }
-              - { label: "Declaración final", name: "statement", widget: "string", required: false }
+              - label: "Contido da condición"
+                name: "body"
+                widget: "markdown"
+                modes: ["rich_text", "raw"]
+                buttons: ["bold", "italic", "link", "bulleted-list", "numbered-list"]
           - label: "Marco Legal de Convivencia (Lei 4/2011)"
             name: "coexistence_articles"
             widget: "object"
@@ -148,15 +146,21 @@ collections:
                 widget: "object"
                 fields:
                   - { label: "Título", name: "title", widget: "string" }
-                  - { label: "Texto introdutorio", name: "intro", widget: "text" }
-                  - { label: "Puntos / Letras", name: "points", widget: "list" }
+                  - label: "Contido (introdución e puntos / letras)"
+                    name: "body"
+                    widget: "markdown"
+                    modes: ["rich_text", "raw"]
+                    buttons: ["bold", "italic", "link", "bulleted-list", "numbered-list"]
               - label: "Artigo 66 (Condutas leves)"
                 name: "article_66"
                 widget: "object"
                 fields:
                   - { label: "Título", name: "title", widget: "string" }
-                  - { label: "Texto introdutorio", name: "intro", widget: "text" }
-                  - { label: "Puntos / Letras", name: "points", widget: "list" }
+                  - label: "Contido (introdución e puntos / letras)"
+                    name: "body"
+                    widget: "markdown"
+                    modes: ["rich_text", "raw"]
+                    buttons: ["bold", "italic", "link", "bulleted-list", "numbered-list"]
           - { label: "Imaxe Plan Corresponsables (opcional)", name: "corresponsables_image", widget: "image", required: false, hint: "Imaxe oficial de pé de páxina (ex: Plan Corresponsables). Se non se especifica ningunha imaxe, amosarase a imaxe predeterminada (/img/extraescolares-corresponsables.jpg)" }
           - { label: "Texto alternativo da imaxe (Alt)", name: "corresponsables_image_alt", widget: "string", required: false, hint: "Texto descritivo de accesibilidade para a imaxe (predeterminado: 'Plan Corresponsables - Xunta de Galicia')" }
 

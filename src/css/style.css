@@ -2214,6 +2214,19 @@ a:hover {
   font-weight: 700;
 }
 
+.conditions-accordion__content ol > li > .condition-body {
+  display: inline;
+}
+
+.conditions-accordion__content ol > li > .condition-body > p:first-of-type {
+  display: inline;
+}
+
+.conditions-accordion__content ol > li > .condition-body > p:not(:first-of-type) {
+  margin-top: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
 .conditions-accordion__content h4 {
   font-size: var(--fs-base);
   font-weight: 700;

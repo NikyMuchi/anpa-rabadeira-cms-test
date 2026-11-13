@@ -38,6 +38,10 @@
     return blocks.map((blk, bIdx) => {
       const lines = blk.split('\n');
       const firstLine = lines[0].trim();
+      // HTML block (e.g. <p class="conditions-statement">)
+      if (firstLine.startsWith('<p') || firstLine.startsWith('<div')) {
+        return h('div', { key: bIdx, dangerouslySetInnerHTML: { __html: blk } });
+      }
       // Heading 2
       if (firstLine.startsWith('## ')) {
         return h('h2', { key: bIdx, style: { marginTop: '1.5rem', marginBottom: '0.75rem', color: '#13406a' } }, firstLine.replace(/^##\s+/, ''));
@@ -59,10 +63,10 @@
         );
       }
       // Paragraph
-      return h('p', { key: bIdx, style: { marginBottom: '1rem', lineHeight: '1.7' } },
+      return h('p', { key: bIdx, style: { marginBottom: '0.75rem', lineHeight: '1.6' } },
         lines.map((line, lIdx) => h('span', {
           key: lIdx,
-          dangerouslySetInnerHTML: { __html: renderInlineMarkdown(line) }
+          dangerouslySetInnerHTML: { __html: renderInlineMarkdown(line) + (lIdx < lines.length - 1 ? '<br/>' : '') }
         }))
       );
     });
@@ -226,47 +230,52 @@
                     items.push(h('strong', { key: 'title' }, `${cond.title}: `));
                   }
 
-                  if (Array.isArray(cond.paragraphs) && cond.paragraphs.length > 0) {
-                    cond.paragraphs.forEach((p, pIdx) => {
-                      if (pIdx === 0) {
-                        items.push(p);
-                      } else {
-                        items.push(h('p', { key: `p-${pIdx}`, className: 'conditions-subtext' }, p));
-                      }
-                    });
-                  } else if (cond.text) {
-                    items.push(cond.text);
+                  if (cond.body) {
+                    items.push(h('div', { key: 'body', className: 'condition-body' }, formatMarkdown(cond.body)));
+                  } else {
+                    // Fallback para datos legados
+                    if (Array.isArray(cond.paragraphs) && cond.paragraphs.length > 0) {
+                      cond.paragraphs.forEach((p, pIdx) => {
+                        if (pIdx === 0) {
+                          items.push(p);
+                        } else {
+                          items.push(h('p', { key: `p-${pIdx}`, className: 'conditions-subtext' }, p));
+                        }
+                      });
+                    } else if (cond.text) {
+                      items.push(cond.text);
+                    }
+
+                    if (Array.isArray(cond.options) && cond.options.length > 0) {
+                      items.push(h('ul', { key: 'opts', className: 'conditions-options' },
+                        cond.options.map((opt, oIdx) => h('li', { key: oIdx }, opt))
+                      ));
+                    }
+
+                    if (cond.extra_text) {
+                      items.push(h('p', { key: 'extra', className: 'conditions-extra-text' }, cond.extra_text));
+                    }
+
+                    if (cond.subheading) {
+                      items.push(h('p', { key: 'subhead', className: 'conditions-subheading' },
+                        h('strong', null, cond.subheading)
+                      ));
+                    }
+
+                    if (Array.isArray(cond.sub_items) && cond.sub_items.length > 0) {
+                      items.push(h('ul', { key: 'subitems', className: 'conditions-sub-items' },
+                        cond.sub_items.map((sub, sIdx) => h('li', { key: sIdx }, sub))
+                      ));
+                    }
+
+                    if (cond.statement) {
+                      items.push(h('p', { key: 'statement', className: 'conditions-statement' },
+                        h('strong', null, cond.statement)
+                      ));
+                    }
                   }
 
-                  if (Array.isArray(cond.options) && cond.options.length > 0) {
-                    items.push(h('ul', { key: 'opts', className: 'conditions-options' },
-                      cond.options.map((opt, oIdx) => h('li', { key: oIdx }, opt))
-                    ));
-                  }
-
-                  if (cond.extra_text) {
-                    items.push(h('p', { key: 'extra', className: 'conditions-extra-text' }, cond.extra_text));
-                  }
-
-                  if (cond.subheading) {
-                    items.push(h('p', { key: 'subhead', className: 'conditions-subheading' },
-                      h('strong', null, cond.subheading)
-                    ));
-                  }
-
-                  if (Array.isArray(cond.sub_items) && cond.sub_items.length > 0) {
-                    items.push(h('ul', { key: 'subitems', className: 'conditions-sub-items' },
-                      cond.sub_items.map((sub, sIdx) => h('li', { key: sIdx }, sub))
-                    ));
-                  }
-
-                  if (cond.statement) {
-                    items.push(h('p', { key: 'statement', className: 'conditions-statement' },
-                      h('strong', null, cond.statement)
-                    ));
-                  }
-
-                  return h('li', { key: cond.number || idx }, items);
+                  return h('li', { key: cond.id || idx }, items);
                 })
               )
             )
@@ -278,17 +287,27 @@
             h('div', { className: 'conditions-accordion__content' },
               coexistence.article_65 ? h('div', null,
                 coexistence.article_65.title ? h('h4', null, coexistence.article_65.title) : null,
-                coexistence.article_65.intro ? h('p', null, coexistence.article_65.intro) : null,
-                Array.isArray(coexistence.article_65.points) && coexistence.article_65.points.length > 0 ? h('ul', null,
-                  coexistence.article_65.points.map((pt, pIdx) => h('li', { key: pIdx }, pt))
-                ) : null
+                coexistence.article_65.body ? formatMarkdown(coexistence.article_65.body) : (
+                  // Fallback legado
+                  h('div', null,
+                    coexistence.article_65.intro ? h('p', null, coexistence.article_65.intro) : null,
+                    Array.isArray(coexistence.article_65.points) && coexistence.article_65.points.length > 0 ? h('ul', null,
+                      coexistence.article_65.points.map((pt, pIdx) => h('li', { key: pIdx }, pt))
+                    ) : null
+                  )
+                )
               ) : null,
               coexistence.article_66 ? h('div', null,
                 coexistence.article_66.title ? h('h4', null, coexistence.article_66.title) : null,
-                coexistence.article_66.intro ? h('p', null, coexistence.article_66.intro) : null,
-                Array.isArray(coexistence.article_66.points) && coexistence.article_66.points.length > 0 ? h('ul', null,
-                  coexistence.article_66.points.map((pt, pIdx) => h('li', { key: pIdx }, pt))
-                ) : null
+                coexistence.article_66.body ? formatMarkdown(coexistence.article_66.body) : (
+                  // Fallback legado
+                  h('div', null,
+                    coexistence.article_66.intro ? h('p', null, coexistence.article_66.intro) : null,
+                    Array.isArray(coexistence.article_66.points) && coexistence.article_66.points.length > 0 ? h('ul', null,
+                      coexistence.article_66.points.map((pt, pIdx) => h('li', { key: pIdx }, pt))
+                    ) : null
+                  )
+                )
               ) : null
             )
           ) : null
