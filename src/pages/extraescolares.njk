@@ -65,11 +65,20 @@ iconColor: "gold"
       {{ act.status_note }}
     </p>
     {% endif %}
-    {% if act.status != 'full' and act.registration_url %}
-    <div>
+    {% set has_reg = (act.status != 'full' and act.registration_url) %}
+    {% set has_email = (act.contact_email and '@' in act.contact_email and not (' ' in act.contact_email.trim())) %}
+    {% if has_reg or has_email %}
+    <div class="activity-card__actions">
+      {% if has_reg %}
       <a href="{{ act.registration_url }}" target="_blank" rel="noopener noreferrer" class="btn-action">
         {{ act.button_label or 'Inscrición' }}
       </a>
+      {% endif %}
+      {% if has_email %}
+      <a href="mailto:{{ act.contact_email | trim | urlencode }}" class="btn-action btn-action--secondary">
+        Contactar por email
+      </a>
+      {% endif %}
     </div>
     {% endif %}
   </article>
@@ -111,7 +120,9 @@ iconColor: "gold"
       {% for cond in extraescolares.general_conditions %}
       <li>
         <strong>{{ cond.title }}:</strong>
-        {% if cond.paragraphs %}
+        {% if cond.body %}
+          <div class="condition-body">{{ cond.body | md | safe }}</div>
+        {% elif cond.paragraphs %}
           {% for p in cond.paragraphs %}
             {% if loop.first %}
               {{ p }}
@@ -119,36 +130,31 @@ iconColor: "gold"
               <p class="conditions-subtext">{{ p }}</p>
             {% endif %}
           {% endfor %}
+          {% if cond.options %}
+          <ul class="conditions-options">
+            {% for opt in cond.options %}
+            <li>{{ opt }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if cond.extra_text %}
+          <p class="conditions-extra-text">{{ cond.extra_text }}</p>
+          {% endif %}
+          {% if cond.subheading %}
+          <p class="conditions-subheading"><strong>{{ cond.subheading }}</strong></p>
+          {% endif %}
+          {% if cond.sub_items %}
+          <ul class="conditions-sub-items">
+            {% for item in cond.sub_items %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if cond.statement %}
+          <p class="conditions-statement"><strong>{{ cond.statement }}</strong></p>
+          {% endif %}
         {% else %}
           {{ cond.text }}
-        {% endif %}
-
-        {% if cond.options %}
-        <ul class="conditions-options">
-          {% for opt in cond.options %}
-          <li>{{ opt }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if cond.extra_text %}
-        <p class="conditions-extra-text">{{ cond.extra_text }}</p>
-        {% endif %}
-
-        {% if cond.subheading %}
-        <p class="conditions-subheading"><strong>{{ cond.subheading }}</strong></p>
-        {% endif %}
-
-        {% if cond.sub_items %}
-        <ul class="conditions-sub-items">
-          {% for item in cond.sub_items %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if cond.statement %}
-        <p class="conditions-statement"><strong>{{ cond.statement }}</strong></p>
         {% endif %}
       </li>
       {% endfor %}
@@ -159,24 +165,36 @@ iconColor: "gold"
 <details class="conditions-accordion">
   <summary>{{ extraescolares.coexistence_articles.title }}</summary>
   <div class="conditions-accordion__content">
+    {% if extraescolares.coexistence_articles.article_65 %}
     <h4>{{ extraescolares.coexistence_articles.article_65.title }}</h4>
-    <p>{{ extraescolares.coexistence_articles.article_65.intro }}</p>
-    <ul>
-      {% for point in extraescolares.coexistence_articles.article_65.points %}
-      <li>{{ point }}</li>
-      {% endfor %}
-    </ul>
+    {% if extraescolares.coexistence_articles.article_65.body %}
+      {{ extraescolares.coexistence_articles.article_65.body | md | safe }}
+    {% else %}
+      <p>{{ extraescolares.coexistence_articles.article_65.intro }}</p>
+      <ul>
+        {% for point in extraescolares.coexistence_articles.article_65.points %}
+        <li>{{ point }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endif %}
 
+    {% if extraescolares.coexistence_articles.article_66 %}
     <h4>{{ extraescolares.coexistence_articles.article_66.title }}</h4>
-    <p>{{ extraescolares.coexistence_articles.article_66.intro }}</p>
-    <ul>
-      {% for point in extraescolares.coexistence_articles.article_66.points %}
-      <li>{{ point }}</li>
-      {% endfor %}
-    </ul>
+    {% if extraescolares.coexistence_articles.article_66.body %}
+      {{ extraescolares.coexistence_articles.article_66.body | md | safe }}
+    {% else %}
+      <p>{{ extraescolares.coexistence_articles.article_66.intro }}</p>
+      <ul>
+        {% for point in extraescolares.coexistence_articles.article_66.points %}
+        <li>{{ point }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endif %}
   </div>
 </details>
 
 <p>
-  <img src="/img/extraescolares-corresponsables.jpg" alt="Plan Corresponsables - Xunta de Galicia">
+  <img src="{{ extraescolares.corresponsables_image or '/img/extraescolares-corresponsables.jpg' }}" alt="{{ extraescolares.corresponsables_image_alt or 'Plan Corresponsables - Xunta de Galicia' }}">
 </p>
