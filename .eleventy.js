@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const cheerio = require("cheerio");
+const cheerio = require("cheerio/slim");
 const markdownIt = require("markdown-it");
 
 // In-memory cache of rendered HTML by URL to keep watch/incremental rebuilds complete
