@@ -161,8 +161,8 @@ collections:
                     widget: "markdown"
                     modes: ["rich_text", "raw"]
                     buttons: ["bold", "italic", "link", "bulleted-list", "numbered-list"]
-          - { label: "Imaxe Plan Corresponsables (opcional)", name: "corresponsables_image", widget: "image", required: false, hint: "Imaxe oficial de pé de páxina (ex: Plan Corresponsables). Se non se especifica ningunha imaxe, amosarase a imaxe predeterminada (/img/extraescolares-corresponsables.jpg)" }
-          - { label: "Texto alternativo da imaxe (Alt)", name: "corresponsables_image_alt", widget: "string", required: false, hint: "Texto descritivo de accesibilidade para a imaxe (predeterminado: 'Plan Corresponsables - Xunta de Galicia')" }
+          - { label: "Imaxe Plan Corresponsables (opcional)", name: "corresponsables_image", widget: "image", required: false, hint: "Imaxe ao pé da páxina de Extraescolares. Para substituíla por outra, prema en 'Elegir una imagen'. Se se deixa este campo baleiro, restaurarase automaticamente a imaxe institucional predeterminada (/img/extraescolares-corresponsables.jpg)." }
+          - { label: "Texto alternativo da imaxe (Alt)", name: "corresponsables_image_alt", widget: "string", required: false, hint: "Texto descritivo de accesibilidade para a imaxe. Se se deixa baleiro, aplicarase o texto predeterminado ('Plan Corresponsables - Xunta de Galicia')." }
 
   # ===== 3. PÁXINAS DE INFORMACIÓN (CAMPOS ESTRUTURADOS E BLOQUES FLEXIBLES) =====
   - name: "pages"

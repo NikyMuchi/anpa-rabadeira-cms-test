@@ -402,6 +402,8 @@ function runTests() {
     assert.strictEqual(typeof data.subintro, 'string');
     assert.strictEqual(typeof data.deadlines_note, 'string');
     assert(typeof data.membership === 'object');
+    assert.strictEqual(data.corresponsables_image, '/img/extraescolares-corresponsables.jpg');
+    assert.strictEqual(data.corresponsables_image_alt, 'Plan Corresponsables - Xunta de Galicia');
   });
 
   console.log(`\nTest Summary: ${passed} passed, ${failed} failed.\n`);
