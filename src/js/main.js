@@ -15,9 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         window.closeMobileNav = () => {
-            if (nav.classList.contains("is-open")) {
-                setNavState(false);
-            }
+            setNavState(false);
         };
 
         toggle.addEventListener("click", (e) => {

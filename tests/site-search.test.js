@@ -336,18 +336,70 @@ async function runSearchTests() {
   }
 
   try {
-    await test("Header and search panel have zero horizontal overflow across 375px, 768px, 1024px, and 1280px", async () => {
+    await test("Header, brand text, search button, and panel have zero overlap, clipping, or overflow across 320px–1280px", async () => {
       const page = await browser.newPage();
-      const widths = [375, 768, 1024, 1280];
+      const widths = [320, 360, 375, 412, 480, 600, 768, 1024, 1280];
 
       for (const w of widths) {
         await page.setViewportSize({ width: w, height: 800 });
         await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
 
-        const overflow = await page.evaluate(() => {
-          return document.documentElement.scrollWidth > window.innerWidth;
+        const metrics = await page.evaluate(() => {
+          const brandName = document.querySelector(".site-brand__name");
+          const searchBtn = document.querySelector(".search-toggle");
+          const searchLabel = document.querySelector(".search-toggle__label");
+          const navBtn = document.querySelector(".nav-toggle");
+
+          const brandRect = brandName.getBoundingClientRect();
+          const searchRect = searchBtn.getBoundingClientRect();
+          const labelRect = searchLabel.getBoundingClientRect();
+          const navRect = navBtn.getBoundingClientRect();
+
+          return {
+            docOverflow: document.documentElement.scrollWidth > window.innerWidth,
+            brandClipped: brandName.scrollWidth > brandName.clientWidth + 1,
+            brandRight: brandRect.right,
+            searchLeft: searchRect.left,
+            searchRight: searchRect.right,
+            searchWidth: searchRect.width,
+            searchHeight: searchRect.height,
+            searchAriaLabel: searchBtn.getAttribute("aria-label"),
+            labelWidth: labelRect.width,
+            navLeft: navRect.left,
+            navVisible: getComputedStyle(navBtn).display !== "none",
+          };
         });
-        assert(!overflow, `Horizontal overflow detected on / at viewport width ${w}px`);
+
+        assert(!metrics.docOverflow, `Horizontal overflow detected on / at viewport width ${w}px`);
+        assert(!metrics.brandClipped, `Brand text 'ANPA Rabadeira' is clipped/overflowing its box at ${w}px`);
+        assert(
+          metrics.brandRight + 8 <= metrics.searchLeft,
+          `Brand text right (${metrics.brandRight}px) is too close to or overlaps search button left (${metrics.searchLeft}px) at ${w}px`
+        );
+
+        if (w <= 600) {
+          assert(
+            metrics.searchWidth >= 44 && metrics.searchHeight >= 44,
+            `Expected >= 44x44px touch target at ${w}px, got ${metrics.searchWidth}x${metrics.searchHeight}`
+          );
+          assert(
+            metrics.labelWidth <= 1,
+            `Expected icon-only search button on narrow screen (${w}px), but label width was ${metrics.labelWidth}px`
+          );
+          assert.strictEqual(metrics.searchAriaLabel, "Abrir o buscador");
+        } else {
+          assert(
+            metrics.labelWidth > 20,
+            `Expected visible 'Buscar' text label on wider screen (${w}px), got width ${metrics.labelWidth}px`
+          );
+        }
+
+        if (metrics.navVisible) {
+          assert(
+            metrics.searchRight + 4 <= metrics.navLeft,
+            `Expected clear spacing between search button (${metrics.searchRight}px) and hamburger (${metrics.navLeft}px) at ${w}px`
+          );
+        }
 
         // Open search panel and check overflow again
         await page.click(".search-toggle");
@@ -372,10 +424,11 @@ async function runSearchTests() {
       await page.click(".nav-toggle");
       assert.strictEqual(await page.getAttribute(".nav-toggle", "aria-expanded"), "true");
 
-      // Clicking search toggle must close mobile nav automatically and focus search input
+      // Clicking search toggle must close mobile nav automatically, remove nav-open body lock, and focus search input
       await page.click(".search-toggle");
       assert.strictEqual(await page.getAttribute(".nav-toggle", "aria-expanded"), "false");
       assert.strictEqual(await page.getAttribute(".search-toggle", "aria-expanded"), "true");
+      assert.strictEqual(await page.evaluate(() => document.body.classList.contains("nav-open")), false);
       const focusedId = await page.evaluate(() => document.activeElement && document.activeElement.id);
       assert.strictEqual(focusedId, "site-search-input", "Search input must receive focus when opened");
 
@@ -395,6 +448,7 @@ async function runSearchTests() {
       await page.keyboard.press("Escape");
       const isHidden = await page.evaluate(() => document.getElementById("site-search-panel").hidden);
       assert.strictEqual(isHidden, true, "Escape must hide #site-search-panel");
+      assert.strictEqual(await page.evaluate(() => document.body.classList.contains("nav-open")), false);
       const activeClass = await page.evaluate(() => document.activeElement && document.activeElement.className);
       assert(activeClass.includes("search-toggle"), "Escape must return focus to .search-toggle");
 

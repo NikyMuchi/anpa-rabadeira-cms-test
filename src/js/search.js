@@ -540,6 +540,10 @@
         panel.hidden = true;
         toggleBtn.setAttribute("aria-expanded", "false");
         toggleBtn.setAttribute("aria-label", "Abrir o buscador");
+        const nav = document.querySelector(".main-nav");
+        if (!nav || !nav.classList.contains("is-open")) {
+          document.body.classList.remove("nav-open");
+        }
         if (restoreFocus) {
           toggleBtn.focus();
         }
