@@ -5,10 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (toggle && nav) {
         const setNavState = (isOpen) => {
+            if (isOpen && typeof window.closeSiteSearch === "function") {
+                window.closeSiteSearch({ restoreFocus: false });
+            }
             nav.classList.toggle("is-open", isOpen);
             toggle.setAttribute("aria-expanded", String(isOpen));
             toggle.setAttribute("aria-label", isOpen ? "Pechar menú" : "Abrir menú");
             document.body.classList.toggle("nav-open", isOpen);
+        };
+
+        window.closeMobileNav = () => {
+            setNavState(false);
         };
 
         toggle.addEventListener("click", (e) => {
@@ -50,3 +57,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+

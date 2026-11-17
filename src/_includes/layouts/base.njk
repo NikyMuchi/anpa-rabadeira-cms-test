@@ -30,17 +30,61 @@
         </div>
       </a>
 
-      <button class="nav-toggle" aria-expanded="false" aria-label="Abrir menú">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-
       <nav class="main-nav" aria-label="Menú principal">
         {%- for pg in collections.navPages %}
         <a href="{{ pg.url or pg.data.permalink }}"{% if page.url == (pg.url or pg.data.permalink) or ((pg.url or pg.data.permalink) != '/' and page.url.startsWith(pg.url or pg.data.permalink)) %} aria-current="page"{% endif %}>{{ pg.data.navLabel or pg.data.title }}</a>
         {%- endfor %}
       </nav>
+
+      <div class="header-actions">
+        <button type="button" class="search-toggle" aria-expanded="false" aria-controls="site-search-panel" aria-label="Abrir o buscador">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <span class="search-toggle__label">Buscar</span>
+        </button>
+
+        <button class="nav-toggle" aria-expanded="false" aria-label="Abrir menú">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="site-search-panel" class="search-panel" role="search" aria-label="Buscador do sitio web" hidden>
+      <div class="search-panel__inner container">
+        <form class="search-form" role="search" novalidate>
+          <label for="site-search-input" class="search-form__label">Buscar na web da ANPA</label>
+          <div class="search-form__controls">
+            <div class="search-input-wrap">
+              <svg class="search-input-wrap__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="search"
+                id="site-search-input"
+                class="search-input"
+                name="q"
+                placeholder="Buscar actividades, comedor, madrugadores, novas…"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                enterkeyhint="search"
+              >
+              <button type="button" class="search-clear-btn" aria-label="Limpar a busca" hidden>
+                <span aria-hidden="true">✕</span>
+              </button>
+            </div>
+            <button type="button" class="search-close-btn">Pechar</button>
+          </div>
+        </form>
+        <div id="site-search-status" class="search-status" role="status" aria-live="polite"></div>
+        <div id="site-search-results" class="search-results">
+          <p class="search-hint">Escribe polo menos 2 letras para buscar en toda a web (ex.: inglés, comedor, madrugadores, inscrición, TEA…).</p>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -80,6 +124,7 @@
   </footer>
 
   <script src="/js/main.js"></script>
+  <script src="/js/search.js"></script>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
     if (window.netlifyIdentity) {
