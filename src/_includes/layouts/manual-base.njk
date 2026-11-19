@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title or "Centro de Ayuda — Manual de Administración | ANPA Rabadeira" }}</title>
+  <meta name="description" content="{{ description or 'Manual práctico y Centro de Ayuda para la administración de contenidos de la ANPA Ensino Rabadeira (Oleiros).' }}">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/jpeg" href="/img/logo-anpa.jpg">
+  <link rel="shortcut icon" type="image/jpeg" href="/img/logo-anpa.jpg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/manual.css">
+</head>
+<body class="manual-body">
+  <!-- Top Admin Bar -->
+  <aside class="manual-admin-bar" aria-label="Barra de administración">
+    <div class="manual-admin-bar__inner">
+      <div class="manual-admin-bar__badge">
+        <span>⚠️ ENTORNO DE PROBAS — CMS TEST</span>
+      </div>
+      <div class="manual-admin-bar__actions">
+        <a href="/admin/" class="manual-admin-bar__link manual-admin-bar__link--btn" title="Volver al panel de edición de contenidos">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+          Volver al Gestor CMS (/admin/)
+        </a>
+        <a href="/" class="manual-admin-bar__link" target="_blank" rel="noopener" title="Ver la web pública de la ANPA">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          Ver Web Pública
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Header -->
+  <header class="manual-header">
+    <div class="manual-header__inner">
+      <a href="/admin/manual/" class="manual-brand" aria-label="Inicio del Centro de Ayuda">
+        <img src="/img/logo-anpa.jpg" alt="Logo ANPA Ensino Rabadeira" class="manual-brand__logo">
+        <div class="manual-brand__text">
+          <span class="manual-brand__title">Centro de Ayuda</span>
+          <span class="manual-brand__sub">Manual de Administración — ANPA Rabadeira</span>
+        </div>
+      </a>
+
+      <!-- Instant Local Search -->
+      <div class="manual-search-wrap" role="search">
+        <div class="manual-search-box">
+          <svg class="manual-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input
+            type="search"
+            id="manual-search-input"
+            class="manual-search-input"
+            placeholder="Buscar tutorial, tarea o duda (ej: noticia, precio, pdf)..."
+            autocomplete="off"
+            aria-label="Buscar en el manual de administración"
+            aria-autocomplete="list"
+            aria-controls="manual-search-dropdown"
+          >
+          <div id="manual-search-actions" class="manual-search-actions" hidden>
+            <button type="button" id="manual-search-clear" class="manual-search-btn manual-search-btn--clear" aria-label="Borrar texto de búsqueda" title="Borrar búsqueda">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <button type="button" id="manual-search-submit" class="manual-search-btn manual-search-btn--submit" aria-label="Buscar o mostrar resultados" title="Buscar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="manual-search-status" class="sr-only" role="status" aria-live="polite"></div>
+
+        <div id="manual-search-dropdown" class="manual-search-dropdown" role="listbox">
+          <!-- Populated dynamically by manual.js -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main id="manual-main">
+    {{ content | safe }}
+  </main>
+
+  <!-- Zoom Modal (Lightbox) for Screenshots -->
+  <div id="manual-zoom-modal" class="manual-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Visualizador de captura de pantalla">
+    <div class="manual-modal__dialog">
+      <div class="manual-modal__header">
+        <p id="manual-modal-caption" class="manual-modal__caption">Captura de pantalla de Decap CMS</p>
+        <button type="button" id="manual-modal-close" class="manual-modal__close" aria-label="Cerrar vista ampliada">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          Cerrar (Esc)
+        </button>
+      </div>
+      <div class="manual-modal__body">
+        <img id="manual-modal-img" src="" alt="" class="manual-modal__img">
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Security & Administration Notice -->
+  <footer class="manual-footer" style="background-color: #ffffff; border-top: 1px solid var(--clr-warm-border, #e8e2d8); padding: 2rem 1.25rem; margin-top: 4rem;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; font-size: 0.875rem; color: var(--clr-gray-600, #475569);">
+      <div>
+        <strong style="color: var(--clr-teal-900, #143e3a);">ANPA Ensino Rabadeira</strong> · CEIP Rabadeira (Oleiros)
+        <p style="margin: 0.25rem 0 0 0; font-size: 0.8125rem;">Manual Oficial de Administración del Sitio Web. Diseñado para la junta directiva.</p>
+      </div>
+      <div style="display: flex; gap: 1.25rem;">
+        <a href="/admin/manual/" style="color: var(--clr-teal-700, #20625d); text-decoration: none; font-weight: 500;">Índice del Manual</a>
+        <a href="/admin/" style="color: var(--clr-teal-700, #20625d); text-decoration: none; font-weight: 500;">Panel CMS</a>
+        <a href="/" target="_blank" rel="noopener" style="color: var(--clr-teal-700, #20625d); text-decoration: none; font-weight: 500;">Web Pública ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/manual.js" defer></script>
+</body>
+</html>

@@ -56,6 +56,8 @@ En la pestaña superior **Flujo Editorial** puedes consultar el tablero visual c
 ![Tablero de flujo editorial con columnas de Borradores, En revisión y Listo en Decap CMS](img/CAP-05-TABLERO-WORKFLOW.png)
 *Figura 5: Tablero visual del Flujo Editorial mostrando las tres columnas organizativas ("Borradores", "En revisión" y "Listo") con tarjetas reales de artículos en cada fase.*
 
+> ℹ️ **Nota sobre las entradas de la imagen:** Las tarjetas mostradas en la captura anterior (*"Obradoiro de Robótica e Ciencia 2026"*, *"Reunión Informativa"*, etc.) son entradas de prueba creadas con fines ilustrativos en una interfaz auténtica de Decap CMS, para mostrar cómo se ordenan las columnas. No corresponden a noticias reales publicadas en la web oficial de la ANPA.
+
 Desde este tablero puedes:
 * **Hacer clic en cualquier tarjeta** para abrirla y seguir editando donde lo dejaste.
 * **Arrastrar tarjetas** de una columna a otra con el ratón para ordenar el trabajo del equipo.

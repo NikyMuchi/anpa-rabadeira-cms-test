@@ -472,6 +472,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/docs");
   eleventyConfig.addPassthroughCopy("emails");
   eleventyConfig.addPassthroughCopy("admin");
+  eleventyConfig.addPassthroughCopy({ "docs/manual/img": "admin/manual/img" });
 
   // Add stable anchor IDs to Extraescolares conditions accordions in rendered HTML
   eleventyConfig.addTransform("extraescolaresAccordionIds", function (content) {
