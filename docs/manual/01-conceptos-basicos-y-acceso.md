@@ -51,13 +51,10 @@ Sigue estos sencillos pasos desde tu ordenador o tableta (recomendamos usar Goog
    ```
    *(También puedes entrar desde la web pública bajando hasta el pie de página y haciendo clic en el enlace discreto que dice **🔒 Acceso administración**).*
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-01-LOGIN]**
-> *(En la Fase 2 se incorporará aquí la captura real del navegador)*
-> * **Pantalla:** Página `/admin/` antes de iniciar sesión.
-> * **Elemento visible:** Cuadro central de bienvenida con el logotipo de la ANPA y el botón central azul oscuro que dice **"Login with GitHub"** sobre fondo crema cálido.
-> * **Acción del usuario:** Hacer clic sobre dicho botón.
+![Pantalla de inicio de sesión de Decap CMS con el aviso de entorno de pruebas](img/CAP-01-LOGIN.png)
+*Figura 1: Pantalla de inicio de sesión de Decap CMS en `/admin/` mostrando el aviso de entorno de pruebas y el botón central de acceso.*
 
-3. Haz clic en el botón azul: **Login with GitHub**.
+3. Haz clic en el botón azul: **Login with GitHub** (o **Iniciar sesión**).
 4. Se abrirá una pequeña ventana emergente (*popup*):
    * Si ya tenías tu sesión de GitHub abierta en ese navegador, la ventana parpadeará unos segundos, confirmará tus permisos y se cerrará sola.
    * Si no tenías la sesión abierta, introduce tu correo/usuario de GitHub y tu contraseña, y pulsa en **Sign in**.
@@ -72,10 +69,8 @@ Sigue estos sencillos pasos desde tu ordenador o tableta (recomendamos usar Goog
 
 Al entrar, te encontrarás con una interfaz limpia y organizada en tres grandes zonas:
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-02-PANEL-GENERAL]**
-> *(En la Fase 2 se incorporará aquí la captura real del panel principal)*
-> * **Pantalla:** Panel principal de Decap CMS tras iniciar sesión con éxito.
-> * **Elementos visibles:** Barra superior con las pestañas "Contenido" y "Flujo editorial", la barra lateral izquierda mostrando las 5 colecciones (`Artigos / Novas`, `Actividades Extraescolares`, `Páxinas de Información`, `Páxina de Inicio`, `Datos Xerais da ANPA`), y la zona central con la lista de artículos.
+![Panel principal de Decap CMS mostrando las 5 colecciones de contenido](img/CAP-02-PANEL-GENERAL.png)
+*Figura 2: Panel principal de Decap CMS con la barra superior de navegación, la barra lateral con las 5 colecciones y el listado de artículos.*
 
 ### Zona A: La barra lateral izquierda (Las Colecciones)
 En el margen izquierdo verás las 5 secciones o archivadores temáticos de la web:

@@ -1,4 +1,4 @@
-﻿# Módulo 7: Alta de Socios e Inscripción (Inscrición)
+# Módulo 7: Alta de Socios e Inscripción (Inscrición)
 
 Hacerse socio o socia de la ANPA permite a las familias financiar las actividades del colegio, disfrutar de tarifas reducidas en extraescolares y participar activamente en la vida escolar.
 
@@ -36,9 +36,8 @@ Verás los siguientes campos:
 | **Mensaxe final** | Despedida | Mensaje de cierre (*Grazas!*). |
 | **Documentos / PDF (opcional)** | Folletos descargables | Permite añadir la ficha de alta en PDF para quien prefiera hacerla en papel. |
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-13-INSCRIPCION-FORM]**
-> * **Pantalla:** Formulario de edición de Inscripción en Decap CMS.
-> * **Elementos visibles:** Campos `Cota anual de socio`, `Número de conta bancaria (IBAN)` mostrando el código formateado, y `Formulario de inscrición (Google Forms URL)` con el botón azul de Google Forms en la vista previa derecha.
+![Formulario de edición de alta de socios e inscripción en Decap CMS](img/CAP-13-INSCRIPCION-FORM.png)
+*Figura 17: Formulario de edición de Inscripción mostrando la cuota anual, casilla de IBAN bancario y enlace al formulario de Google Forms.*
 
 ---
 

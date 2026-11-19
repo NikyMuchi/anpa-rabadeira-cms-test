@@ -1,4 +1,4 @@
-﻿# Módulo 12: Gestión de Multimedia — Fotografías y Documentos PDF
+# Módulo 12: Gestión de Multimedia — Fotografías y Documentos PDF
 
 En este módulo aprenderás las mejores prácticas para subir imágenes y folletos en PDF a la web de la ANPA sin sobrecargarla y garantizando que las familias puedan abrir los archivos con rapidez incluso con poca cobertura móvil.
 
@@ -11,9 +11,8 @@ La **Biblioteca de Medios** es el almacén central donde se guardan todas las fo
 * Cuando estás editando un campo de imagen o archivo y pulsas en **Elegir una imagen** o **Elegir un archivo**, se abre la ventana de la biblioteca.
 * También puedes abrirla en cualquier momento haciendo clic en el icono de imagen situado en la barra superior del panel de control.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-18-BIBLIOTECA-MEDIOS]**
-> * **Pantalla:** Ventana modal emergente de la Biblioteca de Medios en Decap CMS.
-> * **Elementos visibles:** Cuadrícula con miniaturas de imágenes ya subidas (`hero-anpa-comunidade.webp`, logotipos, fotos de noticias), barra de búsqueda interna y el botón azul superior **Subir imagen** (*Upload image*).
+![Ventana modal de la biblioteca de medios en Decap CMS](img/CAP-18-BIBLIOTECA-MEDIOS.png)
+*Figura 26: Ventana modal de la Biblioteca de Medios en Decap CMS con la cuadrícula de archivos subidos, buscador y botón "Subir nuevo".*
 
 ---
 

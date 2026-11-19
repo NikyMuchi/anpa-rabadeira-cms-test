@@ -1,4 +1,4 @@
-﻿# Módulo 5: Servicio de Madrugadores (Servizo de Madrugadores)
+# Módulo 5: Servicio de Madrugadores (Servizo de Madrugadores)
 
 El servicio de madrugadores permite la conciliación familiar y laboral de las familias del CEIP Rabadeira desde primera hora de la mañana.
 
@@ -45,9 +45,8 @@ El editor de Madrugadores es un **Editor de Documento Simple**:
 | **Contido da páxina** | Cuerpo principal | Markdown | **Sí** | Todo el texto explicativo: horarios, tarifas, normas de Jardanay y teléfonos de contacto. |
 | **Documentos / PDF (opcional)** | Tríptico descargable | Lista | No | Folleto oficial de Jardanay en PDF con botones de lectura y descarga. |
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-23-MADRUGADORES-FORM]**
-> * **Pantalla:** Editor de `madrugadores.md` en Decap CMS.
-> * **Elementos visibles:** Campos `Título da páxina`, `Contido da páxina` con los bloques de texto enriquecido, y el bloque `Documentos / PDF (opcional)` desplegado con el tríptico del curso.
+![Editor del servicio de madrugadores en Decap CMS](img/CAP-23-MADRUGADORES-FORM.png)
+*Figura 13: Editor de Madrugadores en Decap CMS mostrando los campos de título, texto de tarifas y bloque de documentos descargables.*
 
 ---
 

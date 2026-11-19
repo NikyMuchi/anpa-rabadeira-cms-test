@@ -1,4 +1,4 @@
-﻿# Módulo 13: El Buscador General del Sitio Web
+# Módulo 13: El Buscador General del Sitio Web
 
 En este módulo conocerás cómo funciona el **Buscador General** (*Buscador xeral*) integrado en la cabecera de la web pública de la ANPA y qué debes tener en cuenta al redactar tus contenidos para que las familias encuentren todo a la primera.
 
@@ -12,9 +12,8 @@ En la cabecera de todas las páginas de la web pública, junto al logotipo y el 
 * En teléfonos móviles se muestra como un botón táctil compacto de 44x44 píxeles para que no estorbe al nombre del colegio ni al menú.
 * Al pulsar sobre la lupa, se abre una ventana modal accesible donde cualquier madre, padre o tutor puede escribir cualquier palabra (por ejemplo: *"judo"*, *"horario"*, *"atriga"*, *"25€"*, *"bajas"*) y ver al instante todos los resultados relevantes ordenados con enlaces directos.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-19-BUSCADOR-MODAL]**
-> * **Pantalla:** La ventana modal del buscador abierta en la web pública.
-> * **Elementos visibles:** Caja de texto con el cursor parpadeando, el texto de ayuda *"Escribe para buscar noticias, actividades ou servizos..."*, y una lista de resultados coincidentes con sus etiquetas temáticas.
+![Ventana modal del buscador general en el sitio web de la ANPA](img/CAP-19-BUSCADOR-MODAL.png)
+*Figura 27: Ventana modal del buscador del sitio web mostrando la búsqueda en vivo con resultados clasificados por categoría temática.*
 
 ---
 

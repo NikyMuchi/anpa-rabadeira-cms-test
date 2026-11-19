@@ -1,4 +1,4 @@
-﻿# Módulo 11: Datos Generales de la Asociación (site.json)
+# Módulo 11: Datos Generales de la Asociación (site.json)
 
 En este módulo aprenderás a gestionar la identidad corporativa y la configuración global de la ANPA a través de la colección **⚙️ Datos Xerais da ANPA**.
 
@@ -39,9 +39,8 @@ Controla el archivo global `src/_data/site.json`. Contiene los 5 datos de identi
 | **Descrición xeral (para buscadores)** | Resumen SEO para Google | Texto | La descripción de texto que muestra Google en sus resultados cuando una familia busca a la ANPA en internet. |
 | **URL do sitio web** | Dominio oficial de la web | Texto | La dirección oficial de publicación (`https://anpa-rabadeira-cms-test.netlify.app`). |
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-27-SITE-SETTINGS]**
-> * **Pantalla:** Formulario de `site_data` en Decap CMS.
-> * **Elementos visibles:** Campos `Nome curto da asociación`, `Nome oficial completo`, `Email oficial de contacto` y `Descrición xeral (para buscadores)`.
+![Formulario de configuración de datos generales de la ANPA en Decap CMS](img/CAP-27-SITE-SETTINGS.png)
+*Figura 25: Formulario de datos generales de la ANPA en Decap CMS mostrando los campos de nombre oficial, email de contacto y descripción SEO.*
 
 ---
 

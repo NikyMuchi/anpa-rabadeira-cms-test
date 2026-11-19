@@ -1,4 +1,4 @@
-﻿# Módulo 6: Pago de Comedor Escolar (Guía ATRIGA)
+# Módulo 6: Pago de Comedor Escolar (Guía ATRIGA)
 
 El pago del comedor escolar del CEIP Rabadeira se realiza de forma telemática a través de la Axencia Tributaria de Galicia (ATRIGA). Para muchas familias nuevas de Infantil y Primaria, este trámite resulta confuso al principio.
 
@@ -43,9 +43,8 @@ El formulario está organizado de forma muy intuitiva:
 | **Información final e xustificantes** | Justificantes y cierre | Markdown | Correo para enviar el justificante, vías alternativas (Abalar) y despedida. |
 | **Documentos / PDF (opcional)** | Guías en PDF | Lista | Para subir guías en PDF si se desea. |
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-24-COMEDOR-EDITOR]**
-> * **Pantalla:** Formulario de edición de `comedor.md` en Decap CMS.
-> * **Elementos visibles:** Campos `Texto introdutorio`, `Información de pagamento (ATRIGA)`, y la lista desplegada de los pasos con sus campos `description` e `image`.
+![Vista general del editor de comedor en Decap CMS](img/CAP-24-COMEDOR-EDITOR.png)
+*Figura 14: Vista general del editor de Comedor en Decap CMS mostrando los campos de título, texto introductorio e información de ATRIGA.*
 
 ---
 
@@ -55,6 +54,12 @@ Cada paso de la lista contiene tres campos:
 * `Texto explicativo`: La instrucción de lo que hay que hacer en esa pantalla.
 * `Imaxe do paso`: La captura de pantalla en formato PNG o JPG guardada en `/img/comedor/`.
 * `Descrición da imaxe (accesibilidade)`: Texto de accesibilidad (ej: *Paso 1 - Portal ATRIGA*).
+
+![Detalle de los pasos ilustrados de la guía de ATRIGA en Decap CMS](img/CAP-14-COMEDOR-ATRIGA-STEPS.png)
+*Figura 15: Detalle de los pasos ilustrados de la guía de pago de ATRIGA con campos de descripción y captura adjunta.*
+
+![Bloque de documentos y guías en PDF descargables para comedor](img/CAP-15-COMEDOR-DOCUMENTOS-PDF.png)
+*Figura 16: Bloque inferior de documentos PDF opcionales para adjuntar guías tributarias o trípticos oficiales.*
 
 ### La secuencia oficial de los 11 pasos:
 1. **Paso 1:** *No apartado de CIDADÁNS, premes iniciar taxa* (Captura `/img/comedor/paso-1.png`).

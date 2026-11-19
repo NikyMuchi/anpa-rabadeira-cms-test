@@ -1,4 +1,4 @@
-﻿# Módulo 3: Gestión de Noticias y Avisos (Novas)
+# Módulo 3: Gestión de Noticias y Avisos (Novas)
 
 En este módulo aprenderás a redactar, ilustrar y publicar comunicados oficiales, avisos urgentes y noticias de actividades para toda la comunidad escolar del CEIP Rabadeira.
 
@@ -34,9 +34,8 @@ Al pulsar en **Novo Artigo** (Nuevo Artículo), verás los siguientes campos:
 | **Deseño (Layout)** | Plantilla técnica | **Automático** | Es un campo técnico oculto (`layouts/post.njk`). **No debes tocarlo**. |
 | **Contido** | Cuerpo del artículo | **Sí** | El texto completo de la noticia. Dispone de barra de formato para negritas, listas y enlaces. |
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-06-FORMULARIO-NOTICIA]**
-> * **Pantalla:** Formulario en blanco de `posts` al hacer clic en "Novo Artigo".
-> * **Elementos visibles:** Campos `Título`, `Data de publicación`, selector `Categoría`, botón `Elegir una imagen` en `Imaxe destacada`, y la barra de herramientas del editor Markdown en `Contido`.
+![Formulario en blanco para crear una nueva noticia en Decap CMS](img/CAP-06-FORMULARIO-NOTICIA.png)
+*Figura 6: Formulario en blanco de `posts` al hacer clic en "Novo Artigo", con los campos de título, fecha, categoría, imagen destacada y editor de contenido.*
 
 ---
 
@@ -115,8 +114,8 @@ Si una noticia ha quedado obsoleta o se creó por error:
 4. El sistema te pedirá confirmación: pulsa **Aceptar**.
 5. En unos dos minutos, la noticia desaparecerá de la web y de la portada.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-07-ELIMINAR-NOTICIA]**
-> * **Pantalla:** Vista de una noticia abierta con el botón o enlace "Eliminar entrada" destacado en rojo en la barra superior de acciones.
+![Botón de eliminación de entrada en el editor de noticias](img/CAP-07-ELIMINAR-NOTICIA.png)
+*Figura 7: Vista de una noticia en edición mostrando el botón "Eliminar entrada" para dar de baja avisos caducados o erróneos.*
 
 ---
 

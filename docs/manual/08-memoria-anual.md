@@ -1,4 +1,4 @@
-﻿# Módulo 8: Memoria Anual de Actividades (Memoria de Actividades)
+# Módulo 8: Memoria Anual de Actividades (Memoria de Actividades)
 
 La transparencia en la gestión de los recursos económicos y en las actividades organizadas es una seña de identidad de la ANPA Rabadeira.
 
@@ -38,9 +38,8 @@ El editor de Memoria es un **Editor de Documento Simple**:
 | **Contido da páxina** | Texto explicativo | Markdown | **Sí** | Párrafo de presentación y correo de contacto para dudas sobre las cuentas de la asociación. |
 | **Documentos / PDF (opcional)** | Lista de Memorias | Lista | **Sí** | Bloque donde se sube el archivo PDF oficial de cada curso escolar. |
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-25-MEMORIA-EDITOR]**
-> * **Pantalla:** Editor de `memoria.md` en Decap CMS.
-> * **Elementos visibles:** Título, cuadro `Contido da páxina` con el texto de presentación, y el bloque `Documentos / PDF (opcional)` mostrando la tarjeta de la memoria del curso con su título y archivo PDF.
+![Editor de memoria anual de actividades en Decap CMS](img/CAP-25-MEMORIA-EDITOR.png)
+*Figura 18: Editor de Memoria Anual en Decap CMS mostrando los campos de título, contenido y bloque de memorias escolares en PDF.*
 
 ---
 

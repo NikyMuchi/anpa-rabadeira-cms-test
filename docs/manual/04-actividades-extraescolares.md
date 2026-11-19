@@ -1,4 +1,4 @@
-﻿# Módulo 4: Gestión de Actividades Extraescolares
+# Módulo 4: Gestión de Actividades Extraescolares
 
 Este es el módulo más importante del sitio web. En él se gestiona toda la oferta de actividades del colegio: el curso escolar, el cartel oficial de horarios, las 18 actividades con sus estados de plazas, los precios, los formularios de inscripción y el reglamento de convivencia.
 
@@ -35,9 +35,8 @@ El formulario está organizado en bloques lógicos. Algunos aparecen colapsados 
  └── Imaxe do Plan Corresponsables
 ```
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-08-EXTRA-CABECERA]**
-> * **Pantalla:** Cabecera del formulario de Extraescolares.
-> * **Elementos visibles:** Campos `Curso académico` con el valor `2026-2027`, `Imaxe do Horario Completo` con el botón `Elegir una imagen`, y los párrafos de `Texto de introdución` y `Aviso de prazos e baixas`.
+![Cabecera del formulario de gestión de actividades extraescolares](img/CAP-08-EXTRA-CABECERA.png)
+*Figura 8: Cabecera del formulario de Extraescolares mostrando el curso académico, la imagen del cuadro horario general y los avisos de plazos.*
 
 ---
 
@@ -66,9 +65,8 @@ Bajo el encabezado **Listado de Actividades (18 actividades)** encontrarás la l
 
 Al hacer clic sobre cualquiera de ellas, se desplegarán sus 12 casillas ordenadas:
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-09-EXTRA-ACTIVIDAD-CAMPOS]**
-> * **Pantalla:** Una actividad desplegada en el editor (ej: "Baile moderno" o "Judo").
-> * **Elementos visibles:** Campos `Nome da actividade`, selector `Estado de dispoñibilidade`, `Aviso de estado`, `Prezo / mes`, selector `Tipo de rexistro`, `Ligazón de inscrición`, `Email de contacto`, y el campo `Identificador (slug)` al final con su texto de advertencia.
+![Campos editables y selector de disponibilidad en una actividad extraescolar](img/CAP-09-EXTRA-ACTIVIDAD-CAMPOS.png)
+*Figura 9: Ficha desplegada de una actividad (Baile moderno) mostrando su nombre, selector de disponibilidad de plazas y precio mensual.*
 
 | Campo en pantalla (Gallego) | Significado en Español | ¿Qué hace y cómo se usa? |
 | :--- | :--- | :--- |
@@ -84,6 +82,12 @@ Al hacer clic sobre cualquiera de ellas, se desplegarán sus 12 casillas ordenad
 | **Etapa educativa** | Cursos escolares | Etapa recomendada (ej: `Infantil e Primaria`, `Primaria`). |
 | **Entidade / Monitor** | Empresa o monitor | Entidad colaboradora si procede (ej: `Sadanza`, `Portobello`). |
 | **Identificador (slug)** | Código técnico permanente | ⛔ **LA REGLA DE ORO: ¡NO TOCAR!** Código interno en minúsculas (ej: `baile-moderno`). Mantiene vivas las anclas de la web (`#act-baile-moderno`). |
+
+![Campos de inscripción, enlace web, texto del botón y correo de contacto](img/CAP-11-EXTRA-REGISTRO-EMAIL.png)
+*Figura 10: Detalle de los campos de registro: tipo de inscripción (Google Form), enlace, texto del botón y correo electrónico de contacto.*
+
+![Identificador técnico permanente con aviso de no modificar](img/CAP-12-EXTRA-SLUG-ID.png)
+*Figura 11: Detalle del campo `Identificador (slug)` con su aviso de preservación permanente para salvaguardar los enlaces internos de la web.*
 
 ---
 
@@ -101,9 +105,8 @@ Al hacer clic sobre cualquiera de ellas, se desplegarán sus 12 casillas ordenad
 6. Comprueba en la vista previa de la derecha que la tarjeta de Judo ahora luce la insignia roja **Completa** y que el botón de inscribirse ha desaparecido para que ninguna familia se confunda.
 7. Pulsa en **Guardar** y luego en **Publicar** -> **Publicar ahora**.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-10-EXTRA-ESTADO-COMPLETA]**
-> * **Pantalla:** La tarjeta de una actividad en la vista previa tras cambiar su estado a "full".
-> * **Elementos visibles:** Insignia roja redondeada con el texto "Completa" al lado del nombre de la actividad y ausencia de botón de inscripción.
+![Actividad con estado completa mostrando distintivo rojo y formulario](img/CAP-10-EXTRA-ESTADO-COMPLETA.png)
+*Figura 12: Estado de disponibilidad marcado como "Completa (sen prazas dispoñibles)", con aviso explicativo y precio mensual.*
 
 ---
 

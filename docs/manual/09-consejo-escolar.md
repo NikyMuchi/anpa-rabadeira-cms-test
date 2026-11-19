@@ -1,4 +1,4 @@
-﻿# Módulo 9: Consejo Escolar (Consello Escolar)
+# Módulo 9: Consejo Escolar (Consello Escolar)
 
 En este módulo aprenderás a gestionar y actualizar la página oficial del **Consejo Escolar** (`/consello-escolar/`) en la web de la ANPA Rabadeira.
 
@@ -36,9 +36,8 @@ Sigue estos pasos para abrir la ficha de edición:
 3. En la barra lateral izquierda, localiza la sección **📄 Páxinas de Información**.
 4. Haz clic sobre el elemento titulado **🏛️ Consello Escolar**.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-20-CONSELLO-MENU]**
-> * **Pantalla:** Barra lateral izquierda del CMS abierta.
-> * **Elementos visibles:** Colección `Páxinas de Información` desplegada, con el cursor seleccionando la opción `🏛️ Consello Escolar`.
+![Acceso a Consello Escolar dentro de Páxinas de Información en Decap CMS](img/CAP-20-CONSELLO-MENU.png)
+*Figura 19: Menú de Páxinas de Información en Decap CMS con el acceso directo a la ficha de Consello Escolar.*
 
 ---
 
@@ -61,11 +60,8 @@ Al abrir la ficha de Consejo Escolar, verás los siguientes campos en el formula
 | **Imaxe destacada (opcional)** | Imagen de cabecera | Imagen | No | Fotografía o escudo representativo que se mostrará en la parte superior. |
 | **Texto alternativo da imaxe (Alt)** | Descripción accesible | Texto | No | Breve frase que describe la imagen para personas con discapacidad visual. |
 | **Contido da páxina** | Cuerpo principal | Markdown | **Sí** | Todo el texto explicativo, enlaces al blog, subtítulos y datos de contacto. |
-| **Documentos / PDF (opcional)** | Folletos y actas | Lista | No | Bloque para subir documentos PDF descargables con botones automáticos. |
-
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-21-CONSELLO-FORMULARIO]**
-> * **Pantalla:** Formulario completo de `consello-escolar.md` en el CMS.
-> * **Elementos visibles:** Campos `Título da páxina`, `Imaxe destacada`, la barra de herramientas completa del editor `Contido da páxina` y el bloque inferior `Documentos / PDF`.
+![Formulario completo de edición de Consello Escolar en Decap CMS](img/CAP-21-CONSELLO-FORMULARIO.png)
+*Figura 20: Formulario de edición de Consello Escolar con campos de título, imagen destacada, editor Markdown y vista previa maquetada.*
 
 ---
 
@@ -88,6 +84,9 @@ El campo **Contido da páxina** cuenta con una barra de herramientas superior pa
 ## 6. Cómo gestionar enlaces web (añadir, modificar y borrar)
 
 En esta página es fundamental saber gestionar enlaces, ya que aquí reside el acceso al blog de las familias del Consejo Escolar.
+
+![Detalle del editor de texto mostrando el enlace al blog de familias](img/CAP-16-CONSELLO-BLOG-LINK.png)
+*Figura 21: Detalle del editor de texto Markdown mostrando el enlace al blog oficial de las familias del Consejo Escolar.*
 
 ### A) Cómo modificar el enlace al blog externo:
 1. Dentro del cuadro **Contido da páxina**, busca la línea que dice:
@@ -135,6 +134,9 @@ La imagen destacada es opcional, pero ayuda a darle un toque visual agradable a 
 
 Si el Consejo Escolar publica una circular informativa o una guía oficial, puedes adjuntarla para que las familias la descarguen fácilmente.
 
+![Bloque de gestión de documentos PDF descargables en Consejo Escolar](img/CAP-17-CONSELLO-PDFS.png)
+*Figura 22: Bloque inferior de Documentos PDF opcionales para circulares, actas o guías informativas del Consejo Escolar.*
+
 ### A) Cómo añadir un documento PDF:
 1. Baja hasta el bloque **Documentos / PDF (opcional)**.
 2. Si la lista está vacía, haz clic en **Añadir Documentos / PDF (opcional)**.
@@ -148,9 +150,8 @@ Si el Consejo Escolar publica una circular informativa o una guía oficial, pued
 1. Haz clic en la tarjeta del documento que deseas retirar.
 2. Pulsa en el icono de la papelera (**Eliminar**) situado en la esquina de la tarjeta.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-22-CONSELLO-PREVIEW]**
-> * **Pantalla:** Pantalla dividida del editor de Consejo Escolar con la vista previa derecha activa.
-> * **Elementos visibles:** A la izquierda, el editor de texto y la lista de PDFs; a la derecha, la vista previa maquetada mostrando el título grande H1, el texto en gallego con el enlace al blog, la caja de contacto y la tarjeta interactiva de descarga del PDF.
+![Vista previa maquetada a pantalla dividida de Consello Escolar](img/CAP-22-CONSELLO-PREVIEW.png)
+*Figura 23: Pantalla dividida mostrando la previsualización maquetada en tiempo real con enlaces interactivos y bloque de contacto.*
 
 ---
 

@@ -1,4 +1,4 @@
-﻿# Módulo 10: Portada Principal de la Web (Páxina de Inicio)
+# Módulo 10: Portada Principal de la Web (Páxina de Inicio)
 
 La portada es la primera impresión que recibe cualquier familia cuando entra en la web de la ANPA Rabadeira (`/`). Un diseño cálido, textos claros y accesos directos actualizados son esenciales para que encuentren rápidamente lo que buscan.
 
@@ -90,8 +90,8 @@ Es la cabecera que preside la web:
 * **Texto do botón:** *Enviar correo* (vinculado automáticamente al correo central de la ANPA).
 * **Nome do centro educativo:** Ficha con el nombre oficial del colegio (*CEIP Rabadeira · Oleiros*).
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-26-PORTADA-EDITOR]**
-> * **Pantalla:** Editor de `home.json` en Decap CMS mostrando los campos del bloque `Hero` y el bloque `Accesos Directos` con las tarjetas de colores en la vista previa derecha.
+![Editor de la portada principal en Decap CMS](img/CAP-26-PORTADA-EDITOR.png)
+*Figura 24: Editor de contenidos de la portada en Decap CMS mostrando los campos del bloque principal (Hero) y tarjetas de acceso.*
 
 ---
 

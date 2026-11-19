@@ -26,14 +26,12 @@ Cuando estás editando una noticia o una página, tu trabajo pasa por tres fases
 
 Cuando abres cualquier noticia o página para editar, en la barra superior verás siempre estos botones:
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-03-BOTONES-SUPERIORES]**
-> *(En la Fase 2 se incorporará aquí la captura real de la cabecera)*
-> * **Pantalla:** Cabecera superior del editor de Decap CMS dentro de una noticia en edición.
-> * **Elementos visibles:** Botón azul **Guardar** (*Save*), selector desplegable de **Estado** (*Status* con opciones Borrador, En revisión, Listo), botón verde desplegable **Publicar** (*Publish* -> *Publicar ahora*), y el botón de alternar vista previa.
+![Barra superior de acciones en el editor de Decap CMS](img/CAP-03-BOTONES-SUPERIORES.png)
+*Figura 3: Barra superior de acciones en el editor mostrando el estado de guardado ("CAMBIOS GUARDADOS"), el selector de estado ("Publicado ▾"), el botón "Eliminar entrada" y el control de vista previa.*
 
-* **Botón azul: Guardar:** Guarda todo lo que hayas escrito hasta ese momento. Siempre que pulses este botón, tu trabajo queda a salvo en GitHub en una rama de borrador privada.
-* **Selector de Estado:** Te permite cambiar manualmente la etiqueta entre *Borrador*, *En revisión* y *Listo*.
-* **Botón verde: Publicar:** Al hacer clic, se despliega la opción **Publicar ahora**. Este es el único botón que traslada tu contenido a la web pública.
+* **Indicador de guardado:** Muestra en verde `CAMBIOS GUARDADOS` o el botón para guardar cambios. Siempre que pulses este botón, tu trabajo queda a salvo en GitHub en una rama de borrador privada.
+* **Selector de Estado:** Te permite comprobar o cambiar el estado entre borrador y publicado.
+* **Botón de publicación:** Al hacer clic, gestiona el despliegue a la web pública.
 * **Botón de vista previa:** Te permite alternar entre ver la pantalla partida (formulario a la izquierda y diseño a la derecha) o ver el formulario a pantalla completa.
 
 ---
@@ -46,21 +44,17 @@ A la derecha de tu formulario de edición verás una réplica exacta de cómo se
 * **Mismo diseño y colores:** La vista previa utiliza los colores corporativos oficiales (tonos crema y azul petróleo) y la misma tipografía que verán las familias.
 * **No guarda nada:** Mirar la vista previa no altera la web; es solo un espejo para comprobar que no te has dejado nada a medias.
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-04-VISTA-PREVIA]**
-> *(En la Fase 2 se incorporará aquí la captura real a pantalla dividida)*
-> * **Pantalla:** Editor de pantalla dividida al redactar una noticia.
-> * **Elementos visibles:** A la izquierda, el formulario con los campos `Título`, `Categoría` y `Contido`; a la derecha, la vista previa renderizada con el titular grande, la fecha en gallego, la insignia de categoría y el texto maquetado.
+![Pantalla dividida con formulario de edición a la izquierda y vista previa en tiempo real a la derecha](img/CAP-04-VISTA-PREVIA.png)
+*Figura 4: Editor de pantalla dividida al redactar una noticia, mostrando los campos de edición a la izquierda y el diseño final maquetado a la derecha.*
 
 ---
 
 ## 4. El Tablero de Flujo Editorial (Workflow)
 
-Si en la barra superior del panel haces clic en la pestaña **Flujo editorial**, verás un tablero tipo corcho con tres columnas:
+En la pestaña superior **Flujo Editorial** puedes consultar el tablero visual con todas las publicaciones en curso organizadas en tres columnas:
 
-> 📸 **[CAPTURA PENDIENTE DE INCORPORAR: CAP-05-TABLERO-WORKFLOW]**
-> *(En la Fase 2 se incorporará aquí la captura real del tablero de flujo editorial)*
-> * **Pantalla:** Vista de la pestaña "Flujo editorial" (*Workflow*).
-> * **Elementos visibles:** Tres columnas tituladas **Borradores** (*Drafts*), **En revisión** (*In review*) y **Listos** (*Ready*), con tarjetas que representan noticias o páginas en preparación mostrando su título, autor y última fecha de modificación.
+![Tablero de flujo editorial con columnas de Borradores, En revisión y Listo en Decap CMS](img/CAP-05-TABLERO-WORKFLOW.png)
+*Figura 5: Tablero visual del Flujo Editorial mostrando las tres columnas organizativas ("Borradores", "En revisión" y "Listo") con tarjetas reales de artículos en cada fase.*
 
 Desde este tablero puedes:
 * **Hacer clic en cualquier tarjeta** para abrirla y seguir editando donde lo dejaste.
