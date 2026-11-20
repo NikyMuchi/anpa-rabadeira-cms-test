@@ -1,0 +1,96 @@
+---
+layout: layouts/manual-base.njk
+title: "Centro de Ayuda — Manual de Administración | ANPA Rabadeira"
+description: "Centro de Ayuda y manual oficial en español para administrar el gestor de contenidos Decap CMS de la ANPA Ensino Rabadeira."
+permalink: "admin/manual/index.html"
+---
+
+<div class="manual-container">
+  <!-- Hero Welcome Banner -->
+  <section class="manual-hero" aria-labelledby="manual-hero-title">
+    <h1 id="manual-hero-title" class="manual-hero__title">Centro de Ayuda — Manual de Administración</h1>
+    <p class="manual-hero__desc">
+      ¡Bienvenida y bienvenido al manual oficial de la web de la ANPA Ensino Rabadeira! Este espacio está creado para que cualquier persona de la directiva pueda gestionar, actualizar y publicar contenidos con total tranquilidad y autonomía, <strong>sin necesidad de conocimientos de informática ni experiencia técnica previa</strong>.
+    </p>
+
+    <!-- Suggested Quick Search Tasks -->
+    <div class="manual-pills" role="region" aria-label="Tareas rápidas y habituales">
+      <span class="manual-pills__label">Tareas frecuentes:</span>
+      <button type="button" class="manual-pill-btn" data-query="publicar una noticia">📰 Publicar una noticia</button>
+      <button type="button" class="manual-pill-btn" data-query="cambiar un precio">💶 Cambiar un precio / cuota</button>
+      <button type="button" class="manual-pill-btn" data-query="cerrar plazas">🚫 Cerrar plazas agotadas</button>
+      <button type="button" class="manual-pill-btn" data-query="subir un pdf">📄 Subir un PDF</button>
+      <button type="button" class="manual-pill-btn" data-query="cambiar una foto">🖼️ Cambiar una foto</button>
+      <button type="button" class="manual-pill-btn" data-query="guardar un borrador">💾 Guardar un borrador</button>
+      <button type="button" class="manual-pill-btn" data-query="consejo escolar">🏛️ Consejo Escolar</button>
+      <button type="button" class="manual-pill-btn" data-query="guia atriga">🍽️ Guía ATRIGA de comedor</button>
+      <button type="button" class="manual-pill-btn" data-query="renovar iban">🏦 Renovar IBAN y socios</button>
+      <button type="button" class="manual-pill-btn" data-query="relevo directiva">🤝 Relevo de directiva</button>
+    </div>
+  </section>
+
+  <!-- The Three Golden Rules -->
+  <section class="manual-rules" aria-labelledby="manual-rules-title">
+    <h2 id="manual-rules-title" class="manual-rules__title">
+      <span aria-hidden="true">⭐</span>
+      Las Tres Reglas de Oro de la Administración
+    </h2>
+    <div class="manual-rules__grid">
+      <div class="manual-rule-card">
+        <span class="manual-rule-card__num">Regla 1</span>
+        <h3 class="manual-rule-card__heading">Guardar no es publicar</h3>
+        <p class="manual-rule-card__text">
+          Puedes pulsar el botón azul <strong>Guardar</strong> con total tranquilidad. Tus cambios quedan protegidos como un borrador privado interno y <strong>no se mostrarán en internet</strong> hasta que pulses <strong>Publicar ahora</strong>.
+        </p>
+      </div>
+
+      <div class="manual-rule-card">
+        <span class="manual-rule-card__num">Regla 2</span>
+        <h3 class="manual-rule-card__heading">Cuidado con los identificadores y el IBAN</h3>
+        <p class="manual-rule-card__text">
+          En Extraescolares, nunca modifiques la casilla <code>Identificador (slug)</code> de las 18 actividades. En Inscripción, revisa tres veces el número de cuenta bancaria (<code>bank_iban</code>) antes de aprobar la publicación.
+        </p>
+      </div>
+
+      <div class="manual-rule-card">
+        <span class="manual-rule-card__num">Regla 3</span>
+        <h3 class="manual-rule-card__heading">Paciencia con el reloj (1 a 2 minutos)</h3>
+        <p class="manual-rule-card__text">
+          Tras pulsar <strong>Publicar ahora</strong>, el servidor tarda habitualmente entre <strong>1 y 2 minutos</strong> en montar la página y distribuirla. Si abres la web de inmediato y no ves los cambios, espera un minuto y pulsa <code>Ctrl + F5</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 Categories with all 14 Modules -->
+  <section class="manual-categories" aria-label="Categorías del manual">
+    {% for cat in manual.categories %}
+    <div class="manual-category-group" id="cat-{{ cat.id }}">
+      <div class="manual-category-header">
+        <span class="manual-category-header__icon" aria-hidden="true">{{ cat.icon }}</span>
+        <h2 class="manual-category-header__title">{{ cat.title }}</h2>
+      </div>
+      <p class="manual-category-desc">{{ cat.description }}</p>
+
+      <div class="manual-modules-grid">
+        {% for mod in cat.modules %}
+        <a href="{{ mod.url }}" class="manual-module-card">
+          <span class="manual-module-card__badge">Módulo {{ mod.numStr }}</span>
+          <h3 class="manual-module-card__title">{{ mod.title }}</h3>
+          <p class="manual-module-card__summary">{{ mod.summary }}</p>
+          <div class="manual-module-card__footer">
+            <span>Ver tutorial paso a paso</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Security and Public URL Notice -->
+  <aside class="manual-security-footer" role="note">
+    <strong>Aviso sobre seguridad y privacidad:</strong> Este manual de administración y Centro de Ayuda está configurado con la etiqueta técnica <code>noindex, nofollow</code> para que los motores de búsqueda (como Google) no lo indexen públicamente entre los resultados escolares para las familias. Sin embargo, al tratarse de un sitio estático en Netlify, sus páginas son legibles si se conoce la dirección web directa (la directiva <code>noindex</code> no equivale a una autenticación con contraseña). Por diseño y política estricta de seguridad, este manual <strong>no contiene contraseñas, claves privadas, credenciales de acceso ni datos personales confidenciales</strong> de ninguna familia ni miembro del equipo directivo.
+  </aside>
+</div>
