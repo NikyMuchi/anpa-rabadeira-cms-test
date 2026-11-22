@@ -150,8 +150,8 @@ Si el Consejo Escolar publica una circular informativa o una guía oficial, pued
 1. Haz clic en la tarjeta del documento que deseas retirar.
 2. Pulsa en el icono de la papelera (**Eliminar**) situado en la esquina de la tarjeta.
 
-![Vista previa maquetada a pantalla dividida de Consello Escolar](img/CAP-22-CONSELLO-PREVIEW.png)
-*Figura 23: Pantalla dividida mostrando la previsualización maquetada en tiempo real con enlaces interactivos y bloque de contacto.*
+![Vista previa maquetada en tiempo real de Consello Escolar](img/CAP-22-CONSELLO-PREVIEW.png)
+*Figura 23: Detalle del panel de vista previa maquetada en tiempo real con enlaces interactivos y bloque de contacto.*
 
 ---
 
