@@ -22,6 +22,38 @@
       z-index: 999999;
       border-bottom: 2px solid #d97706;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .sandbox-banner__sep {
+      color: #b45309;
+      opacity: 0.7;
+    }
+    .sandbox-banner__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background-color: #78350f;
+      color: #fffbeb;
+      padding: 0.15rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+    .sandbox-banner__link:hover,
+    .sandbox-banner__link:focus-visible {
+      background-color: #451a03;
+      color: #ffffff;
+      outline: 2px solid #ffffff;
+      outline-offset: 1px;
+    }
+    .sandbox-banner__icon {
+      flex-shrink: 0;
     }
     body {
       padding-top: 2rem;
@@ -31,7 +63,12 @@
 
 <body>
   <div class="sandbox-banner" role="alert">
-    ⚠️ ENTORNO DE PROBAS — CMS TEST (Sandbox de probas illada)
+    <span class="sandbox-banner__title">⚠️ ENTORNO DE PROBAS — CMS TEST (Sandbox de probas illada)</span>
+    <span class="sandbox-banner__sep" aria-hidden="true">·</span>
+    <a href="/admin/manual/" class="sandbox-banner__link" target="_blank" rel="noopener" aria-label="Abrir o Centro de Axuda e Manual de Administración nunha nova pestana">
+      <svg class="sandbox-banner__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      📖 Centro de Axuda / Manual
+    </a>
   </div>
   <!-- Decap CMS Core (Open-Source) -->
   <script src="https://unpkg.com/decap-cms@^3.1.0/dist/decap-cms.js"></script>

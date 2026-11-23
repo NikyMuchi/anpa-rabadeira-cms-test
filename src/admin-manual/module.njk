@@ -1,0 +1,96 @@
+---
+layout: layouts/manual-base.njk
+pagination:
+  data: manual.modules
+  size: 1
+  alias: item
+permalink: "admin/manual/{{ item.slug }}/index.html"
+eleventyComputed:
+  title: "{{ item.fullTitle }} | Centro de Ayuda ANPA Rabadeira"
+  description: "{{ item.summary }}"
+---
+
+<!-- Breadcrumbs Bar -->
+<nav class="manual-breadcrumbs" aria-label="Ruta de navegación">
+  <div class="manual-breadcrumbs__inner">
+    <a href="/admin/manual/">Centro de Ayuda</a>
+    <span class="manual-breadcrumbs__sep" aria-hidden="true">/</span>
+    <a href="/admin/manual/#cat-{{ item.categorySlug }}">{{ item.category }}</a>
+    <span class="manual-breadcrumbs__sep" aria-hidden="true">/</span>
+    <span class="manual-breadcrumbs__current" aria-current="page">Módulo {{ item.numStr }}</span>
+  </div>
+</nav>
+
+<div class="manual-container">
+  <div class="manual-tutorial-layout">
+    <!-- Sidebar: Table of Contents -->
+    <aside class="manual-sidebar" aria-label="Contenido de este tutorial">
+      <details open class="manual-toc-accordion" id="manual-toc-details">
+        <summary class="manual-sidebar__heading">
+          <span>En este tutorial ({{ item.sections.length }} apartados)</span>
+          <span class="manual-toc-arrow" aria-hidden="true">▾</span>
+        </summary>
+        <ul class="manual-toc-list" style="margin-top: 0.5rem;">
+          {% for sec in item.sections %}
+          <li class="manual-toc-item">
+            <a href="#{{ sec.slug }}" class="manual-toc-link">{{ sec.title }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+
+      <hr class="manual-sidebar__divider">
+
+      <a href="/admin/manual/" class="manual-sidebar__back">
+        <span aria-hidden="true">←</span>
+        Volver al Índice General
+      </a>
+    </aside>
+
+    <!-- Main Tutorial Content -->
+    <article class="manual-article">
+      {{ item.html | safe }}
+
+      <!-- Bottom Pager Navigation (Prev / Next) -->
+      <nav class="manual-nav-pager" aria-label="Navegación entre tutoriales">
+        {% if item.prev %}
+        <a href="{{ item.prev.url }}" class="manual-pager-card manual-pager-card--prev">
+          <span class="manual-pager-label">← Tutorial anterior</span>
+          <span class="manual-pager-title">{{ item.prev.title }}</span>
+        </a>
+        {% else %}
+        <a href="/admin/manual/" class="manual-pager-card manual-pager-card--prev">
+          <span class="manual-pager-label">← Volver</span>
+          <span class="manual-pager-title">Índice del Manual de Administración</span>
+        </a>
+        {% endif %}
+
+        {% if item.next %}
+        <a href="{{ item.next.url }}" class="manual-pager-card manual-pager-card--next">
+          <span class="manual-pager-label">Siguiente tutorial →</span>
+          <span class="manual-pager-title">{{ item.next.title }}</span>
+        </a>
+        {% else %}
+        <a href="/admin/manual/" class="manual-pager-card manual-pager-card--next">
+          <span class="manual-pager-label">Final del manual →</span>
+          <span class="manual-pager-title">Volver al Índice General</span>
+        </a>
+        {% endif %}
+      </nav>
+
+      <!-- Related Tutorials -->
+      {% if item.related and item.related.length > 0 %}
+      <section class="manual-related" aria-labelledby="manual-related-title">
+        <h3 id="manual-related-title" class="manual-related__title">Temas relacionados útiles:</h3>
+        <ul class="manual-related__links">
+          {% for rel in item.related %}
+          <li>
+            <a href="{{ rel.url }}">Módulo {{ rel.numStr }}: {{ rel.shortTitle }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    </article>
+  </div>
+</div>
