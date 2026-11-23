@@ -58,9 +58,6 @@ Cada paso de la lista contiene tres campos:
 ![Detalle de los pasos ilustrados de la guía de ATRIGA en Decap CMS](img/CAP-14-COMEDOR-ATRIGA-STEPS.png)
 *Figura 15: Detalle de los pasos ilustrados de la guía de pago de ATRIGA con campos de descripción y captura adjunta.*
 
-![Bloque de documentos y guías en PDF descargables para comedor](img/CAP-15-COMEDOR-DOCUMENTOS-PDF.png)
-*Figura 16: Bloque inferior de documentos PDF opcionales para adjuntar guías tributarias o trípticos oficiales.*
-
 ### La secuencia oficial de los 11 pasos:
 1. **Paso 1:** *No apartado de CIDADÁNS, premes iniciar taxa* (Captura `/img/comedor/paso-1.png`).
 2. **Paso 2:** *Candado aberto é para o acceso libre ao servizo. Pechado se tedes certificado dixital* (Captura `/img/comedor/paso-2.png`).
@@ -106,14 +103,36 @@ Si el colegio cambia de correo para la recepción de justificantes de comedor:
 
 ---
 
-## 7. Qué se puede cambiar con total tranquilidad y qué no tocar
+## 7. Cómo adjuntar guías o impresos en PDF (opcional)
+
+Si la ANPA o el colegio publican una circular informativa, el impreso de domiciliación bancaria o una guía tributaria oficial en PDF, puedes adjuntarla para que las familias la descarguen directamente desde la página de Comedor.
+
+![Bloque de documentos y guías en PDF descargables para comedor](img/CAP-15-COMEDOR-DOCUMENTOS-PDF.png)
+*Figura 16: Bloque inferior de documentos PDF opcionales para adjuntar guías tributarias o impresos de comedor.*
+
+### A) Cómo añadir un documento PDF:
+1. Dentro del editor de **🍽️ Pago do Comedor**, baja hasta el bloque **Documentos / PDF (opcional)** situado al final del formulario.
+2. Si la lista está vacía, pulsa en el botón **Add documentos / pdf (opcional)**.
+3. Se abrirá una tarjeta con tres casillas:
+   * **Título do documento:** Nombre visible y descriptivo (ej: *Guía tributaria de axuda ATRIGA 2026-2027*).
+   * **Ficheiro PDF:** Haz clic en **Elegir un archivo** -> **Subir archivo**, selecciona el documento PDF desde tu ordenador y pulsa en **Insertar**.
+   * **Descrición breve:** Resumen aclaratorio que verán las familias bajo el título (ej: *Folleto oficial con instrucións de taxas e códigos de autoliquidación*).
+4. En el panel de vista previa derecho verás cómo se genera automáticamente una tarjeta con el icono del documento y dos botones: **Abrir PDF** (para consultarlo en el navegador) y **Descargar** (para guardarlo en el móvil o equipo).
+
+### B) Cómo eliminar o sustituir un documento PDF:
+* **Para sustituir el archivo:** Pulsa sobre **Elegir un archivo** en la tarjeta existente y selecciona el nuevo documento PDF.
+* **Para eliminarlo:** Pulsa en el icono de la papelera (**Eliminar**) situado en la esquina superior de la tarjeta del documento.
+
+---
+
+## 8. Qué se puede cambiar con total tranquilidad y qué no tocar
 * ✅ **Se puede cambiar con tranquilidad:** Actualizar capturas de pantalla, retocar textos explicativos para que se entiendan mejor, añadir nuevas instrucciones o adjuntar un PDF de ayuda.
 * 🚫 **NO desordenes los 11 pasos:** La guía está pensada para seguirse en orden estricto mientras la persona tiene abierta la web de ATRIGA en otra pestaña.
 * 🚫 **NO elimines la advertencia sobre el nombre del alumno:** Indicar el nombre y curso del menor en el justificante es obligatorio para que el colegio pueda identificar de quién es cada pago bancario.
 
 ---
 
-## 8. Errores habituales y soluciones
+## 9. Errores habituales y soluciones
 * **"He subido una captura y se ve gigante o borrosa":**
   * *Solución:* Toma capturas de pantalla en formato PNG con resolución nítida recortando solo la zona relevante de la ventana de ATRIGA, evitando capturar todo el escritorio de tu ordenador.
 * **"El enlace al portal tributario da error":**
